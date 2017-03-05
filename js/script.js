@@ -69,7 +69,7 @@ var reloadControl = L.Control.extend({
   }
 });
 
-var names = ["<i class='fa fa-cubes'></i> <i class='fa fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-90 fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-180 fa-location-arrow'></i>","&#8201;<i class='fa fa-globe'>&#8201; <i class='fa fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-270 fa-location-arrow'></i>","<i class='fa fa-map'></i>"];	
+var names = ["<i class='fa fa-cubes'></i> <i class='fa fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-90 fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-180 fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-270 fa-location-arrow'></i>","&#8201;<i class='fa fa-globe'>&#8201; <i class='fa fa-location-arrow'></i>","<i class='fa fa-map'></i>"];	
 var layerMaps = {}
 
 for(var i=0;i<names.length;i++){
