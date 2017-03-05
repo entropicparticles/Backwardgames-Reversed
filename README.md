@@ -7,4 +7,6 @@ I just did my first javascript code two months ago (Dec-2016, it was my first ht
 
 Do whatever you want with it, enjoy!
 
+DEMO: https://entropicparticles.github.io/leaflet-perlin/
+
 EntropicParticles
