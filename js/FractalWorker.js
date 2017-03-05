@@ -28,8 +28,8 @@ var commands = {
         var pixels = new Array(65536);
 		var voxel = Math.pow(2,9);
         var iter,i=65535;
-		var nivel8  = 12; //pixeles a subir de tope
-
+		
+		var nivel8  = data.input.nivel8; //pixeles a subir de tope
 		var angle   = data.input.angle;
 		var pMax    = data.input.max;
 		var pSea    = data.input.sea;

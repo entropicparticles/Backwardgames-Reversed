@@ -1,3 +1,5 @@
+var hash = window.location.hash.split("#");
+
 // Number of web workers
 var numWorkers = 5;
 	
@@ -27,6 +29,7 @@ for (var k=0; k < npoints*npoints*2; k++) {
   if(iter < min) min = iter;
 }
 
+var nivel8 = hash[1] || 12;
 // Input parameters for the layers
 var inputs = [];
 for (var i=0; i<6; ++i){
@@ -37,7 +40,8 @@ for (var i=0; i<6; ++i){
     'sea':(max+min)/2,
     'max': 1.01*max,
     'ran': contx,
-    'angle': 1.75
+    'angle': 1.75,
+    'nivel8': nivel8
   }
 }
 inputs[1].angle = 1.25;
@@ -51,16 +55,35 @@ var map = L.map('map', {
   minZoom:2,
   maxZoom:6
 });
-			
-var layerMaps = {
-  "<i class='fa fa-cubes'></i> <i class='fa fa-location-arrow'></i>":L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[0]).addTo(map),
-  "<i class='fa fa-cubes'></i> <i class='fa fa-rotate-90 fa-location-arrow'></i>":L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[1]),
-  "<i class='fa fa-cubes'></i> <i class='fa fa-rotate-180 fa-location-arrow'></i>":L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[2]),
-  "<i class='fa fa-cubes'></i> <i class='fa fa-rotate-270 fa-location-arrow'></i>":L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[3]),
-  "&#8201;<i class='fa fa-globe'>&#8201; <i class='fa fa-location-arrow'></i>":L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[4]),
-  "&#8201;<i class='fa fa-map'></i>":L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[5])
+
+var reloadControl = L.Control.extend({
+  options: {
+    position: 'topright' 
+    //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
+  },
+  onAdd: function (map) {
+    var div = L.DomUtil.create('div', 'reload');
+	div.innerHTML = '<input type="button" value="New map" onClick="window.location.reload()">';
+    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+    return div;
+  }
+});
+
+var names = ["<i class='fa fa-cubes'></i> <i class='fa fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-90 fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-180 fa-location-arrow'></i>","&#8201;<i class='fa fa-globe'>&#8201; <i class='fa fa-location-arrow'></i>","<i class='fa fa-cubes'></i> <i class='fa fa-rotate-270 fa-location-arrow'></i>","<i class='fa fa-map'></i>"];	
+var layerMaps = {}
+
+for(var i=0;i<names.length;i++){
+  layerMaps[names[i]] = L.tileLayer.fractalLayer(paletteController, numWorkers,inputs[i]);
 }
+var ini = hash[2] || 0;
+layerMaps[names[ini]].addTo(map);
 
 var lc=L.control.layers(layerMaps,{},{position:"topright",collapsed:false}).addTo(map);
-map.setView([0, 0], 2).addControl(new PaletteControl(layerMaps, {position: "topright"}));
+map.setView([0, 0], 2).addControl(new PaletteControl(layerMaps, {position: "topright"})).addControl(new reloadControl() );
+
+
+
+
+
+
 	
