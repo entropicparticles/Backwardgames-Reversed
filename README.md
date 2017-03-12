@@ -9,4 +9,6 @@ Do whatever you want with it, enjoy!
 
 DEMO: https://entropicparticles.github.io/leaflet-perlin/
 
+Blog: http://www.entropicparticles.com/6-procedural-maps-with-leaflet-ii/
+
 EntropicParticles
