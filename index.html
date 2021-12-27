@@ -1,28 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Generating perlin worlds with leaflet and web workers</title>
-
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/leaflet-0.5.1/leaflet.css" />
-  <link rel="stylesheet" href="css/fa/css/font-awesome.min.css" />
-   
-  <script src="js/leaflet-0.5.1/leaflet.js"></script>
-  <!-- Web workers and palettes logic from aparshin: https://github.com/aparshin/leaflet-fractal -->
-  <script src="js/Palettes.js"></script>
-  <script src="js/PaletteControl.js"></script>
-  <script src="js/FractalLayer.js"></script>
-  <!-- Perlin code from josephg: https://github.com/josephg/noisejs -->
-  <script src='js/perlin.js'></script>
-  <script src='js/WorldCreator.js'></script>
-  
+<meta charset="UTF-8">
+<title>REVERSED - BACKWARD GAMES</title>
+<style>
+    canvas {
+		image-rendering: -moz-crisp-edges;
+		image-rendering: -webkit-crisp-edges;
+		image-rendering: pixelated;
+		image-rendering: crisp-edges;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+    }
+</style>
+<script type="text/javascript" src='tiles.js'         ></script>
+<script type="text/javascript" src='00_starters.js'   ></script>
+<script type="text/javascript" src='01_makebitmap.js' ></script>
+<script type="text/javascript" src='03_rooms.js'      ></script>
+<script type="text/javascript" src='02_actions.js'    ></script>
 </head>
+<body style="background-color:black;">
 
-<body>
-  <div id="map"></div>
-  <script src="js/script.js"></script>
+<!-- CREATE CANVAS AND MUSIC -->
+<canvas id="back"   width="320" height="180"></canvas>
+<canvas id="canvas" width="320" height="180"></canvas>
+<canvas id="text"   width="320" height="180"></canvas>
+<audio id="music" controls style="display:none"></audio>
+
 </body>
-
 </html>
