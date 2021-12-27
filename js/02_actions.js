@@ -1,18 +1,5 @@
 
-function runAction() {
-		
-	for (var k=0; k<actions['background'].length; ++k) {
-		act = actions['background'][k];
-		eval(act['function']);
-	}
-	for (var k=0; k<actions['front'].length; ++k) {
-		act = actions['front'][k];
-		if ( colision([guy.X,guy.Y],[guy.DX,guy.DY],[act.X,act.Y],[act.DX,act.DY]) ) {
-			eval(act['function']);
-		}
-	}
-
-}
+// ACTIONS ----------------------------------------------------------------------------------------
 
 function menuCover() {
 	
@@ -24,10 +11,14 @@ function menuCover() {
 		if (chapter==0) { 
 			if (menuIndex==2) {
 				// let's go
-				actionOn = false;
-				preRoom = room;
-				room = 'hotel_room';
-				loadRoom()
+				actionOn    = false;
+				preRoom     = room;
+				room        = 'hotel_room';
+				firstEntry  = true;
+				menuIndex   = 0;
+				objectIndex = 0;
+				objects     = ['mano','gun']
+				loadRoom();
 			} else if (menuIndex==1) {
 				// let's go for the menu
 				blockKeys = true;

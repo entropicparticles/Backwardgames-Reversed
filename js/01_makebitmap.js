@@ -1,5 +1,6 @@
 
-// Write text ------------------------------------------------------------------------------------
+// WRITE TEXT ------------------------------------------------------------------------------------
+
 function writeText(string,i,j,textType,align,bubble,pointer) {
 		
 	// string: text; i,j: position; textType=['text_normal','text_gothic','text_gothic_fat']
@@ -109,6 +110,8 @@ function writeGothic(string,i,j) {
 	writeText(string,i,j,'text_gothic',true,false,false);	
 } //----------------------------------------------------------------------------------------------
 
+// WRITE PANELS ----------------------------------------------------------------------------------
+
 function drawBackgroundRGB(which) {
 	// Draw the RGB background
 	var im = tiles['panel']['cover'][which];
@@ -166,6 +169,9 @@ function drawPanel() {
 	}
 		
 } //----------------------------------------------------------------------------------------------
+
+
+// WRITE TILES -----------------------------------------------------------------------------------
 
 function drawTile(im,i,j,dj,spined,which) {
 	
@@ -242,7 +248,8 @@ function createImage() {
 	
 }
 
- // SHIT HAPPENS HERE ----------------------------------------------------------------------------
+ // SHIT HAPPENS HERE -----------------------------------------------------------------------------
+ 
 function drawCanvas(t) {
 			
 	// Initiate canvases and draw stuff

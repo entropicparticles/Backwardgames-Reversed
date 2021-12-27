@@ -22,7 +22,7 @@ let actionKeys = {esc:   27, //escape
 				  };
 				  
 var pathmusic  = './music/';
-var songs = ['majestygood.mp3'];
+var songs = ['majestygood.mp3','sweet.mp3','gangsta.mp3','nothing.mp3'];
 
 // Define html elements: canvas, context and music
 var     canvas,     context;
@@ -35,6 +35,7 @@ var LI = 320, LJ = 180, width, height, scale;
 
 // time, chapter, rooms, room or cover?
 var t, chapter, room, preRoom, RGBcover=0;
+var firstEntry = true;
 
 // Objects
 var objects = ['mano','gun','maletin','roomkey'];
@@ -61,9 +62,12 @@ var actionOn  = false;
 // debugging
 var tempo=0,n=0;
 
-// Pixel functions
+// Pixel functions ----------------------------------------------------------------------------------
 function B(a,b) {
 	return 8*a+b;
+}
+function D(a,b) {
+	return 12*a+b;
 }
 function XY2I(x,y) {
     return (Math.round(x)-Math.round(y))*2;
@@ -72,10 +76,18 @@ function XYZ2J(x,y,z) {
     return Math.round(x)+Math.round(y)+Math.round(z);
 }
 
+// Collision function -------------------------------------------------------------------------------
+function collision(rect1,rect2) {
+	// Both must be at same Z
+	return (rect1.X < rect2.X + rect2.DX &&
+			rect1.X + rect1.DX > rect2.X &&
+			rect1.Y < rect2.Y + rect2.DY &&
+			rect1.DY + rect1.Y > rect2.Y) && (rect1.Z == rect2.Z);	
+}//--------------------------------------------------------------------------------------------------
+
 				  
 // START PRESSING ANY KEY (JUST ONCE) ---------------------------------------------------------------
 
-var firstEntry = true;
 document.addEventListener('keydown', function(e) {
 	if (firstEntry) { 
 		start(); 
@@ -226,7 +238,19 @@ function updateMusic() {
 
 function updateAction() {
 	
-	runAction();
+	// First evaluate actions in the background (not related to position)
+	for (var k=0; k<actions['background'].length; ++k) {
+		act = actions['background'][k];
+		eval(act['function']);
+	}
+	
+	// Then, evaluate those actions related to position
+	for (var k=0; k<actions['front'].length; ++k) {
+		act = actions['front'][k];
+		if ( collision(guy,act) ) {
+			eval(act['function']);
+		}
+	}
 	
 }//----------------------------------------------------------------------------------------------
 
@@ -241,8 +265,7 @@ function updateImage() {
 	if (!pause) {	
 		drawCanvasTime(true)
 	}
-}//----------------------------------------------------------------------------------------------
-
+}
 function drawCanvasTime(bo) {
 	if (bo) {
 		var startTime = performance.now()
