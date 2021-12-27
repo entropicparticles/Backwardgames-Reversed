@@ -22,7 +22,7 @@ let actionKeys = {esc:   27, //escape
 				  };
 				  
 var pathmusic  = '../music/';
-var songs = ['majestygood.mp3','sweet.mp3','gangsta.mp3','nothing.mp3'];
+var songs = ['majestygood.mp3'];
 
 // Define html elements: canvas, context and music
 var     canvas,     context;
