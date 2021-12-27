@@ -1,14 +1,7 @@
-# leaflet-perlin.github.io
-DEMO: Generating perlin-based procedural worlds with leaflet and web workers
+# REVERSED
 
-Leaflet is great for exploring maps, web workers are great for procedural content, I just wanted to put it together. I got inspired by the nice work of leaflet-fractal so I started to work on top of their code (github.com/aparshin/leaflet-fractal).
+DEMO: 8-bit noir adventure game, inspired in the pixelart of of Batman and Head Over Hells (Jon Ritman & Bernie Drummond). Everything is done with javascript canvas. There is no images, just tables and code.
 
-I just did my first javascript code two months ago (Dec-2016, it was my first html code at all!) so probably there are infinite ways to improve the code. Sorry for that!
-
-Do whatever you want with it, enjoy!
-
-DEMO: https://entropicparticles.github.io/leaflet-perlin/
-
-Blog: http://www.entropicparticles.com/6-procedural-maps-with-leaflet-ii/
+Enjoy!
 
 EntropicParticles
