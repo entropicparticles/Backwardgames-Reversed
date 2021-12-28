@@ -44,11 +44,8 @@ function writeText(string,i,j,textType,align,bubble,pointer) {
 	// correct j direction
 	jj = height-dj-j
 	
-	//build bubble using size
+	//build bubble using native lines
 	if (bubble) {		
-		//var background = new Image();
-		//background.src = '../angry.gif';
-		//background.onload = () => {
 		txtcontext.lineWidth = 4;
 		txtcontext.strokeStyle = '#ff0000';
 		txtcontext.beginPath();
@@ -71,7 +68,6 @@ function writeText(string,i,j,textType,align,bubble,pointer) {
 		txtcontext.fillStyle = '#440000';
 		txtcontext.fillRect(i+icum0-2, jj-2, isize+3, jsize+2);
 		txtcontext.fill();
-		//}
 	}
 	
 	// Draw pointer when people talks
@@ -273,7 +269,9 @@ function drawStuff(stf,which) {
 	
 	for (var k=0; k<stf.length; ++k) {
 		s = stf[k];
-		drawTile(tiles[s['type']][s['folder']][s['file']],s['I0'],s['J0'],0,s['spin']==-1,which);
+		if (s['visible']) {
+			drawTile(tiles[s['type']][s['folder']][s['file']],s['I0'],s['J0'],0,s['spin']==-1,which);
+		}
 	}	
 	
 }

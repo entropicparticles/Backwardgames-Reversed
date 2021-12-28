@@ -1,6 +1,15 @@
 
 // ACTIONS ----------------------------------------------------------------------------------------
 
+function open_close_door(id,type) {
+	// good
+	for (var k=0; k<stuff['front'].length; ++k) {
+		s = stuff['front'][k];
+		if (s['ID']==id){
+		}
+	}	
+}
+
 function menuCover() {
 	
 	// write start menu

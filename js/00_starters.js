@@ -247,9 +247,9 @@ function updateAction() {
 	// Then, evaluate those actions related to position
 	for (var k=0; k<actions['front'].length; ++k) {
 		act = actions['front'][k];
-		if ( collision(guy,act) ) {
-			eval(act['function']);
-		}
+		//if ( collision(guy,act) ) {
+		//	eval(act['function']);
+		//}
 	}
 	
 }//----------------------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ function updateImage() {
 			
     // Create the image and draw the image data to the canvas
 	if (!pause) {	
-		drawCanvasTime(true)
+		drawCanvasTime(false)
 	}
 }
 function drawCanvasTime(bo) {
