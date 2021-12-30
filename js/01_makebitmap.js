@@ -132,7 +132,14 @@ function drawPanel() {
 		// Draw the help menu, as open as menuIndex says (3 options)
 		im = tiles['panel']['panel']['paneljs']
 		var dj = [im['DJ']-32,im['DJ']-(32+16),0][menuIndex]
-		drawTile(im,0,0,dj)
+		var di = menuIndex==0 ? (4-objects.length)*24 : 0 ;
+		drawTile(im,-di,-dj,0)
+		
+		// Write text for the items
+		textobjects={'mano'  :'Interact / Talk','maletin':'THE case',
+					 'gun'   :'A Beretta 92 FS','roomkey':'A hotel room key',
+					 'report':'A police file'}
+		writeText(textobjects[objects[objectIndex]],4,im['DJ']-(32+13)-dj,'text_normal',false,false,false)
 		
 		// Draw the objects and pointer	
 		dj = [0,16,im['DJ']-32][menuIndex]
@@ -152,12 +159,13 @@ function drawPanel() {
 		k = objectIndex
 		di = 2+24*k+k
 		drawTile(im,di,2+dj,0,false)	
+		
 	
 	} else {
 		
 		// Draw the help menu when asked
 		// only appears after action at index=1 (2nd of menu of 3 options)
-		if (actionOn && menuIndex==1) {		
+		if (menuIndex==1) {		
 			im = tiles['panel']['panel']['panelcoverjs']
 			drawTile(im,0,0,0,false,'text')		
 		}
@@ -169,10 +177,11 @@ function drawPanel() {
 
 // WRITE TILES -----------------------------------------------------------------------------------
 
-function drawTile(im,i,j,dj,spined,which) {
+function drawTile(im,i,j,didj,spined,which) {
 	
 	// im: tile; i,j: canvas position; dj: cut some pixels from above
-	
+	di = didj==0 ? 0 : dj[0] ;
+	dj = didj==0 ? 0 : dj[1] ;
 	j = height-im['DJ']-j+dj
 	
 	var tile = context.createImageData(im['DI'],im['DJ']-dj*im['DI']);
@@ -257,6 +266,7 @@ function drawCanvas(t) {
 		drawStuff(stuff['background'],'background');
 		firstEntry = false;
 	}
+	sortMobile();
 	drawStuff(stuff['front'],'canvas');
 	drawText();
 	drawBorder();

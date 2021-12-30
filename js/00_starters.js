@@ -38,7 +38,7 @@ var t, chapter, room, preRoom, RGBcover=0;
 var firstEntry = true;
 
 // Objects
-var objects = ['mano','gun','maletin','roomkey'];
+var objects = ['mano'];
 
 // List of text and properties
 var listText = [];
@@ -46,8 +46,11 @@ var listText = [];
 // List of actions in the room
 var actions = {'background':[],'front':[]};
 
-// List of stuff in the room
+// List of stuff in the room. Index to find the guy in the list. The guy.
 var stuff = {'background':[],'front':[]};
+var guyIndex;
+var guy   = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
+var space = {'open':[],'solid':[]};
 
 // Keys down and other control variables
 var keys = [];
@@ -57,7 +60,7 @@ var blockKeys = false;
 var menuIndex, objectIndex, songIndex;
 
 // Actions are on?
-var actionOn  = false;
+var actionOn  = false; keyOn = 'stp0';
 
 // debugging
 var tempo=0,n=0;
@@ -77,12 +80,20 @@ function XYZ2J(x,y,z) {
 }
 
 // Collision function -------------------------------------------------------------------------------
+function collisionExtended(rect1,rect2) {
+	return ( rect1.X <= rect2.XM && rect1.XM >= rect2.X &&
+			 rect1.Y <= rect2.YM && rect1.YM >= rect2.Y    ) ||
+		   ( rect2.X <= rect1.XM && rect2.XM >= rect1.X &&
+			 rect2.Y <= rect1.YM && rect2.YM >= rect1.Y    );	
+}
 function collision(rect1,rect2) {
-	// Both must be at same Z
-	return (rect1.X < rect2.X + rect2.DX &&
-			rect1.X + rect1.DX > rect2.X &&
-			rect1.Y < rect2.Y + rect2.DY &&
-			rect1.DY + rect1.Y > rect2.Y) && (rect1.Z == rect2.Z);	
+	return ( rect1.X < rect2.XM && rect1.XM > rect2.X &&
+			 rect1.Y < rect2.YM && rect1.YM > rect2.Y    );	
+}
+
+function collisionGuyAct(rect1,rect2) {
+	return ( rect1.X < rect2.XM+1 && rect1.XM > rect2.X-1 &&
+			 rect1.Y < rect2.YM+1 && rect1.YM > rect2.Y-1    );	
 }//--------------------------------------------------------------------------------------------------
 
 				  
@@ -145,12 +156,13 @@ function start() {
 	music.play();
 	
 	// enter in the room for the first time
-	room = 'cover';
+	room = 'void';
 	preRoom = 'void';
-	actions['background'] = [{'ID':'room','function':'loadRoom()'}]; 
- 
+	actions['background'] = [{'ID':'room','function':'loadRoom("matrix")'}]; 
+	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
+	 
     // Initiate loop
-    canvas.interval = setInterval(updateit, 1000/60);
+    canvas.interval = setInterval(updateit, 1000/15);
 	
 }
 	
@@ -180,9 +192,9 @@ function updateKeys() {
 		
 		// Pause, mute, +, - : have efect only the first time
 		if        ( keys[actionKeys.pause] == 1 ) {
-			pause = pause ? false : true;
+			pause = !pause;
 		} else if ( keys[actionKeys.mute ] == 1 && !pause ) {
-			mute = mute ? false : true;			
+			mute = !mute;			
 		} else if ( keys[actionKeys.plus ] == 1 ) {
 			scale += 1;		
 		} else if ( keys[actionKeys.minus] == 1 ) {
@@ -198,8 +210,9 @@ function updateKeys() {
 		} else if ( keys[actionKeys.left] == 1 && !pause ) {
 			objectIndex = Math.max(0,objectIndex-1);
 		} else if ( keys[actionKeys.act] == 1 && !pause ) {
-			actionOn = actionOn ? false : true;	
-		}				
+			actionOn = !actionOn;	
+		}		
+		
 		
     })
 	//console.log(keys[actionKeys.esc] != 0)
@@ -208,6 +221,16 @@ function updateKeys() {
     window.addEventListener('keyup', function (e) {
 		keys[e.keyCode] = 0;
     })
+	
+	// select key to action
+	keyOn = 'stp0';
+	var moves = [['upx1',keys[actionKeys.upx1]],['dwx1',keys[actionKeys.dwx1]],['upy1',keys[actionKeys.upy1]],['dwy1',keys[actionKeys.dwy1]],
+	             ['upx2',keys[actionKeys.upx2]],['dwx2',keys[actionKeys.dwx2]],['upy2',keys[actionKeys.upy2]],['dwy2',keys[actionKeys.dwy2]]];
+	moves.sort(function(a, b) {return a[1] < b[1];});
+    for (var k=0;k<8; ++k) {
+        if (moves[k][1] != 0) keyOn = moves[k][0];
+    }
+	//console.log(key,guyIndex)
 	
 }//----------------------------------------------------------------------------------------------
 
@@ -238,6 +261,9 @@ function updateMusic() {
 
 function updateAction() {
 	
+	// Walk Guy
+	walkingGuy();
+	
 	// First evaluate actions in the background (not related to position)
 	for (var k=0; k<actions['background'].length; ++k) {
 		act = actions['background'][k];
@@ -247,11 +273,16 @@ function updateAction() {
 	// Then, evaluate those actions related to position
 	for (var k=0; k<actions['front'].length; ++k) {
 		act = actions['front'][k];
-		//if ( collision(guy,act) ) {
-		//	eval(act['function']);
-		//}
+		g = stuff['front'][guyIndex];
+		if ( collisionGuyAct(g,act) && g.Z==act.Z ) {
+			console.log(g.X,g.Y,act['function'])
+			eval(act['function']);
+		} else {
+			//actionOn = false;
+		}
 	}
-	
+	actionOn = false;
+		
 }//----------------------------------------------------------------------------------------------
 
 function updateImage() {
