@@ -38,12 +38,8 @@ function loadRoom(inroom) {
 		LX = 4, LY = 6;
 		I0 = 170, J0 = 4;		
 			
-		RGBcover = 'RGB_cover';
-		entryPoint['void']={'X':B(2,2),'Y':B(3,1),'Z':3,'subfile':'m0_01N'};
-		
-		// just as example: get the position defined by the point of entrance
-		var ep = entryPoint[preRoom in entryPoint ? preRoom : 'void'];
-		guy.X = ep.X; guy.Y = ep.Y; guy.Z = ep.Z; guy.file = ep.subfile;
+		RGBcover = 'RGB_LA';
+		entryPoint = {'X':B(2,2),'Y':B(3,1),'Z':3,'file':'m0_01N'};
 		
 		alltext = [
 			[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false,-1],
@@ -94,7 +90,7 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(putWallAround([[2],[2],[2],[2]],'wall','room',false,LX,LY,0));
 		
 		// Doors	
-		//doors = putDoor(B(2,0) ,B(LY,0),0, 1,1,'other_hotel_room','elevatorhotel','elevator','front','closed',1);
+		//doors = putDoor(B(2,0) ,B(LY,0),0, 1,1,'other_hotel_room_5','elevatorhotel','elevator','front','closed',1);
 		//allstuff = allstuff.concat(doors);                                               
 		//doors = putDoor(B(LX,0),B(2,0) ,0,-1,1,'2matrix','elevatorhotel','elevator','front','closed',1);
 		//allstuff = allstuff.concat(doors);                                               
@@ -144,7 +140,7 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(putWallAround([[1],[2],[2],[2,3]],'wall','room',false,LX,LY,0));
 		
 		// Doors	
-		doors = putDoor(B(1,0) ,B(LY,0),0, 1,1,'other_hotel_room','rooms','door','front','closed',1);
+		doors = putDoor(B(1,0) ,B(LY,0),0, 1,1,'other_hotel_room_5','rooms','door','front','closed',1);
 		allstuff = allstuff.concat(doors);                                               
 		doors = putDoor(B(LX,0),B(2,0) ,0,-1,1,'elevators','elevatorhotel','elevator','front','closed',1);
 		allstuff = allstuff.concat(doors);                                               
@@ -177,9 +173,44 @@ function loadRoom(inroom) {
 		//doors = putDoor(B(2,0) ,B(0,0) ,0, 1,1,'box','rooms','door','back','closed',3);
 		//allstuff = allstuff.concat(doors);
 		//doors = putDoor(B(0,0) ,B(2,0) ,0,-1,1,'2matrix','rooms','door','back','closed',3);
-		//allstuff = allstuff.concat(doors);	
+		//allstuff = allstuff.concat(doors);
 		
-	} else if (room=='hotel_room') {  //------------------------------------------------- ROOM
+	} else if (room=='impossibleroom') {  //------------------------------------------------- ROOM
+	
+		LX = 6, LY = 6;
+		I0 = 0,J0 = 4;		
+			
+		RGBcover = 'RGB_cover';
+		entryPoint = {'X':B(1,0),'Y':B(1,0),'Z':0,'file':'m0_01N'};
+				
+		allstuff = [
+			['box','objects','tables','211', 1,B(2,0),B(2,0),D(0,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','211',-1,B(3,2),B(2,0),D(1,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','112', 1,B(2,-1),B(3,2),D(0,0),true,true,false,false,0,0,'VI']
+			];
+						
+		// Floors
+		floors   = putSquareFloor(0,LX,0,LY,0,'floor','elevator','00',true,0,'BG');
+		allstuff = allstuff.concat(floors);	
+		
+	} else if (room=='dabox') {  //------------------------------------------------- ROOM
+	
+		LX = 5, LY = 5;
+		I0 = 0,J0 = 4;		
+			
+		RGBcover = 'RGB_cover';
+		entryPoint = {'X':B(1,0),'Y':B(1,0),'Z':0,'file':'m0_01N'};
+				
+		allstuff = [
+			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(2,0),B(2,0),D(0,0),true,true,false,false,   0, 2,'VI'],
+			//['box'  ,'structures'   ,'stairs','locker',1,B(2,0),B(2,0),D(0,0),true,true,false,false,   0, 2,'VI']
+			];
+						
+		// Floors
+		floors   = putSquareFloor(0,LX,0,LY,0,'floor','elevator','00',true,0,'BG');
+		allstuff = allstuff.concat(floors);		
+		
+	} else if (room=='hotel_room_5') {  //------------------------------------------------- ROOM
 	
 		menuIndex   = 0;
 		objectIndex = 0;
@@ -192,18 +223,18 @@ function loadRoom(inroom) {
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
 		allstuff = [
-			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(0,0),B(1,0),     0,true, true,false,false,   0, 10,'VI'],
-			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,4),     0,true, true,false,false,   0,  5,'VI'],
-			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0,true, true,false,false,   0,  1,'VI'],
-			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0),true,false,false,false,   0,  2,'VI'],
-			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0,true, true,false,false,   0,  4,'VI'],
-			['lamp' ,'objects'   ,'lamps'      ,'lamp'   , 1,B(0,2),B(4,2),     0,true, true,false,false,'on',  9,'VI'],
-			['lock' ,'objects'   ,'lockers'    ,'00'     ,-1,B(4,6),B(0,4),D(0,6),true,false,false,false,   0,  1,'BG'],
-			['case' ,'objects'   ,'case'       ,'maletin', 1,B(2,1),B(2,4),D(0,6),true,false,false,false,   0,  8,'VI'],
-			['case' ,'structures','hotelwindow','window' , 1,B(1,0),B(0,-1),    0,true,false,false,false,   0, 11,'VI'],
-			['case' ,'structures','hotelwindow','brillo' , 1,B(1,0),B(0,-1),    0,true,false,false,false,   0,  2,'BG'],
-			['dude' ,'people'    ,'drug_dealer','g0_01N' , 1,B(1,1),B(3,5) ,    0,true, true,false,false,   0,  7,'VI'],
-			['girl' ,'people' ,'kidnapped_girl','0_01N'  ,-1,B(4,2),B(0,4) ,    0,true, true,false,false,   0,  6,'VI']
+			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(0,0),B(1,0),     0,true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,4),     0,true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0,true, true,false,false,   0, 0,'BG'],
+			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0),true,false,false,false,   0, 0,'BG'],
+			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0,true, true,false,false,   0, 0,'VI'],
+			['lamp' ,'objects'   ,'lamps'      ,'lamp'   , 1,B(0,2),B(4,2),     0,true, true,false,false,'on', 0,'VI'],
+			['lock' ,'objects'   ,'lockers'    ,'00'     ,-1,B(4,6),B(0,4),D(0,6),true,false,false,false,   0, 0,'BG'],
+			['case' ,'objects'   ,'case'       ,'maletin', 1,B(2,1),B(2,4),D(0,6),true,false,false,false,   0, 0,'VI'],
+			['case' ,'structures','hotelwindow','window' , 1,B(1,0),B(0,-1),    0,true,false,false,false,   0, 0,'VI'],
+			['case' ,'structures','hotelwindow','brillo' , 1,B(1,0),B(0,-1),    0,true,false,false,false,   0, 0,'BG'],
+			['dude' ,'people'    ,'drug_dealer','g0_01N' , 1,B(1,1),B(3,5) ,    0,true, true,false,false,   0, 0,'VI'],
+			['girl' ,'people' ,'kidnapped_girl','0_01N'  ,-1,B(4,2),B(0,4) ,    0,true, true,false,false,   0, 0,'VI']
 			];
 		
 		// Floors
@@ -214,27 +245,27 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(putWallAround([[2],[],[],[]],'wall','room',true,LX,LY,4.5));
 		
 		// Doors	
-		doors = putDoor(B(2,0),B(LY,0),0,1,1,'hotelcorridor-5','rooms','door','front','closed',4);
+		doors = putDoor(B(2,0),B(LY,0),0,1,1,'hotel_corridor_5','rooms','door','front','closed',4);
 		allstuff = allstuff.concat(doors);	
 	
-	} else if (room=='other_hotel_room') {
+	} else if (room=='other_hotel_room_5') {
 		
 		LX = 5, LY = 5;
 		
-		entryPoint ={'X':B(1,2),'Y':B(0,-1),'Z':0,'file':'01N'};
+		entryPoint ={'X':B(1,2),'Y':B(0,-1),'Z':0,'file':'00_01N'};
 				
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
 		allstuff = [
-			['tv'   ,'objects','computers'    ,'tv'    ,-1,B(1,0),B(4,1),D(1,0), true,false,false,false,'broken', 6,'VI'],
-			['box'  ,'objects','tables'       ,'111'   ,-1,B(1,0),B(4,0),     0, true, true,false,false,       0, 5,'VI'],
-			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(1,4),     0, true, true,false,false,       0, 4,'VI'],
-			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(4,2),     0, true, true,false,false,       0, 1,'BG'],
-			['phone','objects','phones'       ,'phone' , 1,B(4,5),B(4,2),D(1,0), true,false,false,false,       0, 2,'BG'],
-			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(2,2),     0, true, true,false,false,       0, 3,'VI'],
-			['lamp' ,'objects','lamps'        ,'lamp'  , 1,B(4,2),B(0,4),     0, true, true, true,false,'broken', 7,'VI'],
-			['ddude','people' ,'gangster_dude','dd_00N',-1,B(1,1),B(3,0),     0, true, true,false,false,       0, 8,'VI'],
-			['dude' ,'people' ,'gangster_dude','g0_01N',-1,B(4,2),B(0,4),     0,false, true, true,false,       0, 8,'VI']
+			['tv'   ,'objects','computers'    ,'tv'    ,-1,B(1,0),B(4,1),D(1,0), true,false,false,false,'broken', 0,'VI'],
+			['box'  ,'objects','tables'       ,'111'   ,-1,B(1,0),B(4,0),     0, true, true,false,false,       0, 0,'VI'],
+			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(1,4),     0, true, true,false,false,       0, 0,'VI'],
+			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(4,2),     0, true, true,false,false,       0, 0,'BG'],
+			['phone','objects','phones'       ,'phone' , 1,B(4,5),B(4,2),D(1,0), true,false,false,false,       0, 0,'BG'],
+			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(2,2),     0, true, true,false,false,       0, 0,'VI'],
+			['lamp' ,'objects','lamps'        ,'lamp'  , 1,B(4,2),B(0,4),     0, true, true, true,false,'broken', 0,'VI'],
+			['ddude','people' ,'gangster_dude','dd_00N',-1,B(1,1),B(3,0),     0, true, true,false,false,       0, 0,'VI'],
+			['dude' ,'people' ,'gangster_dude','g0_01N',-1,B(4,2),B(0,4),     0,false, true, true,false,       0, 0,'VI']
 			];
 		
 		// Floors
@@ -245,10 +276,51 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(putWallAround([[],[],[],[1]],'wall','room',true,LX,LY,0));
 		
 		// Doors	
-		doors = putDoor(B(1,0),B(0,0),0,1,1,'matrix','rooms','door','back','open',10,2);
+		doors = putDoor(B(1,0),B(0,0),0,1,1,'hotel_corridor_5','rooms','door','back','open_always',10,2);
 		allstuff = allstuff.concat(doors);	
 		
+	} else if (room.slice(0,-2)=='hotel_corridor') {
+		
+		var level = room.slice(-1);
+		
+		LX = 8, LY = 7;
+		
+		entryPoint ={'X':B(7,0),'Y':B(5,2),'Z':0,'file':'00_01N'};
+		
+		// sliders at the corridor corner
+		allactions = allactions.concat([['sliderA' ,'sliders',['dwx','upy'],B(6,1),B(5,0),0,B(6,2),B(5,1)],
+										['sliderB' ,'sliders',['dwy','upx'],B(6,0),B(5,1),0,B(6,1),B(5,2)]]);
+		
+		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
+		
+		allstuff = [
+			['tv'   ,'objects','signs','roomnumber', 1,B(1,2),B(6,7),D(3,1), true,false,false,false,0, 6,'BG'],
+			['box'  ,'objects','signs','exit'      , 1,B(6,2),B(6,7),D(3,2), true,false,false,false,0, 5,'BG'],
+			['box'  ,'objects','signs','toilet'    ,-1,B(7,7),B(5,1),D(3,2), true,false,false,false,0, 4,'BG'],
+			];
+			
+		// Floors
+		floors   = putSquareFloor(   0,LX,LY-2,LY  ,0,'floor','hotelfloor','00',true,0,'BG').concat(
+				   putSquareFloor(LX-2,LX,   0,LY-2,0,'floor','hotelfloor','00',true,0,'BG'));
+		allstuff = allstuff.concat(floors);
+			
+		// Walls	
+		walls    = putWallAround([[1,6],[5,1],[],[]],'wall','room',true,LX,LY,0).concat(
+				   putWallLine([2],'x', 0,LX-2, 5,0,'wall','room',false,true,0,0,0)).concat(
+		           putWallLine([ ],'y', 0,   5, 6,0,'wall','room',false,true,0,0,0));
+		allstuff = allstuff.concat(walls);
+		
+		// Doors	
+		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'other_hotel_room_'+level,'rooms'        ,'door'    ,'front','open_always',3,1).concat(
+		        putDoor(B( 6,0),B(LY,0),0, 1,1,'stairs_'+level          ,'rooms'        ,'door'    ,'front','closed'     ,1,1)).concat(
+				putDoor(B(LX,0),B( 5,0),0,-1,1,'toilet_'+level          ,'rooms'        ,'door'    ,'front','open_always',2,1)).concat(
+				putDoor(B(LX,0),B( 1,0),0,-1,1,'elevator'               ,'elevatorhotel','elevator','front','closed'     ,4,1)).concat(
+				putDoor(B( 2,0),B( 5,0),0, 1,1,'hotel_room_'+level      ,'rooms'        ,'door'    ,'back' ,'closed'     ,5,1));
+		allstuff = allstuff.concat(doors);	
+	
 	}
+	
+	// SHIT ENDS HERE -----------------------------------------------------------------------------
 	
 	makeStuff(allstuff);
 	
@@ -310,7 +382,7 @@ function loadRoom(inroom) {
 	*/
 	
 	completeStuff(LX,LY,I0,J0);	
-	sortMobile();
+	sortMobile(false);
 	makeText(alltext);
 	makeActions(allactions);	
 	console.log(actions)

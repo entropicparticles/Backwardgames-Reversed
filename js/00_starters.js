@@ -68,8 +68,6 @@ var actionOn  = false; keyOn = 'stp0';
 // debugging
 var tempo=0,n=0;
 
-
-
 // Pixel functions ----------------------------------------------------------------------------------
 function B(a,b) {
 	return 8*a+b;
@@ -161,7 +159,7 @@ function start() {
 	// enter in the room for the first time
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["matrix"]}]; 
+	actions = [{'ID':'room','function':'changeroom','arguments':["impossibleroom"]}]; 
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop

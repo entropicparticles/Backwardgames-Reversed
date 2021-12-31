@@ -114,16 +114,40 @@ function changeroom(col,Zbol,actOn,which) {
 	if (col&&Zbol) loadRoom(which);
 }
 
-function openclosedoor(col,Zbol,actOn,id,type) {
+function openclosedoor(col,Zbol,actOn,id,type,keepit) {
 	if (type=='automatic') {
 		automaticdoor(col,Zbol,id);
 	} else if (type=='door') {
-		//normaldoor(col,Zbol,actOn,id);
-		elevatordoor(col,Zbol,actOn,id);
+		normaldoor(col,Zbol,actOn,id,keepit);
+		//elevatordoor(col,Zbol,actOn,id);
 	} else if (type=='elevator') {
 		elevatordoor(col,Zbol,actOn,id);
 	}
 	makeSpace()
+}
+
+function normaldoor(col,Zbol,actOn,id,keepit) {	
+	if (col&&Zbol&&actOn) {		
+		// check collision between guy and door
+		var ind = stuff['front'].flatMap((s, i) => s['ID']==id && s['type']=='doors' && !collision(s,stuff['front'][guyIndex]) ? i : []);
+		console.log(ind)
+		if (ind.length==3) {
+			for (var k=0; k<ind.length; ++k) {
+				stuff['front'][ind[k]]['solid']   = !stuff['front'][ind[k]]['solid'];
+				stuff['front'][ind[k]]['visible'] = !stuff['front'][ind[k]]['visible'];
+				actionOn = false;
+			}
+		}
+	} else if (!(col&&Zbol)){
+		// close door when guy outside the square
+		for (var k=0; k<stuff['front'].length; ++k) {
+			s = stuff['front'][k];
+			if (s['ID']==id && s['type']=='doors'){
+				stuff['front'][k]['solid']   = s['state']==keepit;
+				stuff['front'][k]['visible'] = s['state']==keepit;
+			}
+		}	
+	}
 }
 
 function elevatordoor(col,Zbol,actOn,id) {	
@@ -136,7 +160,7 @@ function elevatordoor(col,Zbol,actOn,id) {
 			}
 		}
 	} else if (!(col&&Zbol)){
-		// check collision between guy and door
+		// close door when guy outside the square
 		for (var k=0; k<stuff['front'].length; ++k) {
 			s = stuff['front'][k];
 			if (s['ID']==id && s['type']=='doors'){
@@ -146,8 +170,6 @@ function elevatordoor(col,Zbol,actOn,id) {
 		}	
 	}
 }
-
-
 
 function automaticdoor(col,Zbol,id) {
 	
@@ -167,7 +189,7 @@ function automaticdoor(col,Zbol,id) {
 	
 }
 	
-function normaldoor(col,Zbol,actOn,id) {
+function verynormaldoor(col,Zbol,actOn,id) {
 	// good
 	if (col&&Zbol&&actOn) {
 		for (var k=0; k<stuff['front'].length; ++k) {
@@ -201,7 +223,7 @@ function menuCover() {
 			if (menuIndex==2) {
 				// let's go
 				actionOn = false;
-				loadRoom('hotel_room');
+				loadRoom('hotel_room_5');
 			} else if (menuIndex==1) {
 				// let's go for the menu
 			} else if (menuIndex==0) {

@@ -80,7 +80,12 @@ function makeActions(allactions){
 	// Update action list
 	for (var k=0; k<allactions.length; ++k) {
 		txt = allactions[k];
-		actions.push({'ID':txt[0],'function':txt[1],'arguments':txt[2]});
+		if (txt.length==3) {
+			actions.push({'ID':txt[0],'function':txt[1],'arguments':txt[2]});
+		} else {
+			actions.push({'ID':txt[0],'function':txt[1],'arguments':txt[2],'X':txt[3],'Y':txt[4],'Z':txt[5],'XM':txt[6],'YM':txt[7]});
+		}
+		
 	}
 }
 
@@ -89,8 +94,8 @@ function makeActions(allactions){
 function putSquareFloor(lx0,lx,ly0,ly,z,ids,b,c,vi,rank,bg) {
 	
 	var array = [];	
-	for (var x=0; x<lx; ++x) {
-		for (var y=0; y<ly; ++y) {
+	for (var x=lx0; x<lx; ++x) {
+		for (var y=ly0; y<ly; ++y) {
 			array.push(
 				[ids,'floors',b,c,1,B(x,0),B(y,0),z,true,false,false,vi,0,rank,bg]
 			);
@@ -140,6 +145,7 @@ function putWallLine(door,xy,lxy0,lxy,lyx,z,ids,b,vis,sol,rank,shiftx,shifty) {
 
 function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 	
+	var st0 = st.split('_')[0]
 	var ss = Math.round((1-s)/2);   // for right/left -> true/false -> it works as logic gates
 	var d = side=='front' ? 0 : 1 ; // for top/bottom -> true/false
 	var Ddoor = type=='door' ? [8*ss,8*(1-ss)] : [0,0] ;
@@ -151,9 +157,9 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 	
 	// objects
 	var array = [
-			[id,'doors' ,b+"_"+type+"_"+side,'closed',s,x-(1-2*d)*ss           ,y-(1-2*d)*(1-ss)             ,z,st!='open',st!='open',false,false,'closed',rank    ,'VI',entryx,entryy,entryz,w],
-			[id,'doors' ,b+"_"+type+"_"+side,'frame' ,s,x-(1-2*d)*ss+w*8*(1-ss),y-(1-2*d)*(1-ss)+w*8*ss      ,z,st=='open',st=='open',false,false,'open'  ,rank-0.1,'VI'],
-			[id,'doors' ,b+"_"+type+"_"+side,'open'  ,s,x-(1-2*d)*ss-Ddoor[0]  ,y-(1-2*d)*(1-ss)-Ddoor[1]    ,z,st=='open',st=='open',false,false,'open'  ,rank    ,'VI']
+			[id,'doors' ,b+"_"+type+"_"+side,'closed',s,x-(1-2*d)*ss           ,y-(1-2*d)*(1-ss)             ,z,st0!='open',st0!='open',false,false,'closed',rank    ,'VI',entryx,entryy,entryz,w],
+			[id,'doors' ,b+"_"+type+"_"+side,'frame' ,s,x-(1-2*d)*ss+w*8*(1-ss),y-(1-2*d)*(1-ss)+w*8*ss      ,z,st0=='open',st0=='open',false,false,'open'  ,rank-0.1,'VI'],
+			[id,'doors' ,b+"_"+type+"_"+side,'open'  ,s,x-(1-2*d)*ss-Ddoor[0]  ,y-(1-2*d)*(1-ss)-Ddoor[1]    ,z,st0=='open',st0=='open',false,false,'open'  ,rank    ,'VI']
 			];
 			
 	// put some extra floor deep under the door
@@ -179,13 +185,16 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 						{'ID':id+'_bor2B','function':'sliders','arguments':[stp1B[1-d][ss],stp2A[ss]],
 					         'X':x-2*ss*(1-2*d)+(1-ss)*w*8,'Y':y-2*(1-ss)*(1-2*d)+ss*w*8,'Z':z,'DX':1,'DY':1,'DZ':0}]);
 	
+	
 	// this actions only for doors than can be used 
-	if (st!='alwaysclosed') {
+	if (st!='closed_always') {
 		// 1 square up to 4px inside the door gate, 1 square for open/close around
-		acts = acts.concat([{'ID':id,'function':'openclosedoor','arguments':[id,type],
-					         'X':x-w*8*(1-d)*ss-(1-d)*(1-ss),'Y':y-w*8*(1-d)*(1-ss)-(1-d)*ss,'Z':z,'DX':w*8+2,'DY':w*8+2,'DZ':0},
-							{'ID':id,'function':'changeroom','arguments':[id],
-							 'X':x-w*8*d*ss+3*(1-2*d)*ss,'Y':y-w*8*d*(1-ss)+3*(1-2*d)*(1-ss),'Z':z,'DX':w*8,'DY':w*8,'DZ':0}]);
+		acts = acts.concat([{'ID':id,'function':'changeroom','arguments':[id],
+							 'X':x-w*8*d*ss+3*(1-2*d)*ss,'Y':y-w*8*d*(1-ss)+3*(1-2*d)*(1-ss),'Z':z,'DX':w*8+1,'DY':w*8+1,'DZ':0}]);
+		if (st!='open_always') {
+			acts = acts.concat([{'ID':id,'function':'openclosedoor','arguments':[id,type,st],
+					             'X':x-w*8*(1-d)*ss-(1-d)*(1-ss),'Y':y-w*8*(1-d)*(1-ss)-(1-d)*ss,'Z':z,'DX':w*8+2,'DY':w*8+2,'DZ':0}]);	
+		}
 	}
 	// complete ojects
 	for (var k=0;k<acts.length;++k) {

@@ -183,6 +183,7 @@ function drawPanel() {
 
 function drawTile(im,i,j,didj,spined,which,the3colors) {
 	
+	//console.log(im)
 	// im: tile; i,j: canvas position; dj: cut some pixels from above
 	di = didj==0 ? 0 : dj[0] ;
 	dj = didj==0 ? 0 : dj[1] ;
@@ -225,15 +226,19 @@ function drawCanvas(t) {
 		drawStuff(stuff['background'],'background');
 		firstEntry = false;
 	}
-	sortMobile();
+	//sortMobile();
 	drawStuff(stuff['front'],'canvas');
 	drawText();
 	drawPanel();
 	
 }
 
+function drawStuff(stf,which){
+	printAllIsometric(stf,which);
+}
+
 // Loop to draw all the stuff at the room
-function drawStuff(stf,which) {
+function drawStuff_old(stf,which) {
 	
 	for (var k=0; k<stf.length; ++k) {
 		s = stf[k];
