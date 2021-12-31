@@ -122,7 +122,6 @@ function sortMobile() {
 			stuff['front'].push(s);
 		}
 	}
-	
 	for (var k=0; k<stuff['front'].length; ++k) {
 		s = stuff['front'][k];
 		if (s['ID']=='guy') {
@@ -130,5 +129,6 @@ function sortMobile() {
 			break;
 		}
 	}
+	//console.log(stuff['front'])
 	
 }

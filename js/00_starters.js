@@ -22,8 +22,11 @@ let actionKeys = {esc:   27, //escape
 				  };
 				  
 var pathmusic  = './music/';
-var songs = ['majestygood.mp3','sweet.mp3','gangsta.mp3','nothing.mp3'];
-
+var songs = {'cover'        :'majestygood.mp3',
+			 'club'         :'sweet.mp3',
+			 'policestation':'gangsta.mp3',
+			 'motel'        :'nothing.mp3'};
+			 
 // Define html elements: canvas, context and music
 var     canvas,     context;
 var  txtcanvas,  txtcontext;
@@ -38,13 +41,13 @@ var t, chapter, room, preRoom, RGBcover=0;
 var firstEntry = true;
 
 // Objects
-var objects = ['mano'];
+var objects = ['mano','gun','maletin','roomkey'];
 
 // List of text and properties
 var listText = [];
 
 // List of actions in the room
-var actions = {'background':[],'front':[]};
+var actions = [];
 
 // List of stuff in the room. Index to find the guy in the list. The guy.
 var stuff = {'background':[],'front':[]};
@@ -59,11 +62,13 @@ var pause = false;
 var blockKeys = false;
 var menuIndex, objectIndex, songIndex;
 
-// Actions are on?
+// Actions are on? and other action stuff
 var actionOn  = false; keyOn = 'stp0';
 
 // debugging
 var tempo=0,n=0;
+
+
 
 // Pixel functions ----------------------------------------------------------------------------------
 function B(a,b) {
@@ -82,9 +87,7 @@ function XYZ2J(x,y,z) {
 // Collision function -------------------------------------------------------------------------------
 function collisionExtended(rect1,rect2) {
 	return ( rect1.X <= rect2.XM && rect1.XM >= rect2.X &&
-			 rect1.Y <= rect2.YM && rect1.YM >= rect2.Y    ) ||
-		   ( rect2.X <= rect1.XM && rect2.XM >= rect1.X &&
-			 rect2.Y <= rect1.YM && rect2.YM >= rect1.Y    );	
+			 rect1.Y <= rect2.YM && rect1.YM >= rect2.Y    );	
 }
 function collision(rect1,rect2) {
 	return ( rect1.X < rect2.XM && rect1.XM > rect2.X &&
@@ -119,13 +122,15 @@ function setSize3(){
 
 function start() {
 	
-	// Get the canvas and context
+	// Get elements from html: canvas and context & music
 	canvas      = document.getElementById("canvas"); 
 	context     = canvas.getContext("2d");
 	txtcanvas   = document.getElementById("text"); 
 	txtcontext  = txtcanvas.getContext("2d");
 	backcanvas  = document.getElementById("back"); 
 	backcontext = backcanvas.getContext("2d");
+	
+	music = document.getElementById('music');
 		
 	// Define the image dimensions
 	width  = canvas.width;
@@ -140,25 +145,23 @@ function start() {
 	chapter = 0;
 		
 	// Initiate indices
-    menuIndex   = 2;
+    menuIndex   = 0;
 	objectIndex = 0;
-	songIndex   = 0;
 	
 	// Initiate key list
 	keys = [];
 	for (var k = 0; k < 256; ++k) {
 		keys[k] = 0;
-	}	
- 		
+	}	 		
+	
 	// Initiate music
-	music = document.getElementById('music');
-	music.src = pathmusic+songs[songIndex];
-	music.play();
+	//music.src = pathmusic+songs[songIndex];
+	//music.play();
 	
 	// enter in the room for the first time
 	room = 'void';
 	preRoom = 'void';
-	actions['background'] = [{'ID':'room','function':'loadRoom("matrix")'}]; 
+	actions = [{'ID':'room','function':'changeroom','arguments':["matrix"]}]; 
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -176,10 +179,12 @@ function updateit() {
 	}
 	
 	// update all stuff
-	updateKeys();			
+	updateKeys();	
 	updateMusic();
-	updateAction();	
-	updateImage();
+	if (!pause) {	
+		updateAction();	
+		updateImage();
+	}
 	
 }//----------------------------------------------------------------------------------------------
 
@@ -236,12 +241,12 @@ function updateKeys() {
 
 function updateMusic() {
 	
-	// change the song
+	/*// change the song
 	if (keys[actionKeys.next]) {
 		music.pause();
 		music.src = pathmusic+songs[songIndex];
 		music.play();
-	}
+	}*/
 	
 	// mute the song: times continues
 	if (keys[actionKeys.mute] && mute) {
@@ -259,44 +264,40 @@ function updateMusic() {
 	
 }//----------------------------------------------------------------------------------------------
 
+
+
 function updateAction() {
 	
 	// Walk Guy
 	walkingGuy();
-	
-	// First evaluate actions in the background (not related to position)
-	for (var k=0; k<actions['background'].length; ++k) {
-		act = actions['background'][k];
-		eval(act['function']);
-	}
-	
-	// Then, evaluate those actions related to position
-	for (var k=0; k<actions['front'].length; ++k) {
-		act = actions['front'][k];
-		g = stuff['front'][guyIndex];
-		if ( collisionGuyAct(g,act) && g.Z==act.Z ) {
-			console.log(g.X,g.Y,act['function'])
-			eval(act['function']);
-		} else {
-			//actionOn = false;
-		}
-	}
+	// Evaluate actions
+	for (var k=0; k<actions.length; ++k) {
+		
+		var act  = actions[k];
+		var g    = stuff['front'][guyIndex];
+		var col  = 'Z' in act ? collision(g,act) : true ;
+		var Zbol = 'Z' in act ? g.Z==act.Z             : true ;
+		
+		// add collision and Z as arguments to evaluate. Check strings in the argument list
+		var args = [col,Zbol,actionOn];
+		var argsact = act['arguments'].map(function(x){return (typeof x === 'string' || x instanceof String) ? '"'+x+'"' : x });
+		
+		eval(act['function']+'('+args.concat(argsact).join(',')+')');
+	}	
 	actionOn = false;
+
 		
 }//----------------------------------------------------------------------------------------------
 
 function updateImage() {
 	
 	// set CSS to scale
-	if (keys[actionKeys.minus]||keys[actionKeys.plus]) {
-		setSize3()
-	}
+	if (keys[actionKeys.minus]||keys[actionKeys.plus]) setSize3()
 			
     // Create the image and draw the image data to the canvas
-	if (!pause) {	
-		drawCanvasTime(false)
-	}
+	drawCanvasTime(false)
 }
+
 function drawCanvasTime(bo) {
 	if (bo) {
 		var startTime = performance.now()

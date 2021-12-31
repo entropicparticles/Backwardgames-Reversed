@@ -1,9 +1,10 @@
 
  
  // FUNCTIONS TO PUT SHIT TOGETHER ----------------------------------------------------------------
- 
+
 function makeSpace() {
 	 
+	space = {'open':[],'solid':[]};
 	var labels = ['background','front']
 	for (var q=0; q<2; ++q) {
 		label = labels[q];
@@ -32,9 +33,10 @@ function completeStuff(LX,LY,I0,J0) {
 	// Add the other parameters from tiles
 	var labels = ['background','front']
 	
+	// Where we set the (0,0) in canvas. If 00, we center the image
 	var jc = J0 == 0 ? (height - ((LX+LY)*8+12*5))/2 : J0 ;
 	var ic = I0 == 0 ?  LY*16 + (width-(LX+LY)*16)/2 : I0 ;
-	console.log(I0,J0)
+
 	for (var q=0; q<2; ++q) {
 		label = labels[q];
 		for (var k=0; k<stuff[label].length; ++k) {
@@ -73,16 +75,12 @@ function makeText(alltext) {
 	}
 }
 
-function makeActions(allactionsBG,allactionsXY){
+function makeActions(allactions){
 	
 	// Update action list
-	for (var k=0; k<allactionsBG.length; ++k) {
-		txt = allactionsBG[k];
-		actions['background'].push({'ID':txt[0],'function':txt[1]});
-	}
-	for (var k=0; k<allactionsXY.length; ++k) {
-		txt = allactionsXY[k]
-		actions['front'].push({'ID':txt[0],'function':txt[1],'X':txt[2],'Y':txt[2],'Z':txt[2],'DX':txt[2],'DY':txt[2],'DZ':txt[2]});
+	for (var k=0; k<allactions.length; ++k) {
+		txt = allactions[k];
+		actions.push({'ID':txt[0],'function':txt[1],'arguments':txt[2]});
 	}
 }
 
@@ -146,9 +144,14 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 	var d = side=='front' ? 0 : 1 ; // for top/bottom -> true/false
 	var Ddoor = type=='door' ? [8*ss,8*(1-ss)] : [0,0] ;
 	
+	// tell where the guy appears
+	var entryx = x ,//- 8*(1-2*d)*ss     - 4*(1-d)*ss     + 0*(1-ss) , 
+	    entryy = y ,//- 8*(1-2*d)*(1-ss) - 4*(1-d)*(1-ss) + 0*ss,
+		entryz = z;
+	
 	// objects
 	var array = [
-			[id,'doors' ,b+"_"+type+"_"+side,'closed',s,x-(1-2*d)*ss           ,y-(1-2*d)*(1-ss)             ,z,st!='open',st!='open',false,false,'closed',rank    ,'VI'],
+			[id,'doors' ,b+"_"+type+"_"+side,'closed',s,x-(1-2*d)*ss           ,y-(1-2*d)*(1-ss)             ,z,st!='open',st!='open',false,false,'closed',rank    ,'VI',entryx,entryy,entryz,w],
 			[id,'doors' ,b+"_"+type+"_"+side,'frame' ,s,x-(1-2*d)*ss+w*8*(1-ss),y-(1-2*d)*(1-ss)+w*8*ss      ,z,st=='open',st=='open',false,false,'open'  ,rank-0.1,'VI'],
 			[id,'doors' ,b+"_"+type+"_"+side,'open'  ,s,x-(1-2*d)*ss-Ddoor[0]  ,y-(1-2*d)*(1-ss)-Ddoor[1]    ,z,st=='open',st=='open',false,false,'open'  ,rank    ,'VI']
 			];
@@ -162,37 +165,34 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 	var stp1A=['upx','upy'];
 	var stp1B=[['dwy','dwx'],['upy','upx']];
 	var stp2A=['dwx','dwy'];
-	var acts = [{'ID':id+'_bor1A','function':'sliders("'+stp1A[ss]+'","'+stp1B[d][ss]+'")',
-					         'X':x-(1-ss)  ,'Y':y-ss  ,'Z':z,'DX':1,'DY':1,'DZ':0},
-				{'ID':id+'_bor2A','function':'sliders("'+stp2A[ss]+'","'+stp1B[d][ss]+'")',
-					         'X':x+(1-ss)*(w*8+1),'Y':y+ss*(w*8+1),'Z':z,'DX':1,'DY':1,'DZ':0}];
+	var acts = [{'ID':id+'_bor1A','function':'sliders','arguments':[stp1A[ss],stp1B[d][ss]],
+				 'X':x-ss*(1-2*d)-(1-ss)        ,'Y':y-(1-ss)*(1-2*d)-ss        ,'Z':z,'DX':1,'DY':1,'DZ':0},
+				{'ID':id+'_bor2A','function':'sliders','arguments':[stp2A[ss],stp1B[d][ss]],
+				 'X':x-ss*(1-2*d)+(1-ss)*(w*8+1),'Y':y-(1-ss)*(1-2*d)+ss*(w*8+1),'Z':z,'DX':1,'DY':1,'DZ':0}];
+				 
 	// sliders from front
 	var stp1A=['upx','upy'];
 	var stp1B=[['dwy','dwx'],['upy','upx']];
 	var stp2A=['dwx','dwy'];
-	acts = acts.concat([{'ID':id+'_bor1B','function':'sliders("'+stp1B[1-d][ss]+'","'+stp1A[ss]+'")',
-					         'X':x-ss*(1-2*d),'Y':y-(1-ss)*(1-2*d),'Z':z,'DX':1,'DY':1,'DZ':0},
-				{'ID':id+'_bor2B','function':'sliders("'+stp1B[1-d][ss]+'","'+stp2A[ss]+'")',
-					         'X':x-ss*(1-2*d)+(1-ss)*(w*8+1),'Y':y-(1-ss)*(1-2*d)+ss*(w*8+1),'Z':z,'DX':1,'DY':1,'DZ':0}]);
+	acts = acts.concat([{'ID':id+'_bor1B','function':'sliders','arguments':[stp1B[1-d][ss],stp1A[ss]],
+					         'X':x-2*ss*(1-2*d)           ,'Y':y-2*(1-ss)*(1-2*d)       ,'Z':z,'DX':1,'DY':1,'DZ':0},
+						{'ID':id+'_bor2B','function':'sliders','arguments':[stp1B[1-d][ss],stp2A[ss]],
+					         'X':x-2*ss*(1-2*d)+(1-ss)*w*8,'Y':y-2*(1-ss)*(1-2*d)+ss*w*8,'Z':z,'DX':1,'DY':1,'DZ':0}]);
 	
 	// this actions only for doors than can be used 
 	if (st!='alwaysclosed') {
 		// 1 square up to 4px inside the door gate, 1 square for open/close around
-		acts = acts.concat([{'ID':id,'function':'openclosedoor("'+id+'","'+type+'")',
-					         'X':x-w*8*(1-d)*ss,'Y':y-w*8*(1-d)*(1-ss),'Z':z,'DX':w*8,'DY':w*8,'DZ':0},
-							{'ID':id,'function':'changeroom("'+id+'")',
-							 'X':x-w*8*d*ss+5*(1-2*d)*ss,'Y':y-w*8*d*(1-ss)+5*(1-2*d)*(1-ss),'Z':z,'DX':w*8,'DY':w*8,'DZ':0}]);
+		acts = acts.concat([{'ID':id,'function':'openclosedoor','arguments':[id,type],
+					         'X':x-w*8*(1-d)*ss-(1-d)*(1-ss),'Y':y-w*8*(1-d)*(1-ss)-(1-d)*ss,'Z':z,'DX':w*8+2,'DY':w*8+2,'DZ':0},
+							{'ID':id,'function':'changeroom','arguments':[id],
+							 'X':x-w*8*d*ss+3*(1-2*d)*ss,'Y':y-w*8*d*(1-ss)+3*(1-2*d)*(1-ss),'Z':z,'DX':w*8,'DY':w*8,'DZ':0}]);
 	}
-	// complete ojects and put openclosedoor in background for automatic dors
+	// complete ojects
 	for (var k=0;k<acts.length;++k) {
 		act = acts[k];
 		act['XM'] = act['X'] + act['DX'];
 		act['YM'] = act['Y'] + act['DY'];
-		if (type=='automatic' && act['function']=='openclosedoor("'+id+'","'+type+'")') {
-			actions['background'].push(act);
-		} else {
-			actions['front'].push(act);
-		}
+		actions.push(act);
 	}
 	
 	return array;

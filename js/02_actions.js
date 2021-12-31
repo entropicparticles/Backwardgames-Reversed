@@ -1,6 +1,14 @@
 
 // ACTIONS ----------------------------------------------------------------------------------------
 
+function playMusic(songIndex) {
+	if (songIndex in songs) {
+		music.pause();
+		music.src = pathmusic+songs[songIndex];
+		music.play();
+	}
+}
+
 function walkingGuy() {
 	if (guyIndex>=0) walking(keyOn,guyIndex);
 }
@@ -69,7 +77,7 @@ function walking(step,indk) {
 			
 			// if go, continue; if not, stop here
 			if (go) {
-				++q;
+				++q
 			} else {
 				break;
 			}
@@ -95,60 +103,90 @@ function walking(step,indk) {
 	
 }
 
-function sliders(key1,key2) {
-    if (keyOn.slice(0,-1)==key1) walking(key2+keyOn.slice(-1),guyIndex)
-}
-
-function changeroom(which) {
-	loadRoom(which);
-}
-
-function openclosedoor(id,type) {
-	if (type=='automatic'){
-		automaticdoor(id);
-	} else {
-		normaldoor(id);
+function sliders(col,Zbol,acton,key1,key2) {
+	if (col&Zbol) {
+		console.log(key1,'->',key2)
+		if (keyOn.slice(0,-1)==key1) walking(key2+'1',guyIndex);
 	}
 }
 
-function automaticdoor(id) {
+function changeroom(col,Zbol,actOn,which) {
+	if (col&&Zbol) loadRoom(which);
+}
+
+function openclosedoor(col,Zbol,actOn,id,type) {
+	if (type=='automatic') {
+		automaticdoor(col,Zbol,id);
+	} else if (type=='door') {
+		//normaldoor(col,Zbol,actOn,id);
+		elevatordoor(col,Zbol,actOn,id);
+	} else if (type=='elevator') {
+		elevatordoor(col,Zbol,actOn,id);
+	}
+	makeSpace()
+}
+
+function elevatordoor(col,Zbol,actOn,id) {	
+	if (col&&Zbol&&actOn) {
+		for (var k=0; k<stuff['front'].length; ++k) {
+			s = stuff['front'][k];
+			if (s['ID']==id && s['type']=='doors'){
+				stuff['front'][k]['solid']   = s['state']=='open';
+				stuff['front'][k]['visible'] = s['state']=='open';	
+			}
+		}
+	} else if (!(col&&Zbol)){
+		// check collision between guy and door
+		for (var k=0; k<stuff['front'].length; ++k) {
+			s = stuff['front'][k];
+			if (s['ID']==id && s['type']=='doors'){
+				stuff['front'][k]['solid']   = s['state']=='closed';
+				stuff['front'][k]['visible'] = s['state']=='closed';
+			}
+		}	
+	}
+}
+
+
+
+function automaticdoor(col,Zbol,id) {
 	
 	// check collision between guy and door
 	for (var k=0; k<stuff['front'].length; ++k) {
 		s = stuff['front'][k];
 		if (s['ID']==id && s['type']=='doors'){
-			var act = actions['background'].filter(function( obj ) { return  obj.ID==id;})[0];
-		    var g = stuff['front'][guyIndex];
-			if (collisionExtended(act,g)) {
-				stuff['front'][k]['solid']   = s['file']!='closed';
-				stuff['front'][k]['visible'] = s['file']!='closed';
+			if (col&&Zbol) {
+				stuff['front'][k]['solid']   = s['state']!='closed';
+				stuff['front'][k]['visible'] = s['state']!='closed';
 			} else {
-				stuff['front'][k]['solid']   = s['file']=='closed';
-				stuff['front'][k]['visible'] = s['file']=='closed';
+				stuff['front'][k]['solid']   = s['state']=='closed';
+				stuff['front'][k]['visible'] = s['state']=='closed';
 			}
 		}
-		// not very optimal
-		space = {'open':[],'solid':[]};
-		makeSpace();
-		actionOn = false;
-	}	
+	}
 	
 }
 	
-function normaldoor(id) {
+function normaldoor(col,Zbol,actOn,id) {
 	// good
-	if (actionOn) {
+	if (col&&Zbol&&actOn) {
 		for (var k=0; k<stuff['front'].length; ++k) {
 			s = stuff['front'][k];
 			if (s['ID']==id && s['type']=='doors'){
+				
 				stuff['front'][k]['solid']   = !s['solid'];
 				stuff['front'][k]['visible'] = !s['visible'];
+				
+				g = stuff['front'][guyIndex];
+				console.log(s)
+				// Move the guy if it collaps with the door
+				if (collision(s,g)) {
+					var steps = ['upx'+(s['XM']-g['X']),'upy'+(s['YM']-g['Y'])]
+					var step = (s['state']=='open' ^ s['spin']==1) ? steps[1] : steps[0] ;
+					walking(step,guyIndex);
+				}				
 			}
 		}
-		// not very optimal
-		space = {'open':[],'solid':[]};
-		makeSpace();
-		actionOn = false;
 	}	
 }
 
