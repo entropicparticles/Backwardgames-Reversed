@@ -1,0 +1,6 @@
+Images here:
+
+0 -> transparent
+1 -> any color for dark
+2 -> white for light
+3 -> black for special effects
