@@ -91,11 +91,7 @@ function collision(rect1,rect2) {
 	return ( rect1.X < rect2.XM && rect1.XM > rect2.X &&
 			 rect1.Y < rect2.YM && rect1.YM > rect2.Y    );	
 }
-
-function collisionGuyAct(rect1,rect2) {
-	return ( rect1.X < rect2.XM+1 && rect1.XM > rect2.X-1 &&
-			 rect1.Y < rect2.YM+1 && rect1.YM > rect2.Y-1    );	
-}//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 
 				  
 // START PRESSING ANY KEY (JUST ONCE) ---------------------------------------------------------------
@@ -135,7 +131,7 @@ function start() {
 	height = canvas.height;
 	
 	// Set CSS size
-	scale = 2;
+	scale = 3;
 	setSize3()
 	
 	// Initiate time
@@ -159,7 +155,7 @@ function start() {
 	// enter in the room for the first time
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["impossibleroom"]}]; 
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_corridor_0"]}]; 
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop

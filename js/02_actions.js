@@ -56,6 +56,7 @@ function walking(step,indk) {
 				var obj = space['open'][k];
 				var col = collision(testa,obj);
 				if (col) {
+					console.log(obj)
 					var dz = obj.ZM-testa.Z;
 					if (dz<=0) godown = Math.max(godown,dz);
 					if (dz> 0) goup   = Math.min(goup,dz);
@@ -65,25 +66,26 @@ function walking(step,indk) {
 				}
 			}
 			// if in the next move there is only floor lower than 3 or hight than 3 (rare), it's too much
-			if (godown < -3) go = false;
+			go = !(godown < -3);
 			
-			// solid don't care about Z for simplicity, let' be aware of that
+			// solid 
 			if (go) {
-				for (var k=0; k<space['solid'].length; ++k) {
-					go = go && !collision(testa,space['solid'][k]);
-					if (!go) break;
-				}
+				dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 ) ;
+				testa.Z  += dz;
+				testa.ZM += dz;
+				go = go && !space['solid'].some( obj => collision(testa,obj) && testa.Z>=obj.Z && testa.Z<obj.ZM )
 			}
 			
 			// if go, continue; if not, stop here
 			if (go) {
 				++q
 			} else {
+				dz = 0
 				break;
 			}
 			
 		}
-		dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 );
+//		dz = go ? dz : 0 ;
 		//console.log(goup,godown,dz,q)
 		// update position
 		stuff['front'][indk]['X']  += q*move.xyz[0];
@@ -105,7 +107,7 @@ function walking(step,indk) {
 
 function sliders(col,Zbol,acton,key1,key2) {
 	if (col&Zbol) {
-		console.log(key1,'->',key2)
+		//console.log(key1,'->',key2)
 		if (keyOn.slice(0,-1)==key1) walking(key2+'1',guyIndex);
 	}
 }
@@ -123,14 +125,14 @@ function openclosedoor(col,Zbol,actOn,id,type,keepit) {
 	} else if (type=='elevator') {
 		elevatordoor(col,Zbol,actOn,id);
 	}
-	makeSpace()
+	makeSpace();
 }
 
 function normaldoor(col,Zbol,actOn,id,keepit) {	
 	if (col&&Zbol&&actOn) {		
 		// check collision between guy and door
 		var ind = stuff['front'].flatMap((s, i) => s['ID']==id && s['type']=='doors' && !collision(s,stuff['front'][guyIndex]) ? i : []);
-		console.log(ind)
+		//console.log(ind)
 		if (ind.length==3) {
 			for (var k=0; k<ind.length; ++k) {
 				stuff['front'][ind[k]]['solid']   = !stuff['front'][ind[k]]['solid'];
@@ -237,3 +239,47 @@ function menuCover() {
 	}
 	
 }
+
+function elevatorMirror(){
+	
+	var mirroredIndex = stuff['front'].flatMap((it, i) => it['ID'] == 'reflection' ? i : [])[0];
+	guy = stuff['front'][guyIndex];
+	
+    var x  = B(4,0)-2-guy['X'],
+	    y  = guy['Y'];
+    var pm = {'01':'00','00':'10','11':'01','10':'11'}[guy['file'].slice(-3,-1)];
+    pm=guy['file'].slice(0,-3)+pm+guy['file'].slice(-1);
+	
+	stuff[label][mirroredIndex]['file'] = pm;
+	stuff[label][mirroredIndex]['spin'] = -1;
+	stuff[label][mirroredIndex]['X'] = x;
+	stuff[label][mirroredIndex]['Y'] = y;	
+	
+	completeStuffItem(mirroredIndex,2,2,0,0);
+	
+}
+
+
+function cameraZ() {
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

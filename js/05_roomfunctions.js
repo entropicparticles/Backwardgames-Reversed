@@ -14,6 +14,7 @@ function makeSpace() {
 			if (s['solid'])    space['solid'].push(s);
 		}
 	}
+	//console.log(space['open'])
 }
 
 function makeStuff(allstuff) {
@@ -43,10 +44,12 @@ function completeStuff(LX,LY,I0,J0) {
 			
 			s = stuff[label][k];
 			//console.log(s);
-			im = tiles[s['type']][s['folder']][s['file']];
 			
 			// if the tile exists, complete info; if not, not needed.
-			if (im != undefined) {	
+			if (s['ID']!='fake') {
+				
+				im = tiles[s['type']][s['folder']][s['file']];
+			
 				var d1 = s['spin'] == 1 ? im['DX'] : im['DY'];
 				var d2 = s['spin'] == 1 ? im['DY'] : im['DX'];		
 				stuff[label][k]['XM'] = s['X']+d1;
@@ -63,8 +66,37 @@ function completeStuff(LX,LY,I0,J0) {
 			}
 			
 		}
-		stuff[label].sort((a, b) => (a.order > b.order) ? 1 : -1);
+		//stuff[label].sort((a, b) => (a.order > b.order) ? 1 : -1);
 	}
+	// get where is the guy
+	guyIndex = stuff['front'].flatMap((it, i) => it['ID'] == 'guy' ? i : [])[0];
+}
+
+function completeStuffItem(k,LX,LY,I0,J0) {
+		
+	var label = 'front';
+	// Where we set the (0,0) in canvas. If 00, we center the image
+	var jc = J0 == 0 ? (height - ((LX+LY)*8+12*5))/2 : J0 ;
+	var ic = I0 == 0 ?  LY*16 + (width-(LX+LY)*16)/2 : I0 ;
+
+	s = stuff[label][k];
+	//console.log(s);
+	im = tiles[s['type']][s['folder']][s['file']];
+		
+	var d1 = stuff[label][k]['spin'] == 1 ? im['DX'] : im['DY'];
+	var d2 = s['spin'] == 1 ? im['DY'] : im['DX'];		
+	stuff[label][k]['XM'] = s['X']+d1;
+	stuff[label][k]['YM'] = s['Y']+d2;
+	stuff[label][k]['ZM'] = s['Z']+im['DZ'];
+	
+	var ir = s['spin'] == 1 ? im['I'] : im['DI']-im['I'] ;
+	stuff[label][k]['IC'] = XY2I(s['X'],s['Y']);
+	stuff[label][k]['JC'] = XYZ2J(s['X'],s['Y'],0);
+	stuff[label][k]['I0'] = XY2I(s['X'],s['Y']) - ir + ic;
+	stuff[label][k]['J0'] = XYZ2J(s['X'],s['Y'],s['Z']) - im['J'] + jc;
+	stuff[label][k]['IM'] = stuff[label][k]['I0'] + im['DI'];
+	stuff[label][k]['JM'] = stuff[label][k]['J0'] + im['DJ'];
+	
 }
 
 function makeText(alltext) {	
@@ -104,12 +136,12 @@ function putSquareFloor(lx0,lx,ly0,ly,z,ids,b,c,vi,rank,bg) {
 	return array;
 }
 
-function putWallAround(door,fol,fil,vis,LX,LY,rank) {
+function putWallAround(door,fol,fil,vis,LX,LY,z,rank) {
 	
-		var	walls =          putWallLine(door[0],'x',0,LX,LY,0,fol,fil,  vis,true,rank,0,0);
-		walls = walls.concat(putWallLine(door[3],'x',0,LX, 0,0,fol,fil,false,true,rank,0,0));
-		walls = walls.concat(putWallLine(door[1],'y',0,LY,LX,0,fol,fil,  vis,true,rank,0,0));
-		walls = walls.concat(putWallLine(door[2],'y',0,LY, 0,0,fol,fil,false,true,rank,0,0));
+		var	walls =          putWallLine(door[0],'x',z,LX,LY,0,fol,fil,  vis,true,rank,0,0);
+		walls = walls.concat(putWallLine(door[3],'x',z,LX, 0,0,fol,fil,false,true,rank,0,0));
+		walls = walls.concat(putWallLine(door[1],'y',z,LY,LX,0,fol,fil,  vis,true,rank,0,0));
+		walls = walls.concat(putWallLine(door[2],'y',z,LY, 0,0,fol,fil,false,true,rank,0,0));
 		return walls;	
 		
 }
@@ -162,9 +194,9 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 			[id,'doors' ,b+"_"+type+"_"+side,'open'  ,s,x-(1-2*d)*ss-Ddoor[0]  ,y-(1-2*d)*(1-ss)-Ddoor[1]    ,z,st0=='open',st0=='open',false,false,'open'  ,rank    ,'VI']
 			];
 			
-	// put some extra floor deep under the door
+	// put some extra floor deep under the door, visible only at ground level
 	for (var k=0;k<w;++k) {
-		array = array.concat([[id,'floors','dark','00',1,x-8*d*ss+8*k*(1-ss),y-8*d*(1-ss)+8*k*ss,z,true,false,false,true,0,0,'BG']]);
+		array = array.concat([[id,'floors','dark','00',1,x-8*d*ss+8*k*(1-ss),y-8*d*(1-ss)+8*k*ss,z,z<12*4,false,false,true,0,0,'BG']]);
 	}
 	
 	// sliders from sides

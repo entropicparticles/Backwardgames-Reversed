@@ -43,7 +43,7 @@ function AM_encimade_BM(A,B) {
     return A.ZM >= B.ZM ;
 }
     
-// sorting in isometric, aun falla en algunos casos, revisar en detalle
+// Who is in front of whom? Isometric
 function compareIsometric(r2,r1) {
 	var print = r1['ID']=='guy' && false;
 	var R1infrontofR2;
@@ -119,7 +119,7 @@ function printAllIsometric(objects,which) {
 					// if we find that the object is in front of the row, we apply the image substraction
 					if (OBJinfrontofROW) {
 						
-						// we create a copy otherwishe we mees it up with the original png
+						// we create a copy otherwishe we mesh it up with the original png
 						// again, reverse if spin=-1
 						var tileobj = {};
 						Object.assign(tileobj, tiles[obj['type']][obj['folder']][obj['file']]);
@@ -157,12 +157,15 @@ function substractImage(row,obj) {
 	var o=0;
 	var png = [...row['png']];	
 	
+	// loop for the object
 	for (var k=0; k<obj['png'].length; ++k) {
-		// get ij coordinates for row to know the ij for obj and get the index q
+		// get ij coordinates for object to know the ij for row and get its index q
 		var iobj = k%obj['DI'],
 		    jobj = Math.floor(k/obj['DI']);
 		var irow = iobj+i0obj,
 		    jrow = jobj-j0obj;
+			
+		// make sure q is in the range, otherwhise it creates copies
 		if (jrow>=0 && jrow<row['DJ'] && irow>=0 && irow<row['DI']) {
 			var q = jrow*row['DI']+irow;
 		
