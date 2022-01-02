@@ -23,7 +23,7 @@ function HSVtoRGB(h, s, v) {
         case 4: r = t, g = p, b = v; break;
         case 5: r = v, g = p, b = q; break;
     }
-	c = [ Math.round(r * 255), Math.round(g * 255), Math.round(b * 255) ];
+	c = [ Math.round(r * 255), Math.round(g * 255), Math.round(b * 255), 255 ];
     return c;
 }
 
@@ -41,44 +41,57 @@ function givemeColors(row) {
 		
 	var X = row['X'] ? row['X'] : 0 ;
 	var Y = row['Y'] ? row['Y'] : 0 ;
+	var Z = row['Z'] ? row['Z'] : 0 ;
+	var ra = [[250,10,0],[50,5,0]];
 	
-    var r = 0-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5 + 255*5;
-    r = (r%255)/255
-    
-    //f1 = room['globalsets']['lamp']
-    f1 = [0,1][0];
-    
-    if (!row) {
-		var a = 0.95;
+	if (room.slice(0,-2)=='stairs') {
+
+		var r = -50-(XYZ2J(X,Y,Z)/XYZ2J(5,5,0))+255*10;
+		r = (r%255)/255;
+		r = (row['ID']=='railing') ? r-0.02 : r ; 
+		r = cl(r);
+		
+		if (!row) {
+			var a = 0.95;
+		} else {
+			a = 235-(XYZ2J(X,Y,0)/XYZ2J(4,4,0))*20;
+			a = cl(a/255);		
+			a = Math.max(a,0.2);
+			a = (row['ID']=='railing') ? 0.5 + 0.5*a : a ; 
+			a = (row['type']=='objects') ? 0.2 + 0.8*a : a ; 
+			a = (row['ID']=='guy') ? 0.3 + 0.7*a : a ; 
+		}
+		
+		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
+		        [r,1            ,a/4]];  // dark		
+	
 	} else {
-		var L = 8;
-		var a  = gauss([X,Y,0],[  L,  0,0],1.5*L)*180/2/255 +
-			     gauss([X,Y,0],[2*L,  0,0],1.5*L)*180/2/255 +
-			     gauss([X,Y,0],[  L,3*L,0],  4*L)*(205*f1+50)/255 +
-			     gauss([X,Y,0],[4*L,  0,0],    L)*150*f1/255;
 	
-		a = ['people','objects','human'].includes(row['type']) ? a+5 : a ; 
-		a = cl(a)
-    }
-	
-	var lightColor = HSVtoRGB(r,cl(0.75+a/10),a  );
-	lightColor.push(255);
-	var darkColor  = HSVtoRGB(r,1        ,a/4);
-	darkColor.push(255);
+		var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
+		r = (r%255)/255;
+		
+		//f1 = room['globalsets']['lamp']
+		f1 = [0,1][0];
+		
+		if (!row) {
+			var a = 0.95;
+		} else {
+			var L = 8;
+			var a  = gauss([X,Y,0],[  L,  0,0],1.5*L)*180/2/255 +
+					 gauss([X,Y,0],[2*L,  0,0],1.5*L)*180/2/255 +
+					 gauss([X,Y,0],[  L,3*L,0],  4*L)*(205*f1+50)/255 +
+					 gauss([X,Y,0],[4*L,  0,0],    L)*150*f1/255;
+			a = cl(a);
+			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
+		}
+		
+		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
+		        [r,1            ,a/4]];  // dark
+	}
+	//console.log(ra)
+	var lightColor = HSVtoRGB(ra[0][0],ra[0][1],ra[0][2]);
+	var darkColor  = HSVtoRGB(ra[1][0],ra[1][1],ra[1][2]);
 	
 	return [[0,0,0,0],darkColor,lightColor,[0,0,0,255]];
-		
-	/*
-	var png = [];
-	for (var k=0; k<row['png'].length;  k++) {
-		var RGBA = [0,0,0,0]; // transparent
-		if (row['png'][k]==1) {
-			RGBA = darkColor; 
-		} else if (row['png'][k]==2) {
-			RGBA = lightColor;
-		}
-		png.push(RGBA);
-	}
-	return png;
-	*/
+
 }

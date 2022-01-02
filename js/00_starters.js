@@ -38,7 +38,8 @@ var LI = 320, LJ = 180, width, height, scale;
 
 // time, chapter, rooms, room or cover?
 var t, chapter, room, preRoom, RGBcover=0;
-var firstEntry = true;
+// first frame in the room? first time in teleporter because you just apperaed there?
+var firstEntry = true, firstTimeOnTeleporter = true;
 
 // Objects
 var objects = ['mano','gun','maletin','roomkey'];
@@ -131,7 +132,7 @@ function start() {
 	height = canvas.height;
 	
 	// Set CSS size
-	scale = 3;
+	scale = 2;
 	setSize3()
 	
 	// Initiate time
@@ -176,6 +177,7 @@ function updateit() {
 	updateKeys();	
 	updateMusic();
 	if (!pause) {	
+		walkingGuy();
 		updateAction();	
 		updateImage();
 	}
@@ -262,8 +264,6 @@ function updateMusic() {
 
 function updateAction() {
 	
-	// Walk Guy
-	walkingGuy();
 	// Evaluate actions
 	for (var k=0; k<actions.length; ++k) {
 		

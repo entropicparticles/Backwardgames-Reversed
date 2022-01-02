@@ -34,33 +34,30 @@ function walking(step,indk) {
 	
 	if (step!='stp0') {
 
-		// go for the movement
-		var xyz = move.xyz;
-		var ij  = move.ij;
-		var qm  = step.slice(-1); 
-		
+		// go for the movement		
 		// test move: we loop for all pixels done in the same movement
+		var qm  = step.slice(-1); 
 		var q = 0
 		for (n=1;n<=qm;++n) { 
 		
 			var go     = false;
 			var godown = -8;
-			var goup   = 8;
-			var testa = {'X' :im['X']  + n*move.xyz[0],'Y' :im['Y']  + n*move.xyz[1],'Z' :im['Z'] ,
-						 'XM':im['XM'] + n*move.xyz[0],'YM':im['YM'] + n*move.xyz[1],'ZM':im['ZM']};
+			var goup   =  8;
+			var testa = {'X' :im['X']  + move.xyz[0],'Y' :im['Y']  + move.xyz[1],'Z' :im['Z'] ,
+						 'XM':im['XM'] + move.xyz[0],'YM':im['YM'] + move.xyz[1],'ZM':im['ZM']};
 						
 			// we check Z to know if he has to go down a maximum of 3 pixels only if there is no dz=0
 			// to go up, just one dz=3 up is enough
-			// solid don't care about Z for simplicity, let' be aware of that
 			for (var k=0; k<space['open'].length; ++k) {
 				var obj = space['open'][k];
 				var col = collision(testa,obj);
 				if (col) {
-					console.log(obj)
 					var dz = obj.ZM-testa.Z;
 					if (dz<=0) godown = Math.max(godown,dz);
 					if (dz> 0) goup   = Math.min(goup,dz);
-					go = col;
+					go = true;
+					//console.log('dz',dz,'up',goup,'down',godown);
+					//console.log('col ->',obj.Z);
 					//console.log(obj.ZM,testa.Z,dz,godown,goup);
 					//console.log('XYZ: ',im['X'],im['Y'],im['Z']);
 				}
@@ -73,33 +70,34 @@ function walking(step,indk) {
 				dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 ) ;
 				testa.Z  += dz;
 				testa.ZM += dz;
-				go = go && !space['solid'].some( obj => collision(testa,obj) && testa.Z>=obj.Z && testa.Z<obj.ZM )
+				go = go && !space['solid'].some( obj => collision(testa,obj) && testa.Z>=obj.Z && testa.Z<obj.ZM );
 			}
 			
-			// if go, continue; if not, stop here
+			// if go, check action and continue; if not, stop here
 			if (go) {
-				++q
+				
+				stuff['front'][indk]['X']  += move.xyz[0];
+				stuff['front'][indk]['Y']  += move.xyz[1];
+				stuff['front'][indk]['Z']  += dz;
+				stuff['front'][indk]['XM'] += move.xyz[0];
+				stuff['front'][indk]['YM'] += move.xyz[1];
+				stuff['front'][indk]['ZM'] += dz;
+				stuff['front'][indk]['I0'] += move.ij[0];		
+				stuff['front'][indk]['J0'] += move.ij[1]+dz;
+				stuff['front'][indk]['IM'] += move.ij[0];		
+				stuff['front'][indk]['JM'] += move.ij[1]+dz;
+				im = stuff['front'][indk];
+				console.log(n,'>',stuff['front'][indk]['ID'],stuff['front'][indk]['X'],stuff['front'][indk]['Y'],stuff['front'][indk]['Z'],dz)
+				updateAction();	
+				if (firstEntry) break; //stop loop if room changed
+				
 			} else {
-				dz = 0
+				
 				break;
+				
 			}
 			
-		}
-//		dz = go ? dz : 0 ;
-		//console.log(goup,godown,dz,q)
-		// update position
-		stuff['front'][indk]['X']  += q*move.xyz[0];
-		stuff['front'][indk]['Y']  += q*move.xyz[1];
-		stuff['front'][indk]['Z']  += dz;
-		stuff['front'][indk]['XM'] += q*move.xyz[0];
-		stuff['front'][indk]['YM'] += q*move.xyz[1];
-		stuff['front'][indk]['ZM'] += dz;
-		stuff['front'][indk]['I0'] += q*move.ij[0];		
-		stuff['front'][indk]['J0'] += q*move.ij[1]+dz;
-		stuff['front'][indk]['IM'] += q*move.ij[0];		
-		stuff['front'][indk]['JM'] += q*move.ij[1]+dz;
-		
-		console.log(stuff['front'][indk]['ID'],stuff['front'][indk]['X'],stuff['front'][indk]['Y'],stuff['front'][indk]['Z'])
+		}		
 	}
 	
 	
@@ -114,6 +112,16 @@ function sliders(col,Zbol,acton,key1,key2) {
 
 function changeroom(col,Zbol,actOn,which) {
 	if (col&&Zbol) loadRoom(which);
+}
+
+function teleporter(col,Zbol,actOn,room1,room2){
+	if (col&&Zbol&&!firstTimeOnTeleporter) {
+		firstTimeOnTeleporter = true;
+		var which =  room1==room ? room2 : room1 ;
+		loadRoom(which);
+	} else if (!col&&!Zbol) {
+		firstTimeOnTeleporter = false;		
+	}
 }
 
 function openclosedoor(col,Zbol,actOn,id,type,keepit) {
