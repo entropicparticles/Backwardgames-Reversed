@@ -70,7 +70,7 @@ function walking(step,indk) {
 				dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 ) ;
 				testa.Z  += dz;
 				testa.ZM += dz;
-				go = go && !space['solid'].some( obj => collision(testa,obj) && testa.Z>=obj.Z && testa.Z<obj.ZM );
+				go = go && !space['solid'].some( obj => collision(testa,obj) && ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z)) );
 			}
 			
 			// if go, check action and continue; if not, stop here

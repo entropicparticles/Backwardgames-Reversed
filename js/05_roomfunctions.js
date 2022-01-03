@@ -238,3 +238,66 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 	
 	return array;
 }
+
+
+function createRoadSquaresFloorFromRGB(ground) {
+
+		var floors;
+		for (var k=0; k<obj['png'].length; ++k) {
+			if (ground['png'][k]!=[0,0,0,0]) {
+				var x = k%ground['DI'],
+					y = Math.floor(k/ground['DI']);
+				var road      = (ground['png'][k] == [0,0,0,255]),
+					squares   = (ground['png'][k] == [255,0,0,255]),
+					squaresBG = (ground['png'][k] == [255,0,0,255]);
+				var folder = road ? 'road' : 'squares' ;
+				
+				if (road) {
+				
+					floors.push(['road','floors','road','00',1,B(x,0),B(ground['DJ']-y,0),z,true,false,false,true,0,0,'BG']);
+				
+				} else {
+					
+					var file = '0000',
+					    spin = 1;
+					var qnorth     = ground['png'][(y-1)*ground['DI']+x  ] == [0,0,0,255],
+						qsouth     = ground['png'][(y+1)*ground['DI']+x  ] == [0,0,0,255],
+						qeast      = ground['png'][y*ground['DI']+x+1    ] == [0,0,0,255],
+						qwest      = ground['png'][y*ground['DI']+x-1    ] == [0,0,0,255],
+					    qnortheast = ground['png'][(y-1)*ground['DI']+x+1] == [0,0,0,255],
+						qsoutheast = ground['png'][(y+1)*ground['DI']+x+1] == [0,0,0,255],
+						qnorthwest = ground['png'][(y-1)*ground['DI']+x-1] == [0,0,0,255],
+						qsouthwest = ground['png'][(y+1)*ground['DI']+x-1] == [0,0,0,255];
+					
+					if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0001'; spin = 1;
+					} else if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && qsouthwest ) {
+						file = '0010'; spin = 1;
+					} else if ( !qnorth && qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0011'; spin = 1;
+					} else if ( !qnorth && !qsouth && !qeast && !qwest && qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0100'; spin = 1;
+					} else if ( !qnorth && !qsouth && qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0011'; spin = 1;
+					} else if ( !qnorth && qsouth && qeast && !qwest && !qnortheast && qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0111'; spin = 1;
+					} else if ( !qnorth && qsouth && !qeast && qwest && !qnortheast && !qsoutheast && !qnorthwest && qsouthwest ) {
+						file = '1011'; spin = 1;
+					} else if ( qnorth && !qsouth && qeast && !qwest && qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '1101'; spin = 1;
+					} else if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && qnorthwest && !qsouthwest ) {
+						file = '0001'; spin = -1;
+					} else if ( !qnorth && !qsouth && !qeast && qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0011'; spin = -1;
+					} else if ( qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+						file = '0011'; spin = -1;
+					} else if ( qnorth && !qsouth && !qeast && qwest && !qnortheast && !qsoutheast && qnorthwest && !qsouthwest ) {
+						file = '0111'; spin = -1;
+					}
+					floors.push(['road','floors','squares',file,spin,B(x,0),B(ground['DJ']-y,0),z,true,false,false,true,0,0,squaresBG ? 'BG' : 'VI']);					
+				}
+			}
+		}
+		
+		return floors;
+}

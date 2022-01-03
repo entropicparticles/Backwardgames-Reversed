@@ -200,14 +200,14 @@ function loadRoom(inroom) {
 		I0 = 0,J0 = 4;		
 			
 		RGBcover = 'RGB_cover';
-		entryPoint['X']    = B(1,0);
-		entryPoint['Y']    = B(1,0);
+		entryPoint['X']    = 22;
+		entryPoint['Y']    = 24;
 		entryPoint['Z']    = 0;
 		entryPoint['file'] = 'm0_01N';
 				
 		allstuff = [
 			['box','objects','tables','211', 1,B(2,0),B(2,0),D(0,0),true,true,false,false,0,0,'VI'],
-			['box','objects','tables','211',-1,B(3,3),B(2,0),D(1,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','211',-1,B(3,2),B(2,4),D(1,0),true,true,false,false,0,0,'VI'],
 			['box','objects','tables','112', 1,B(2,-2),B(3,1),D(0,0),true,true,false,false,0,0,'VI']
 			];   
 
@@ -601,7 +601,13 @@ function loadRoom(inroom) {
 			allstuff = allstuff.concat(squares);
 			
 		}
-		
+	
+	} else if (room.slice(0,-2)=='hotel_street') {  //------------------------------------------------- HOTEL STREET
+	
+		var ground = tiles['panel']['blueprints']['RGB_hotelground'];
+		floors = createRoadSquaresFloorFromRGB(ground);
+				
+	
 	}
 
 	
