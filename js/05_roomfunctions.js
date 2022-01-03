@@ -239,65 +239,98 @@ function putDoor(x,y,z,s,w,id,b,type,side,st,rank) {
 	return array;
 }
 
+const equals = (a, b) =>
+  a.length === b.length &&
+  a.every((v, i) => v === b[i]);
+  
+function createRoadSquaresFloorFromRGB(ground,z) {
+	
 
-function createRoadSquaresFloorFromRGB(ground) {
-
-		var floors;
-		for (var k=0; k<obj['png'].length; ++k) {
-			if (ground['png'][k]!=[0,0,0,0]) {
-				var x = k%ground['DI'],
-					y = Math.floor(k/ground['DI']);
-				var road      = (ground['png'][k] == [0,0,0,255]),
-					squares   = (ground['png'][k] == [255,0,0,255]),
-					squaresBG = (ground['png'][k] == [255,0,0,255]);
+		//console.log(ground['png'].length/4,ground['png'][-345])
+		var floors = [];
+		var kk=0;
+		for (var k=0; k<ground['png'].length; k=k+4) {
+			if (ground['png'][k+3]!=0) {
+				
+				++kk;
+			//console.log(k/4,kk,ground['png'].slice(k,k+4),equals(ground['png'].slice(k,k+4),[0,0,0,255]),[0,0,0,255])
+			
+				var road      = equals(ground['png'].slice(k,k+4) , [0,0,0,255]),
+					squares   = equals(ground['png'].slice(k,k+4) , [0,0,255,255]),
+					squaresBG = equals(ground['png'].slice(k,k+4) , [255,0,0,255]);
+					
 				var folder = road ? 'road' : 'squares' ;
+					
+				var dy = ground['DJ'],
+					dx = ground['DI'];
+				var x = (k/4)%dx,
+					y = Math.floor((k/4)/dx);
 				
 				if (road) {
-				
-					floors.push(['road','floors','road','00',1,B(x,0),B(ground['DJ']-y,0),z,true,false,false,true,0,0,'BG']);
+					
+					floors.push(['road','floors','road','00',1,B(x,0),B(dy-y,0),z,true,false,false,true,0,0,'BG']);
 				
 				} else {
 					
-					var file = '0000',
-					    spin = 1;
-					var qnorth     = ground['png'][(y-1)*ground['DI']+x  ] == [0,0,0,255],
-						qsouth     = ground['png'][(y+1)*ground['DI']+x  ] == [0,0,0,255],
-						qeast      = ground['png'][y*ground['DI']+x+1    ] == [0,0,0,255],
-						qwest      = ground['png'][y*ground['DI']+x-1    ] == [0,0,0,255],
-					    qnortheast = ground['png'][(y-1)*ground['DI']+x+1] == [0,0,0,255],
-						qsoutheast = ground['png'][(y+1)*ground['DI']+x+1] == [0,0,0,255],
-						qnorthwest = ground['png'][(y-1)*ground['DI']+x-1] == [0,0,0,255],
-						qsouthwest = ground['png'][(y+1)*ground['DI']+x-1] == [0,0,0,255];
+						
+					var n  = y-1>=0           ? 4*((y-1)*dx+x  ) : undefined , s  = y+1<dy           ? 4*((y+1)*dx+x  ) : undefined , 
+					    e  =           x+1<dx ? 4*( y   *dx+x+1) : undefined , w  =           x-1>=0 ? 4*( y   *dx+x-1) : undefined ,
+						ne = y-1>=0 && x+1<dx ? 4*((y-1)*dx+x+1) : undefined , se = y+1<dy && x+1<dx ? 4*((y+1)*dx+x+1) : undefined , 
+						nw = y-1>=0 && x-1>=0 ? 4*((y-1)*dx+x-1) : undefined , sw = y+1<dy && x-1>=0 ? 4*((y+1)*dx+x-1) : undefined ;
 					
-					if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && qsoutheast && !qnorthwest && !qsouthwest ) {
+					var qnorth     = equals( ground['png'].slice(n ,n +4) , [0,0,0,255] ),
+						qsouth     = equals( ground['png'].slice(s ,s +4) , [0,0,0,255] ),
+						qeast      = equals( ground['png'].slice(e ,e +4) , [0,0,0,255] ),
+						qwest      = equals( ground['png'].slice(w ,w +4) , [0,0,0,255] ),
+					    qnortheast = equals( ground['png'].slice(ne,ne+4) , [0,0,0,255] ),
+						qsoutheast = equals( ground['png'].slice(se,se+4) , [0,0,0,255] ),
+						qnorthwest = equals( ground['png'].slice(nw,nw+4) , [0,0,0,255] ),
+						qsouthwest = equals( ground['png'].slice(sw,sw+4) , [0,0,0,255] );
+					
+					var file = '0000', spin = 1;
+					       if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast &&  qsoutheast && !qnorthwest && !qsouthwest ) {
 						file = '0001'; spin = 1;
-					} else if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && qsouthwest ) {
+					} else if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest &&  qsouthwest ) {
 						file = '0010'; spin = 1;
-					} else if ( !qnorth && qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+					} else if ( !qnorth &&  qsouth && !qeast && !qwest && !qnortheast &&        true && !qnorthwest &&        true ) {
 						file = '0011'; spin = 1;
-					} else if ( !qnorth && !qsouth && !qeast && !qwest && qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+					} else if ( !qnorth && !qsouth && !qeast && !qwest &&  qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
 						file = '0100'; spin = 1;
-					} else if ( !qnorth && !qsouth && qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
-						file = '0011'; spin = 1;
-					} else if ( !qnorth && qsouth && qeast && !qwest && !qnortheast && qsoutheast && !qnorthwest && !qsouthwest ) {
+					} else if ( !qnorth && !qsouth &&  qeast && !qwest &&        true &&        true && !qnorthwest && !qsouthwest ) {
+						file = '0101'; spin = 1;
+					} else if ( !qnorth &&  qsouth &&  qeast && !qwest &&        true &&  qsoutheast && !qnorthwest &&        true ) {
 						file = '0111'; spin = 1;
-					} else if ( !qnorth && qsouth && !qeast && qwest && !qnortheast && !qsoutheast && !qnorthwest && qsouthwest ) {
+					} else if ( !qnorth &&  qsouth && !qeast &&  qwest && !qnortheast &&        true &&        true &&  qsouthwest ) {
 						file = '1011'; spin = 1;
-					} else if ( qnorth && !qsouth && qeast && !qwest && qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+					} else if (  qnorth && !qsouth &&  qeast && !qwest &&  qnortheast &&        true &&        true && !qsouthwest ) {
 						file = '1101'; spin = 1;
-					} else if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && qnorthwest && !qsouthwest ) {
+					} else if ( !qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast &&  qnorthwest && !qsouthwest ) {
 						file = '0001'; spin = -1;
-					} else if ( !qnorth && !qsouth && !qeast && qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
+					} else if ( !qnorth && !qsouth && !qeast &&  qwest && !qnortheast && !qsoutheast &&        true &&        true ) {
 						file = '0011'; spin = -1;
-					} else if ( qnorth && !qsouth && !qeast && !qwest && !qnortheast && !qsoutheast && !qnorthwest && !qsouthwest ) {
-						file = '0011'; spin = -1;
-					} else if ( qnorth && !qsouth && !qeast && qwest && !qnortheast && !qsoutheast && qnorthwest && !qsouthwest ) {
+					} else if (  qnorth && !qsouth && !qeast && !qwest &&        true && !qsoutheast &&        true && !qsouthwest ) {
+						file = '0101'; spin = -1;
+					} else if (  qnorth && !qsouth && !qeast &&  qwest &&        true && !qsoutheast &&  qnorthwest &&        true ) {
 						file = '0111'; spin = -1;
 					}
-					floors.push(['road','floors','squares',file,spin,B(x,0),B(ground['DJ']-y,0),z,true,false,false,true,0,0,squaresBG ? 'BG' : 'VI']);					
+					/*
+					console.log(k,4*(y*dx+x),x,y,dx,dy,qnorth,qsouth,qeast,qwest,qnortheast,qsoutheast,qnorthwest,qsouthwest)
+					console.log(
+						 ground['png'].slice(n ,n +4),
+						 ground['png'].slice(s ,s +4),
+						 ground['png'].slice(e ,e +4),
+					     ground['png'].slice(w ,w +4),
+						 ground['png'].slice(ne,ne+4),
+						 ground['png'].slice(se,se+4),
+						 ground['png'].slice(nw,nw+4),
+					     ground['png'].slice(sw,sw+4))
+					console.log(file)
+					*/
+					floors.push(['road','floors','squares',file,spin,B(x,0),B(dy-y,0),z,true,false,false,true,0,0,squaresBG ? 'BG' : 'VI']);					
 				}
 			}
 		}
+		//console.log(floors)
 		
 		return floors;
 }

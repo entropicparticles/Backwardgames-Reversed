@@ -603,9 +603,56 @@ function loadRoom(inroom) {
 		}
 	
 	} else if (room.slice(0,-2)=='hotel_street') {  //------------------------------------------------- HOTEL STREET
-	
+		
+		var level = [0,1,2,3].includes(room.slice(-1)) ? 0 : 6;
+		
 		var ground = tiles['panel']['blueprints']['RGB_hotelground'];
-		floors = createRoadSquaresFloorFromRGB(ground);
+		floors = createRoadSquaresFloorFromRGB(ground,0);
+		allstuff = allstuff.concat(floors);
+		
+		I0 = 400,J0 = 4;		
+			
+		entryPoint['X']    = B(2,2);
+		entryPoint['Y']    = B(3,1);
+		entryPoint['Z']    = 0;
+		entryPoint['file'] = 'm0_01N';
+								
+		
+		// Doors	
+		doors = putDoor(B(7,4) ,B(10,0),3, 1,2,'hotel_corridor_0','maindoorhotel','automatic','front','closed',1);
+		allstuff = allstuff.concat(doors); 
+
+		var zmin = Math.max(0,level-3-6),
+		    zmax = Math.min(6,level+3+6);
+		for (var z=zmin; z<zmax; ++z) {
+			
+			var Z = z*5;
+		
+			walls.push(['hotelwall','walls','hotel','10',-1,B(6,0),B(10,0),D(Z,3),true,true,true,false,0,0,'BG']);	
+			for (var x=1; x<11; ++x) {
+				walls.push(
+					['hotelwall','walls','hotel','00',-1,B(6,0),B(10+x,0),D(Z,3),true,true,true,false,0,0,'BG']
+				);			
+			}
+			walls.push(['hotelwall','walls','hotel','01',-1,B(6,0),B(21,0),D(Z,3),true,true,true,false,0,0,'VI']);
+			
+			walls.push(['hotelwall','walls','hotel','10'         ,1,B(6,0),B(10,0),D(Z,3),true,true,true,false,0,0,'BG']);	
+			if (Z==0) {
+				walls.push(['hotelwall','walls','hotel','00_top_10'  ,1,B(7,0),B(10,0),D(Z,3),true,false,true,false,0,0,'BG']);	
+				walls.push(['hotelwall','walls','hotel','00_top_10_f',1,B(7,0),B(10,0),D(Z,3),true,false,true,false,0,0,'VI']);	
+				walls.push(['hotelwall','walls','hotel','00_top'     ,1,B(8,0),B(10,0),D(Z,3),true,false,true,false,0,0,'BG']);	
+				walls.push(['hotelwall','walls','hotel','00_top_01'  ,1,B(9,0),B(10,0),D(Z,3),true,false,true,false,0,0,'BG']);	
+			}
+			for (var x= Z==0 ? 4 : 1; x<11; ++x) {
+				walls.push(
+					['hotelwall','walls','hotel','00',1,B(6+x,0),B(10,0),D(Z,3),true,true,true,false,0,0,'BG']
+				);			
+			}
+			walls.push(['hotelwall','walls','hotel','01',1,B(17,0),B(10,0),D(Z,3),true,true,true,false,0,0,'VI']);
+		
+		}
+		
+		allstuff = allstuff.concat(walls);      
 				
 	
 	}

@@ -87,7 +87,8 @@ function walking(step,indk) {
 				stuff['front'][indk]['IM'] += move.ij[0];		
 				stuff['front'][indk]['JM'] += move.ij[1]+dz;
 				im = stuff['front'][indk];
-				console.log(n,'>',stuff['front'][indk]['ID'],stuff['front'][indk]['X'],stuff['front'][indk]['Y'],stuff['front'][indk]['Z'],dz)
+				console.log(n,'>',stuff['front'][indk]['ID'],stuff['front'][indk]['X'],stuff['front'][indk]['Y'],stuff['front'][indk]['Z'],
+								  [Math.floor(stuff['front'][indk]['X']/8),Math.floor(stuff['front'][indk]['Y']/8),Math.floor(stuff['front'][indk]['Z']/8)],dz)
 				updateAction();	
 				if (firstEntry) break; //stop loop if room changed
 				

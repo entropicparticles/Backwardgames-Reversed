@@ -156,7 +156,7 @@ function start() {
 	// enter in the room for the first time
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_corridor_0"]}]; 
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_street_0"]}]; 
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
