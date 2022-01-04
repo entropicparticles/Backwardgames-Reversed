@@ -31,7 +31,7 @@ function AM_derechade_BM(A,B) {
     return A.XM - B.XM >= 0 && A.YM - B.YM <= 0;
 }
 function A0_encimade_B0(A,B) {
-    return A.Z  >= B.Z  ;
+    return A.Z  > B.Z  ;
 }
 function A0_encimade_BM(A,B) {
     return A.Z  >= B.ZM ;
@@ -47,7 +47,20 @@ function AM_encimade_BM(A,B) {
 function compareIsometric(r2,r1) {
 	var print = r1['ID']=='guy' && false;
 	var R1infrontofR2;
-    if (A0_detrasde_B0(r1,r2) && A0_detrasde_BM(r1,r2)) { 
+	
+	if ( (r1.X==r1.XM && r1.XM==r2.X) || (r1.Y==r1.YM && r1.YM==r2.Y) ) {
+        if (print) console.log(' 1',r1['ID'],r1['file'],' pegado en frente de ',r2['ID'],r2['file'])
+        R1infrontofR2 = true;	
+    } else if ( (r2.X==r2.XM && r2.XM==r1.X) || (r2.Y==r2.YM && r2.YM==r1.Y)) {
+        if (print) console.log(' 1',r2['ID'],r2['file'],' pegado en frente de ',r1['ID'],r1['file'])
+        R1infrontofR2 = false;	
+    } else if (r1.Z==r1.ZM && r1.ZM==r2.Z) {
+        if (print) console.log(' 1',r2['ID'],r2['file'],' pisa al plano ',r1['ID'],r1['file'])
+        R1infrontofR2 = false;	
+    } else if (r2.Z==r2.ZM && r2.ZM==r1.Z) {
+        if (print) console.log(' 1',r1['ID'],r1['file'],' pisa al plano ',r2['ID'],r2['file'])
+        R1infrontofR2 = true;	
+    } else if (A0_detrasde_B0(r1,r2) && A0_detrasde_BM(r1,r2)) { 
         if (print) console.log(' 1',r2['ID'],r2['file'],' totalmente delante de ',r1['ID'],r1['file'])
         R1infrontofR2 = false;
     } else if ((A0_detrasde_B0(r1,r2) || A0_derechade_B0(r2,r1)) && AM_derechade_B0(r2,r1) && AM_detrasde_B0(r1,r2)) {
@@ -64,6 +77,12 @@ function compareIsometric(r2,r1) {
         R1infrontofR2 = true;
     } else if ((A0_detrasde_B0(r2,r1) || A0_derechade_B0(r1,r2)) && AM_derechade_B0(r1,r2) && AM_detrasde_B0(r2,r1)) {
         if (print) console.log(' 6',r2['ID'],r2['file'],' detrás y a la izquierda de ',r1['ID'],r1['file'])
+        R1infrontofR2 = true;
+    } else if (A0_encimade_BM(r2,r1)) {
+        if (print) console.log('11',r2['ID'],r2['file'],' vuela sobre ',r1['ID'],r1['file'])
+        R1infrontofR2 = false;
+    } else if (A0_encimade_BM(r1,r2)) {
+        if (print) console.log('12',r2['ID'],r2['file'],' debajo de ',r1['ID'],r1['file'])
         R1infrontofR2 = true;
     } else if (A0_detrasde_B0(r2,r1) && AM_detrasde_BM(r1,r2) && A0_encimade_BM(r2,r1)) {
         if (print) console.log(' 7',r2['ID'],r2['file'],' pequeño sobre gran  ',r1['ID'],r1['file'])

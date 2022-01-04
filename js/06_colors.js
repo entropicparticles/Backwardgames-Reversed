@@ -44,7 +44,7 @@ function givemeColors(row) {
 	var Z = row['Z'] ? row['Z'] : 0 ;
 	var ra = [[250,10,0],[50,5,0]];
 	
-	if (room.slice(0,-2)=='stairs') {
+	if (room.slice(0,-2)=='stairs') { //------------------------------------------- STAIRS
 
 		var r = -50-(XYZ2J(X,Y,Z)/XYZ2J(5,5,0))+255*10;
 		r = (r%255)/255;
@@ -65,30 +65,24 @@ function givemeColors(row) {
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark		
 	
-	} else if (room.slice(0,-2)=='hotel_street') {
-	
-		var r = 255*2-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
+	} else if (room.slice(0,-2)=='hotel_street') { //--------------------------------- HOTEL STREET
+		
+		var r = 50-(20*X+20*(Y-8*4)+Z)/200;
 		r = (r%255)/255;
 		
-		//f1 = room['globalsets']['lamp']
-		f1 = [0,1][0];
-		
 		if (!row) {
-			var a = 0.95;
+			var a  = 0.95;
+			var a2 = a;
 		} else {
-			var L = 8;
-			var a  = gauss([X,Y,0],[  L,  0,0],1.5*L)*180/2 +
-					 gauss([X,Y,0],[2*L,  0,0],1.5*L)*180/2 +
-					 gauss([X,Y,0],[  L,3*L,0],  4*L)*(205*f1+50) +
-					 gauss([X,Y,0],[4*L,  0,0],    L)*150*f1;
+			var a  = 235-(XYZ2J(X,Y,0)/XYZ2J(45,45,0))*20;
 			a = (a%255)/255;
 			a = cl(a);
-			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
+			var a2 = ['people','objects'].includes(row['type']) || ['street','firestairs','vehicles'].includes(row['folder']) ? 0.4 + 0.6*a : a ; 
 		}
 		
-		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
-		        [r,1            ,a/4]];  // dark
-	} else {
+		ra =  [ [r+a*0.8,cl(0.8+a2/10),a2  ],   // ligtht
+		        [r+a*0.8,1           ,a2/5]];  // dark
+	} else {  //------------------------------------------------------------------------ OTHER ROOMS
 	
 		var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
 		r = (r%255)/255;
@@ -107,7 +101,9 @@ function givemeColors(row) {
 			a = (a%255)/255;
 			a = cl(a);
 			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
-		}
+		}  
+		
+		//---------------------------------------------------------------------------------------------
 		
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark

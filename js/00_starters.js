@@ -160,7 +160,7 @@ function start() {
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
-    canvas.interval = setInterval(updateit, 1000/15);
+    canvas.interval = setInterval(updateit, 1000/35);
 	
 }
 	

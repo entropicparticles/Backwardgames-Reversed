@@ -243,7 +243,7 @@ const equals = (a, b) =>
   a.length === b.length &&
   a.every((v, i) => v === b[i]);
   
-function createRoadSquaresFloorFromRGB(ground,z) {
+function createRoadSquaresFloorFromRGB(ground,z,lx,ly) {
 	
 
 		//console.log(ground['png'].length/4,ground['png'][-345])
@@ -268,7 +268,7 @@ function createRoadSquaresFloorFromRGB(ground,z) {
 				
 				if (road) {
 					
-					floors.push(['road','floors','road','00',1,B(x,0),B(dy-y,0),z,true,false,false,true,0,0,'BG']);
+					floors.push(['road','floors','road','00',1,B(lx+x,0),B(ly+dy-y,0),z,true,false,false,true,0,0,'BG']);
 				
 				} else {
 					
@@ -326,7 +326,7 @@ function createRoadSquaresFloorFromRGB(ground,z) {
 					     ground['png'].slice(sw,sw+4))
 					console.log(file)
 					*/
-					floors.push(['road','floors','squares',file,spin,B(x,0),B(dy-y,0),z,true,false,false,true,0,0,squaresBG ? 'BG' : 'VI']);					
+					floors.push(['road','floors','squares',file,spin,B(lx+x,0),B(ly+dy-y,0),z,true,false,false,true,0,0,squaresBG ? 'BG' : 'VI']);					
 				}
 			}
 		}
