@@ -617,10 +617,40 @@ function loadRoom(inroom) {
 		entryPoint['Z']    = 0;
 		entryPoint['file'] = 'm0_01N';
 								
-		
 		// Doors	
 		doors = putDoor(B(7,4) ,B(10,0),3, 1,2,'hotel_corridor_0','maindoorhotel','automatic','front','closed',1);
 		allstuff = allstuff.concat(doors); 
+		
+		// Walls
+		
+		// Fence to the right
+		for (var x=0; x<9; ++x)  walls.push(['fence','walls','fence','00',1,B(18+x,0),B(10,4),3,true,true,false,false,0,0,x<7?'BG':'VI']);			
+		walls.push(['fence','walls','fence','10' ,1,B(27,0),B(10,4),0,true,true,false,false,0,0,'BG']);
+		walls.push(['fence','walls','fence','01' ,1,B(28,0),B(10,4),0,true,true,false,false,0,0,'BG']);
+		walls.push(['fence','walls','fence','10P',1,B(29,0),B(10,4),0,true,true,false,false,0,0,'BG']);
+		walls.push(['fence','walls','fence','01P',1,B(30,0),B(10,4),0,true,true,false,false,0,0,'BG']);
+		walls.push(['fence','walls','fence','00' ,1,B(31,0),B(10,4),3,true,true,false,false,0,0,'BG']);
+		// Fence to the left
+		for (var x=0; x<8; ++x){
+			walls.push(['fence','walls','fence','00',-1,B(6,4),B(22+x,0),3,true, true,false,false,0,0,'BG']);
+			walls.push(['fence','walls','fence','00', 1,B(6+x,4),B(30,0),3,true,false,false,false,0,0,'BG']);	
+		}
+
+		// concrete
+		walls.push(['trainwall','walls','concrete','10shadow' ,1,B(32,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+		walls.push(['trainwall','walls','concrete','00Bshadow',1,B(33,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+		walls.push(['trainwall','walls','concrete','00Ashadow',1,B(34,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+		walls.push(['trainwall','walls','concrete','01shadow' ,1,B(35,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+		for (var x=0; x<5; ++x){
+			walls.push(['trainwall','walls','concrete','10' ,-1,B(32,0),B(5+4*x,0),0,true, true,false,false,0,0,'BG']);
+			walls.push(['trainwall','walls','concrete','00B',-1,B(32,0),B(6+4*x,0),0,true, true,false,false,0,0,'BG']);
+			walls.push(['trainwall','walls','concrete','00A',-1,B(32,0),B(7+4*x,0),0,true, true,false,false,0,0,'BG']);
+			walls.push(['trainwall','walls','concrete','01' ,-1,B(32,0),B(8+4*x,0),0,true, true,false,false,0,0,'BG']);			
+		}
+		
+		// train
+		for (var x=-2; x<11; ++x) walls.push(['train','structures','street','train',1,B(32,-2),B(5+4*x,0),D(5,5),true,false,false,false,0,0,x==-1?'VI':'BG']);			
+					
 
 		var zmin = Math.max(0,level-3-6),
 		    zmax = Math.min(6,level+3+6);
@@ -628,29 +658,65 @@ function loadRoom(inroom) {
 			
 			var Z = z*5;
 		
-			walls.push(['hotelwall','walls','hotel','10',-1,B(6,0),B(10,0),D(Z,3),true,true,true,false,0,0,'BG']);	
-			for (var x=1; x<11; ++x) {
-				walls.push(
-					['hotelwall','walls','hotel','00',-1,B(6,0),B(10+x,0),D(Z,3),true,true,true,false,0,0,'BG']
-				);			
-			}
-			walls.push(['hotelwall','walls','hotel','01',-1,B(6,0),B(21,0),D(Z,3),true,true,true,false,0,0,'VI']);
+			// Walls
+			// Bricks to the left
+			walls.push(['hotelwall','walls','hotel','10',-1,B(6,0),B(10,0),D(Z,3),true,Z==0,false,false,0,0,'BG']);	
+			for (var x=1; x<11; ++x) walls.push(['hotelwall','walls','hotel','00',-1,B(6,0),B(10+x,0),D(Z,3),true,true,false,false,0,0,'BG']);			
+			walls.push(['hotelwall','walls','hotel','01',-1,B(6,0),B(21,0),D(Z,3),true,Z==0,false,false,0,0,Z==0?'VI':'BG']);
 			
-			walls.push(['hotelwall','walls','hotel','10'         ,1,B(6,0),B(10,0),D(Z,3),true,true,true,false,0,0,'BG']);	
+			// Bricks to the right
+			walls.push(['hotelwall','walls','hotel','10',1,B(6,0),B(10,0),D(Z,3),true,Z==0,false,false,0,0,'BG']);	
 			if (Z==0) {
-				walls.push(['hotelwall','walls','hotel','00_top_10'  ,1,B(7,0),B(10,0),D(Z,3),true,false,true,false,0,0,'BG']);	
-				walls.push(['hotelwall','walls','hotel','00_top_10_f',1,B(7,0),B(10,0),D(Z,3),true,false,true,false,0,0,'VI']);	
-				walls.push(['hotelwall','walls','hotel','00_top'     ,1,B(8,0),B(10,0),D(Z,3),true,false,true,false,0,0,'BG']);	
-				walls.push(['hotelwall','walls','hotel','00_top_01'  ,1,B(9,0),B(10,0),D(Z,3),true,false,true,false,0,0,'BG']);	
+				walls.push(['hotelwall','walls','hotel','00_top_10'  ,1,B(7,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);	
+				walls.push(['hotelwall','walls','hotel','00_top_10_f',1,B(7,0),B(10,0),D(Z,3),true,false,false,false,0,0,'VI']);	
+				walls.push(['hotelwall','walls','hotel','00_top'     ,1,B(8,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);	
+				walls.push(['hotelwall','walls','hotel','00_top_01'  ,1,B(9,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);	
 			}
-			for (var x= Z==0 ? 4 : 1; x<11; ++x) {
-				walls.push(
-					['hotelwall','walls','hotel','00',1,B(6+x,0),B(10,0),D(Z,3),true,true,true,false,0,0,'BG']
-				);			
-			}
-			walls.push(['hotelwall','walls','hotel','01',1,B(17,0),B(10,0),D(Z,3),true,true,true,false,0,0,'VI']);
+			for (var x= Z==0 ? 4 : 1; x<11; ++x) walls.push(['hotelwall','walls','hotel','00',1,B(6+x,0),B(10,0),D(Z,3),true,Z==0,false,false,0,0,'BG']);			
+			walls.push(['hotelwall','walls','hotel','01',1,B(17,0),B(10,0),D(Z,3),true,Z==0,false,false,0,0,Z==0?'VI':'BG']);
 		
 		}
+		
+		// Roof Wall 
+		// Bricks to the left
+		Z=6*5;
+		walls.push(['hotelwall','walls','hotel','10_roof',-1,B(6,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);	
+		for (var x=1; x<11; ++x) walls.push(['hotelwall','walls','hotel','00_roof',-1,B(6,0),B(10+x,0),D(Z,3),true,true,false,false,0,0,'BG']);			
+		walls.push(['hotelwall','walls','hotel','01_roof',-1,B(6,0),B(21,0),D(Z,3),true,false,false,false,0,0,'BG']);
+		for (var x=1; x<11; ++x) walls.push(['hotelwall','walls','hotel','00_roof_back',-1,B(6+x,0),B(21,4),D(Z,3),true,true,false,false,0,0,'BG']);
+		walls.push(['hotelwall','walls','hotel','10_roof_back',-1,B(17,0),B(21,4),D(Z,3),true,true,false,false,0,0,'BG']);		
+		// Bricks to the right
+		walls.push(['hotelwall','walls','hotel','10_roof',1,B(6,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);	
+		for (var x=1; x<11; ++x) walls.push(['hotelwall','walls','hotel','00_roof',1,B(6+x,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);			
+		walls.push(['hotelwall','walls','hotel','01_roof',1,B(17,0),B(10,0),D(Z,3),true,false,false,false,0,0,'BG']);
+		for (var x=1; x<11; ++x) walls.push(['hotelwall','walls','hotel','00_roof_back',1,B(17,4),B(10+x,0),D(Z,3),true,false,false,false,0,0,'BG']);
+		walls.push(['hotelwall','walls','hotel','10_roof_back',1,B(17,4),B(21,0),D(Z,3),true,false,false,false,0,0,'BG']);	
+		
+		Z=6*5+2.5;
+		// Roof Floors
+		floors   = putSquareFloor(6.5,17,10.5,21,D(Z,3),'floor','road','00',true,0,'BG');
+		allstuff = allstuff.concat(floors);
+		
+		// Extra Roof Wall 
+		// Bricks to the left
+		walls.push(['hotelwall','walls','hotel','10_roof',-1,B(10,0),B(14,0),D(Z,3),true,false,false,false,0,0,'VI']);	
+		for (var x=1; x<7; ++x) walls.push(['hotelwall','walls','hotel','00_roof',-1,B(10,0),B(14+x,0),D(Z,3),true,true,false,false,0,0,'VI']);			
+		walls.push(['hotelwall','walls','hotel','01_roof',-1,B(10,0),B(21,0),D(Z,3),true,false,false,false,0,0,'VI']);
+		for (var x=1; x<7; ++x) walls.push(['hotelwall','walls','hotel','00_roof_back',-1,B(10+x,0),B(21,4),D(Z,3),true,true,false,false,0,0,'VI']);
+		walls.push(['hotelwall','walls','hotel','10_roof_back',-1,B(17,0),B(21,4),D(Z,3),true,true,false,false,0,0,'VI']);		
+		// Bricks to the right
+		walls.push(['hotelwall','walls','hotel','10_roof',1,B(10,0),B(14,0),D(Z,3),true,false,false,false,0,0,'VI']);	
+		for (var x=1; x<7; ++x) walls.push(['hotelwall','walls','hotel','00_roof',1,B(10+x,0),B(14,0),D(Z,3),true,false,false,false,0,0,'VI']);			
+		walls.push(['hotelwall','walls','hotel','01_roof',1,B(17,0),B(14,0),D(Z,3),true,false,false,false,0,0,'VI']);
+		for (var x=1; x<7; ++x) walls.push(['hotelwall','walls','hotel','00_roof_back',1,B(17,4),B(14+x,0),D(Z,3),true,false,false,false,0,0,'VI']);
+		walls.push(['hotelwall','walls','hotel','10_roof_back',1,B(17,4),B(21,0),D(Z,3),true,false,false,false,0,0,'VI']);
+		
+		Z=6*5+5;
+		// Roof Floors
+		floors   = putSquareFloor(10.5,17,14.5,21,D(Z,3),'floor','road','00',true,0,'BG');
+		allstuff = allstuff.concat(floors);
+			
+
 		
 		allstuff = allstuff.concat(walls);      
 				

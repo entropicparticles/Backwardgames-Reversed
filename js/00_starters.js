@@ -132,7 +132,7 @@ function start() {
 	height = canvas.height;
 	
 	// Set CSS size
-	scale = 2;
+	scale = 1;
 	setSize3()
 	
 	// Initiate time

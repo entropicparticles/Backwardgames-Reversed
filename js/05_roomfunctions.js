@@ -146,7 +146,7 @@ function putWallAround(door,fol,fil,vis,LX,LY,z,rank) {
 		
 }
 
-function putWallLine(door,xy,lxy0,lxy,lyx,z,ids,b,vis,sol,rank,shiftx,shifty) {
+function putWallLine(door,xy,lxy0,lxy,lyx,z,ids,b,vis,sol,rank,shiftx,shifty,side) {
 	
 	var s = xy=='x' ? 1 : -1 ;
 	var array = [];
@@ -170,7 +170,7 @@ function putWallLine(door,xy,lxy0,lxy,lyx,z,ids,b,vis,sol,rank,shiftx,shifty) {
 	fil = door.includes(lxy-1) ? '00_top' : '01' ;
 	posx = xy == 'x' ? B(lxy-1,shiftx) : B(lyx,shiftx) ;
 	posy = xy == 'y' ? B(lxy-1,shifty) : B(lyx,shifty) ;
-	array.push([ids,'walls',b,fil,s,posx,posy,z,vis,!(sol&&door.includes(lxy-1)),false,false,0,rank,'BG']);
+	array.push([ids,'walls',b,fil,s,posx,posy,z,vis,!(sol&&door.includes(lxy-1)),false,false,0,rank,side=='exterior'?'VI':'BG']);
 	
 	return array;
 }
