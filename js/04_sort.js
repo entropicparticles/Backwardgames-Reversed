@@ -131,9 +131,9 @@ function printAllIsometric(objects,which) {
 			// loop for all the other objects to be drawn and check those with tile overlap
 			for (var q=0;q<objects.length; q+=1) {
 				obj = objects[q];
-				if (k!=q && doOverlap(row,obj) && obj['visible'] ) {
+				if (k!=q && doOverlap(rowt,obj) && obj['visible'] ) {
 					// is obj in front of row?
-					var OBJinfrontofROW  = compareIsometric(row,obj);
+					var OBJinfrontofROW  = compareIsometric(rowt,obj);
 					
 					// if we find that the object is in front of the row, we apply the image substraction
 					if (OBJinfrontofROW) {
@@ -150,9 +150,11 @@ function printAllIsometric(objects,which) {
 				} 
 			}
 			
+			rowt['png'] = specialEffects(rowt,k);
+			
 			// get the colors and draw it at the canvas
-			var the3colors = givemeColors(row);
-			drawTile(rowt,row['I0'],row['J0'],0,false,which,the3colors);
+			var the3colors = givemeColors(rowt);
+			drawTile(rowt,rowt['I0'],rowt['J0'],0,false,which,the3colors);
 		}
 	}	
 	
@@ -173,7 +175,6 @@ function substractImage(row,obj) {
 	var i0obj = obj['I0']-row['I0'],
 	    j0obj = obj['JM']-row['JM']; //j goes the other way around in JS
 
-	var o=0;
 	var png = [...row['png']];	
 	
 	// loop for the object
@@ -191,58 +192,9 @@ function substractImage(row,obj) {
 			// here's where the magic happens
 			if (obj['png'][k]!=0) {
 				png[q] = 0;
-				//console.log(t,k,q,o)
-				++o;
 			}
 		}		
 	}
 	return png;
 }
 
-function sortMobile(sure) {
-	
-	if (sure) {
-
-		// filter by mobile
-		var mobiles    = stuff['front'].filter(function( obj ) { return  obj.mobile;});
-		mobiles.sort((a, b) => (a.order > b.order) ? 1 : -1);
-		stuff['front'] = stuff['front'].filter(function( obj ) { return !obj.mobile;});
-		
-		//console.log(JSON.stringify(mobiles));
-		//console.log(JSON.stringify(stuff['background']));
-		
-		//console.log(stuff['front'].length,mobiles.length);
-		for (var k=0; k<mobiles.length; ++k) {
-			s = mobiles[k];
-			//console.log(stuff['front'].length,'r1 es ',s['file'])
-			var tellme=true;
-			//for (var q=stuff['front'].length-1; q>=0; q+=-1) {
-			for (var q=0;q<stuff['front'].length; q+=1) {
-				r = stuff['front'][q];
-				if (r['visible']) {
-					//console.log(q,compareIsometric(s,r) && doOverlap(s,r));
-					if ( (compareIsometric(r,s)) && doOverlap(s,r) ){
-						stuff['front'].splice(q,0,s);
-						tellme = false;
-						break;
-					}
-				}
-			}
-			if (tellme) {
-				stuff['front'].push(s);
-			}
-		}
-		for (var k=0; k<stuff['front'].length; ++k) {
-			s = stuff['front'][k];
-			if (s['ID']=='guy') {
-				guyIndex = k;
-				break;
-			}
-		}
-		//console.log(stuff['front'])
-		
-	} else {
-		guyIndex = stuff['front'].flatMap((it, i) => it['ID'] == 'guy' ? i : [])[0];
-	}
-	
-}

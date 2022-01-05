@@ -229,7 +229,8 @@ function loadRoom(inroom) {
 		entryPoint['Y']    = B(1,0);
 		entryPoint['Z']    = 0;
 		entryPoint['file'] = 'm0_01N';
-				
+			
+		/*
 		allstuff = [
 			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(2,0),B(2,0),D(0,0),true,true,false,false,   0, 2,'VI'],
 			//['box'  ,'structures'   ,'stairs','locker',1,B(2,0),B(2,0),D(0,0),true,true,false,false,   0, 2,'VI']
@@ -238,6 +239,24 @@ function loadRoom(inroom) {
 		// Floors
 		floors   = putSquareFloor(0,LX,0,LY,0,'floor','elevator','00',true,0,'BG');
 		allstuff = allstuff.concat(floors);
+		*/
+
+				
+				// Floors
+				floors   = putSquareFloor(0,LX,0,LY,0,'floor','tiles','00',true,0,'BG');
+				allstuff = allstuff.concat(floors);
+			
+			// 0th floor images
+				allstuff = allstuff.concat([
+					['STAIRS0','structures','stairs','3halfsquare2halfhigh', 1,B(0,0),B(3,4),  0, true,true,false,false,0, 0,'VI'],
+					['STAIRS0','structures','stairs','stairs0leftwallA'    , 1,B(1,4),B(3,4),  0, true,true,false,false,0, 0,'VI'],
+					['STAIRS0','structures','stairs','stairs0leftwallB'    , 1,B(2,4),B(3,4),  0, true,true,false,false,0, 0,'VI'],	
+					['STAIRS0','structures','stairs','stairs0rightwallA'   ,-1,B(3,4),B(1,4),  0, true,true,false,false,0, 0,'VI'],			
+					['STAIRS0','structures','stairs','stairs0rightwallB'   ,-1,B(3,4),B(2,4),  0, true,true,false,false,0, 0,'VI'],			
+					['STAIRS0','structures','stairs','3halfsquareveryhigh' ,-1,B(3,4),B(0,0),  0, true,true,false,false,0, 0,'VI'],			
+					['STAIRS0','structures','stairs','thingsonthewall'      ,-1,B(3,4),B(0,1), 7, true,true,false,false,0, 0,'VI']			
+				]);		
+
 		
 	} else if (room=='elevator') {  //--------------------------------------------------------------- ELEVATOR ------------------------------
 	
@@ -276,6 +295,43 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(doors);
 
 		
+	} else if (room=='hotel_room_1') {  //------------------------------------------------- ROOM 2nd floor
+	
+		menuIndex   = 0;
+		objectIndex = 0;
+		objects     = ['mano','gun','maletin','roomkey']
+		
+		LX = 5, LY = 5;
+		
+		entryPoint['X']    = B(2,3);
+		entryPoint['Y']    = B(0,1);
+		entryPoint['Z']    = 0;
+		entryPoint['file'] = 'm0_01N';
+				
+		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
+		
+		allstuff = [
+			['sofa' ,'objects'   ,'sofas'      ,'111'    , 1,B(1,3),B(0,1),     0,true, true,false,false,   0, 0,'VI'],
+			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(0,0),B(0,3),     0,true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,5),     0,true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0,true, true,false,false,   0, 0,'BG'],
+			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0),true,false,false,false,   0, 0,'BG'],
+			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0,true, true,false,false,   0, 0,'VI'],
+			['lamp' ,'objects'   ,'lamps'      ,'lamp'   , 1,B(0,2),B(4,2),     0,true, true,false,false,'on', 0,'VI'],
+			['lock' ,'objects'   ,'lockers'    ,'00'     ,-1,B(4,6),B(0,4),D(0,6),true,false,false,false,   0, 0,'BG']
+			];
+		
+		// Floors
+		floors   = putSquareFloor(0,LX,0,LY,0,'floor','hotelfloor','00',true,0,'BG');
+		allstuff = allstuff.concat(floors);
+			
+		// Walls	
+		allstuff = allstuff.concat(putWallAround([[2],[],[],[]],'wall','room',true,LX,LY,0,0));
+		
+		// Doors	
+		doors = putDoor(B(2,0),B(LY,0),0,1,1,'hotel_corridor_1','rooms','door','front','closed',4);
+		allstuff = allstuff.concat(doors);	
+	
 	} else if (room=='hotel_room_5') {  //------------------------------------------------- ROOM
 	
 		menuIndex   = 0;
@@ -293,7 +349,7 @@ function loadRoom(inroom) {
 		
 		allstuff = [
 			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(0,0),B(1,0),     0,true, true,false,false,   0, 0,'VI'],
-			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,4),     0,true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,5),     0,true, true,false,false,   0, 0,'VI'],
 			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0,true, true,false,false,   0, 0,'BG'],
 			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0),true,false,false,false,   0, 0,'BG'],
 			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0,true, true,false,false,   0, 0,'VI'],
@@ -329,15 +385,15 @@ function loadRoom(inroom) {
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
 		allstuff = [
-			['tv'   ,'objects','computers'    ,'tv'    ,-1,B(1,0),B(4,1),D(1,0), true,false,false,false,'broken', 0,'VI'],
-			['box'  ,'objects','tables'       ,'111'   ,-1,B(1,0),B(4,0),     0, true, true,false,false,       0, 0,'VI'],
-			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(1,4),     0, true, true,false,false,       0, 0,'VI'],
-			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(4,2),     0, true, true,false,false,       0, 0,'BG'],
-			['phone','objects','phones'       ,'phone' , 1,B(4,5),B(4,2),D(1,0), true,false,false,false,       0, 0,'BG'],
-			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(2,2),     0, true, true,false,false,       0, 0,'VI'],
+			['tv'   ,'objects','computers'    ,'tv'    ,-1,B(1,0),B(4,1),D(1,0), true,false,false,false,'whitenoised', 0,'VI'],
+			['box'  ,'objects','tables'       ,'111'   ,-1,B(1,0),B(4,0),     0, true, true,false,false,0, 0,'VI'],
+			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(1,4),     0, true, true,false,false,0, 0,'VI'],
+			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(4,2),     0, true, true,false,false,0, 0,'BG'],
+			['phone','objects','phones'       ,'phone' , 1,B(4,5),B(4,2),D(1,0), true,false,false,false,0, 0,'BG'],
+			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(2,2),     0, true, true,false,false,0, 0,'VI'],
 			['lamp' ,'objects','lamps'        ,'lamp'  , 1,B(4,2),B(0,4),     0, true, true, true,false,'broken', 0,'VI'],
-			['ddude','people' ,'gangster_dude','dd_00N',-1,B(1,1),B(3,0),     0, true, true,false,false,       0, 0,'VI'],
-			['dude' ,'people' ,'gangster_dude','g0_01N',-1,B(4,2),B(0,4),     0,false, true, true,false,       0, 0,'VI']
+			['ddude','people' ,'gangster_dude','dd_00N',-1,B(1,1),B(3,0),     0, true, true,false,false,0, 0,'VI'],
+			['dude' ,'people' ,'gangster_dude','g0_01N',-1,B(4,2),B(0,4),     0,false, true, true,false,0, 0,'VI']
 			];
 		
 		// Floors
@@ -416,12 +472,13 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(walls);
 		
 		// Doors	
-		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'other_hotel_room_'+level,'rooms'        ,'door'    ,'front','open_always',1).concat(
+		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'other_hotel_room_'+level,'rooms'        ,'door'    ,'front',level==5?'open_always':'closed_always',1).concat(
 				putDoor(B( 6,0),B(LY,0),0, 1,1,'stairs_'+level          ,'rooms'        ,'door'    ,'front','closed'     ,1)).concat(
-				putDoor(B(LX,0),B( 5,0),0,-1,1,'toilet_'+level          ,'rooms'        ,'door'    ,'front','open',1)).concat(
+				putDoor(B(LX,0),B( 5,0),0,-1,1,'toilet_'+level          ,'rooms'        ,'door'    ,'front',level==5?'open':'closed',1)).concat(
 				putDoor(B(LX,0),B( 1,0),0,-1,1,'elevator'               ,'elevatorhotel','elevator','front','closed'     ,1)).concat(
-				putDoor(B( 2,0),B( 5,0),0, 1,1,'hotel_room_'+level      ,'rooms'        ,'door'    ,'back' ,'closed'     ,1));
+				putDoor(B( 2,0),B( 5,0),0, 1,1,'hotel_room_'+level,'rooms','door','back','closed'+(['1','5'].includes(level)?'':'_always'),1));
 		allstuff = allstuff.concat(doors);	
+		console.log([1,5].includes(level),level)
 
 	} else if (room == 'hotel_corridor_0') {  //----------------------------------------------------------------- LOBBY
 		
@@ -456,7 +513,7 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(putWallAround([[1,6],[1,5],[],[1,2]],'wall','room',true,LX,LY,0,0));
 		
 		// Doors	
-		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'impossible'    ,'rooms'        ,'door'     ,'front','closed'       ,0,1).concat(
+		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'dabox'    ,'rooms'        ,'door'     ,'front','closed'       ,0,1).concat(
 		        putDoor(B( 6,0),B(LY,0),0, 1,1,'stairs_0'      ,'rooms'        ,'door'     ,'front','closed'       ,0,1)).concat(
 				putDoor(B(LX,0),B( 5,0),0,-1,1,'toilet_0'      ,'rooms'        ,'door'     ,'front','closed'       ,0,1)).concat(
 				putDoor(B(LX,0),B( 1,0),0,-1,1,'elevator'      ,'elevatorhotel','elevator' ,'front','closed'       ,0,1)).concat(
@@ -487,15 +544,6 @@ function loadRoom(inroom) {
 		//allactions = allactions.concat([['sliderA' ,'sliders',['dwx','upy'],B(6,1),B(5,0),0,B(6,3),B(5,1)],
 		//								['sliderB' ,'sliders',['dwy','upx'],B(6,0),B(5,1),0,B(6,1),B(5,2)]]);
 
-		// teleporter between levels Move it strategically
-		/*allactions = allactions.concat([
-										['from012to234','changeroom', [screenLevel == 0 ? 'stairs_2' : 'stairs_0'] ,
-											B(1,4),B(0,0),60*2+(screenLevel == 0 ? 0 : -3),B(2,0),B(1,4)],
-										['from234to456','changeroom', [screenLevel == 2 ? 'stairs_4' : 'stairs_2'] ,
-											B(1,4),B(0,0),60*4+(screenLevel == 2 ? 0 : -3),B(2,0),B(1,4)],
-										['from456to6'  ,'changeroom', [screenLevel == 4 ? 'stairs_6' : 'stairs_4'] ,
-											B(1,4),B(0,0),60*6+(screenLevel == 4 ? 0 : -3),B(2,0),B(1,4)]
-									   ]);*/
 		allactions = allactions.concat([
 										['from012to234','changeroom', [screenLevel == 0 ? 'stairs_2' : 'stairs_0'] ,
 											B(2,4),B(3,4),60  +30-3+(screenLevel == 0 ? 0 : -3),B(3,0),B(5,0)],
@@ -507,12 +555,12 @@ function loadRoom(inroom) {
 									   
 
 		
-		// internal walls (mind the first floor distribution)
-		fakeWalls = [{'ID':'fake','X':B(1,2),'Y':B(1,4),'Z': 0,'XM':B(1, 4),'YM':B(4,-1),'ZM':12*6*6,'visible':false,'solid':true,'walkable':false},
-					 {'ID':'fake','X':B(1,4),'Y':B(3,4),'Z': 0,'XM':B(3, 4),'YM':B(4,-1),'ZM':12*6*6,'visible':false,'solid':true,'walkable':false},
-					 {'ID':'fake','X':B(3,4),'Y':B(1,4),'Z': 0,'XM':B(4,-1),'YM':B(4,-1),'ZM':12*6*6,'visible':false,'solid':true,'walkable':false},
+		// internal walls (mind the first floor distribution) // rehacer esta parte por el filtro de pantalla
+		fakeWalls = [{'ID':'fake','X':B(1,2),'Y':B(1,4),'Z': 0,'XM':B(1, 4),'YM':B(4,-1),'ZM':12*6*7,'visible':false,'solid':true,'walkable':false},
+					 {'ID':'fake','X':B(1,4),'Y':B(3,4),'Z': 0,'XM':B(3, 4),'YM':B(4,-1),'ZM':12*6*7,'visible':false,'solid':true,'walkable':false},
+					 {'ID':'fake','X':B(3,4),'Y':B(1,4),'Z': 0,'XM':B(4,-1),'YM':B(4,-1),'ZM':12*6*7,'visible':false,'solid':true,'walkable':false},
 					 {'ID':'fake','X':B(3,4),'Y':B(0,0),'Z': 0,'XM':B(3, 4),'YM':B(4,-1),'ZM':12*3  ,'visible':false,'solid':true,'walkable':false},
-					 {'ID':'fake','X':B(1,2),'Y':B(1,2),'Z':45,'XM':B(4,-1),'YM':B(1, 4),'ZM':12*6*6,'visible':false,'solid':true,'walkable':false}];
+					 {'ID':'fake','X':B(1,2),'Y':B(1,2),'Z':45,'XM':B(4,-1),'YM':B(1, 4),'ZM':12*6*7,'visible':false,'solid':true,'walkable':false}];
 		stuff['background'] = stuff['background'].concat(fakeWalls);
 		
 		// external walls (mind the door)
@@ -522,8 +570,8 @@ function loadRoom(inroom) {
 					 {'ID':'fake','X':B( 1,0),'Y':B( 0,0),'Z':0,'XM':B(LX,1),'YM':B( 0,1),'ZM':12*6*6,'visible':false,'solid':true,'walkable':false}];
 		stuff['background'] = stuff['background'].concat(fakeWalls);
 
-		var zmin = Math.max(0,level-3),
-		    zmax = Math.min(6,level+3);
+		var zmin = 0,
+		    zmax = 6;
 		for (var z=zmin; z<zmax; ++z) {
 			
 			var Z = z*5;
@@ -539,12 +587,11 @@ function loadRoom(inroom) {
 				allstuff = allstuff.concat([
 					['STAIRS0','structures','stairs','3halfsquare2halfhigh', 1,B(0,0),B(3,4),  0, true,false,false,false,0, 0,'VI'],
 					['STAIRS0','structures','stairs','stairs0leftwallA'    , 1,B(1,4),B(3,4),  0, true,false,false,false,0, 0,'VI'],
-					['STAIRS0','structures','stairs','stairs0leftwallB'    , 1,B(2,4),B(3,4),  0, true,false,false,false,0, 0,'VI'],
-					//['STAIRS0','structures','stairs','3halfsquare2halfhigh',-1,B(3,4),B(3,4), 15, true,false,false,false,0, 0,'VI'],			
-					['STAIRS0','structures','stairs','stairs0rightwallA'   ,-1,B(3,4),B(0,4),  0, true,false,false,false,0, 0,'VI'],			
+					['STAIRS0','structures','stairs','stairs0leftwallB'    , 1,B(2,4),B(3,4),  0, true,false,false,false,0, 0,'VI'],	
 					['STAIRS0','structures','stairs','stairs0rightwallA'   ,-1,B(3,4),B(1,4),  0, true,false,false,false,0, 0,'VI'],			
 					['STAIRS0','structures','stairs','stairs0rightwallB'   ,-1,B(3,4),B(2,4),  0, true,false,false,false,0, 0,'VI'],			
-					['STAIRS0','structures','stairs','3halfsquareveryhigh' ,-1,B(3,4),B(0,0),  0, true,false,false,false,0, 0,'VI']			
+					['STAIRS0','structures','stairs','3halfsquareveryhigh' ,-1,B(3,4),B(0,0),  0, true,false,false,false,0, 0,'VI'],			
+					['STAIRS0','structures','stairs','thingsonthewall'      ,-1,B(3,4),B(0,1), 7, true,false,false,false,0, 0,'VI']			
 				]);			
 				
 			}		
@@ -604,17 +651,64 @@ function loadRoom(inroom) {
 	
 	} else if (room.slice(0,-2)=='hotel_street') {  //------------------------------------------------- HOTEL STREET
 		
-		var level = [0,1,2,3].includes(room.slice(-1)) ? 0 : 6;
+		var level = room.slice(-1);
 		
+		if (level==0) {
+			I0 = 160,J0 = -60;
+		} else if (level==6) {
+			I0 = 210, J0 = -500;
+		} else if (level==1) {
+			I0 = 350,J0 = -140;
+		} else if (level==2) {
+			I0 = -50,J0 = -145
+		} else if (level==3) {
+			I0 = -150,J0 = -240;
+		} else {
+			I0 = 400, J0 = 4;
+		}
+		
+		// For teleporters: if guy arrives from the same room, use his XYZ as it is
+		if (preRoom.slice(0,-2)!='hotel_street') {
+			entryPoint['X']    = B( 6,6);
+			entryPoint['Y']    = B( 7,2);
+			entryPoint['Z']    = 3;
+			entryPoint['file'] = 'm0_01N';
+		} else {
+			entryPoint['X']    = guy.X;
+			entryPoint['Y']    = guy.Y;
+			entryPoint['Z']    = guy.Z;	
+			entryPoint['must'] = true;	
+		}		
+		
+		var delta  = (level==0?0:5);
+		var delta1 = (level==2?0:5);
+		allactions = allactions.concat([
+										['from0to1_3','changeroom', [level == 0 ? 'hotel_street_1' : 'hotel_street_0'] ,
+											B(4,0),B(13,4)-delta,3,B(6,0),B(13,5)-delta] ,
+										['from0to1_0','changeroom', [level == 0 ? 'hotel_street_1' : 'hotel_street_0'] ,
+											B(3,0),B(13,4)-delta,0,B(4,0),B(13,5)-delta] ,
+											
+										['from0to2_3','changeroom', [level == 0 ? 'hotel_street_2' : 'hotel_street_0'] ,
+											B(15,0)-delta,B(8,0),3,B(15,1)-delta,B(10,0)],
+										['from0to2_0','changeroom', [level == 0 ? 'hotel_street_2' : 'hotel_street_0'] ,
+											B(15,0)-delta,B(4,0),0,B(15,1)-delta,B(8,0)],
+											
+										['from2to3_3','changeroom', [level == 2 ? 'hotel_street_3' : 'hotel_street_2'] ,
+											B(26,0)-delta1,B(5,0),3,B(26,1)-delta1,B(11,0)],
+										['from2to3_0','changeroom', [level == 2 ? 'hotel_street_3' : 'hotel_street_2'] ,
+											B(26,0)-delta1,B(4,0),0,B(26,1)-delta1,B(5,0)]
+									   ]);
+									   
+		
+		// Ground base
 		var ground = tiles['panel']['blueprints']['RGB_hotelground'];
 		floors = createRoadSquaresFloorFromRGB(ground,0,-5,-5);
 		
-		I0 = 400,J0 = 4;		
-			
-		entryPoint['X']    = B(2,2);
-		entryPoint['Y']    = B(3,1);
-		entryPoint['Z']    = 0;
-		entryPoint['file'] = 'm0_01N';
+		// Fake Walls	
+		walls = walls.concat(putWallLine([],'x',3.5,34, 4.25,0,'wall','room',false,true,0,0,0));
+		walls = walls.concat(putWallLine([],'y',4.5,25, 3.25,0,'wall','room',false,true,0,0,0));
+		walls = walls.concat(putWallLine([],'x',3.5, 5,25,0,'wall','room',false,true,0,0,0));
+		walls = walls.concat(putWallLine([],'y',4.5, 6,33,0,'wall','room',false,true,0,0,0));		
 								
 		// Main Doors	
 		doors = putDoor(B(7,4) ,B(10,0),3, 1,2,'hotel_corridor_0','maindoorhotel','automatic','front','closed',1);
@@ -624,7 +718,7 @@ function loadRoom(inroom) {
 						['cars','structures','vehicles','taxi'      , 1,B(13,0),B( 6,-2),0,true, true,false,false,0,0,'VI'],
 						['cars','structures','vehicles','taxi'      , 1,B(20,0),B( 6,-4),0,true, true,false,false,0,0,'VI'],
 						['cars','structures','vehicles','heisenberg',-1,B(24,0),B(11,4),0,true,false,false,false,0,0,'BG'],
-						['cars','structures','vehicles','normal'    ,-1,B(20,4),B(11,7),0,true,false,false,false,0,0,'BG'],
+						['cars','structures','vehicles','normal'    ,-1,B(20,6),B(11,7),0,true,false,false,false,0,0,'BG'],
 						['cars','structures','vehicles','limo'      , 1,B( 6,0),B(2,3),0,true,true,false,false,0,0,'VI'],
 		]);
 		
@@ -662,8 +756,6 @@ function loadRoom(inroom) {
 		['fence','walls','fence','10' ,1,B(27,0),B(10,4),0,true,true,false,false,0,0,'BG']
 								]);
 
-		
-		
 		allstuff = allstuff.concat([
 			['stuff','structures','street','parking'     , 1,B(26,0),B( 6,0), 3,true, true,false,false,0,0,'VI'],
 			['stuff','structures','street','light'       ,-1,B(21,0),B( 8,4), 3,true, true,false,false,0,0,'VI'],
@@ -671,16 +763,17 @@ function loadRoom(inroom) {
 			['stuff','structures','street','postbox'     , 1,B(15,5),B( 9,4), 3,true, true,false,false,0,0,'VI'],
 			['stuff','structures','street','trafficlight', 1,B( 4,4),B( 9,0), 3,true, true,false,false,0,0,'VI'],
 			['stuff','structures','street','light'       , 1,B( 4,4),B(13,4), 3,true, true,false,false,0,0,'VI'],
-			['stuff','structures','street','light'       , 1,B( 4,4),B(23,4), 3,true, true,false,false,0,0,'VI'],
+			['stuff','structures','street','light'       , 1,B( 4,4),B(23,0), 3,true, true,false,false,0,0,'VI'],
 			['stuff','structures','street','container'   ,-1,B( 5,1),B(23,0), 3,true, true,false,false,0,0,'VI'],
 			['stuff','structures','street','container'   ,-1,B( 5,0),B(24,5), 3,true, true,false,false,0,0,'VI'],
-			['stuff','structures','street','muelle'      , 1,B( 5,5),B(15,5),12,true,false,false,false,0,0,'VI'],
+			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(15,7),D(1,3),true,false,false,false,0,0,'VI'],
+			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(14,2),D(1,3),true,false,false,false,0,0,'VI'],
+			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(12,7),D(1,2),true,false,false,false,0,0,'VI'],
 			['stuff','structures','street','pasadena_hotel_83',1,B(6,5),B(9,-1),D(4,3),true,false,false,false,0,0,'VI'],
 			['stuff','objects'   ,'plants','05051'       , 1,B( 6,6),B( 9,2), 3,true, true,false,false,0,0,'VI'],
 			['stuff','objects'   ,'plants','05051'       , 1,B( 9,6),B( 9,2), 3,true, true,false,false,0,0,'VI']
 		]);
-		
-		
+				
 		
 		// Walls 
 		
@@ -698,6 +791,8 @@ function loadRoom(inroom) {
 			walls.push(['fence','walls','fence','00',-1,B(6,4),B(22+x,0),3,true, true,false,false,0,0,'BG']);
 			walls.push(['fence','walls','fence','00', 1,B(5+x,4),B(30,0),3,true,false,false,false,0,0,'BG']);	
 		}
+		
+		// TRAIN
 
 		// concrete
 		walls.push(['trainwall','walls','concrete','10shadow' ,1,B(32,0),B(5,0),0,true, true,false,false,0,0,'BG']);
@@ -710,7 +805,7 @@ function loadRoom(inroom) {
 			walls.push(['trainwall','walls','concrete','00A',-1,B(32,0),B(7+4*x,0),0,true, true,false,false,0,0,'BG']);
 			walls.push(['trainwall','walls','concrete','01' ,-1,B(32,0),B(8+4*x,0),0,true, true,false,false,0,0,'BG']);			
 		}
-		for (var x=0; x<4; ++x) walls.push(['lisghts','structures','street','lights' ,1,B(32,-2),B(3+12*x,3),D(8,1),true, false,false,false,0,0,x==0?'VI':'BG']);	
+		for (var x=0; x<4; ++x) walls.push(['lisghts','structures','street','lights' ,1,B(32,-2),B(1+12*x,3),D(8,1),true, false,false,false,0,0,x==0?'VI':'BG']);	
 		
 		// train
 		for (var x=-2; x<11; ++x) {
@@ -775,10 +870,10 @@ function loadRoom(inroom) {
 		
 		Z=Z+2.5;
 		// Roof Floors
-		floors   = floors.concat(putSquareFloor( 6.5,11,10.5,22,D(Z,3),'floor','road','00',true,0,'VI'));
-		floors   = floors.concat(putSquareFloor(11.5,12,10.5,13,D(Z  ,3),'floor','road','00',true,0,'VI')); // SPACE FOR STAIRS
-		floors   = floors.concat(putSquareFloor(11.5,12,14  ,18,D(Z-2,3),'floor','road','00',true,0,'BG')); // FLOOR FOR STAIRS
-		floors   = floors.concat(putSquareFloor(12.5,16,10.5,21,D(Z  ,3),'floor','road','00',true,0,'BG'));
+		floors   = floors.concat(putSquareFloor( 6.5,11,10.5,22,D(Z,3),'floor','road','00',true,'roaded','VI'));
+		floors   = floors.concat(putSquareFloor(11.5,12,10.5,13,D(Z  ,3),'floor','road','00',true,'roaded','VI')); // SPACE FOR STAIRS
+		floors   = floors.concat(putSquareFloor(11.5,12,14  ,18,D(Z-2,3),'floor','road','00',true,'roaded','BG')); // FLOOR FOR STAIRS
+		floors   = floors.concat(putSquareFloor(12.5,16,10.5,21,D(Z  ,3),'floor','road','00',true,'roaded','BG'));
 		floors.push(['floor','floors','hotelfloor','00',1,B(14,2),B(14,6),D(Z,3),true,false,false,false,0,0,'VI']);
 		floors.push(['floor','floors','hotelfloor','00',1,B(9,0),B(14,4),D(Z,3),true,false,false,false,0,0,'VI']);
 		floors.push(['floor','floors','hotelfloor','00',1,B( 7,4),B(17,0),D(Z,3),true,false,false,false,0,0,'VI']);
@@ -826,30 +921,39 @@ function loadRoom(inroom) {
 		
 		Z=6*5+5;
 		// Roof Floors
-		floors   = floors.concat(putSquareFloor(11.5,16,17.5,22,D(Z,3),'floor','road','00',true,0,'BG'));
+		floors   = floors.concat(putSquareFloor(11.5,16,17.5,22,D(Z,3),'floor','road','00',true,'roaded','BG'));
 		
 		// ---------------------------------------- ROOF STUFF <<
 		
 		
 		allstuff = allstuff.concat(floors);	
 		allstuff = allstuff.concat(walls); 
-		allstuff = allstuff.concat(doors);      
-				
-	
+		allstuff = allstuff.concat(doors);  
+
 	}
 
 	
 	// SHIT ENDS HERE -----------------------------------------------------------------------------
 
-	
+	// Consolide all stuff
 	makeStuff(allstuff);
-	putGuyAtRoom(entryPoint,entryPreDoor,entryPoint);
 	completeStuff(LX,LY,I0,J0);	
-	//sortMobile(false);
+	
+	// Keep only what is in the screen
+	stuff['background'] = stuff['background'].filter(st => doOverlap(st,{'I0':0,'J0':0,'IM':320,'JM':180}) || st['ID']=='fake' );
+	stuff['front'] = stuff['front'].filter(st => doOverlap(st,{'I0':0,'J0':0,'IM':320,'JM':180}) || st['ID']=='fake' );
+	
+	// Now the guy;
+	putGuyAtRoom(entryPoint,entryPreDoor,entryPoint);
+	completeStuffItem(guyIndex,LX,LY,I0,J0);	
+		
+	// All other things
 	makeText(alltext);
 	makeActions(allactions);	
 	console.log(actions)
 	makeSpace();
+		
+
 }
 
 function putGuyAtRoom(entryPoint,entryPreDoor,entryPoint) {
@@ -897,8 +1001,10 @@ function putGuyAtRoom(entryPoint,entryPreDoor,entryPoint) {
 		}
 	}
 	
-	
-	makeStuff([['guy','people',guy.folder,guy.file,1,guy.X,guy.Y,guy.Z,true,false,true,false,guy.state,-1,'VI']]);
+	var txt = ['guy','people',guy.folder,guy.file,1,guy.X,guy.Y,guy.Z,true,false,true,false,guy.state,-1,'VI']
+	stuff['front'].push({'ID':txt[0],'type':txt[1],'folder':txt[2],'file':txt[3],'spin':txt[4],'X':txt[5],'Y':txt[6],'Z':txt[7],
+							'visible':txt[8],'solid':txt[9],'mobile':txt[10],'walkable':txt[11],'state':txt[12],'order':txt[13]});
+	guyIndex = stuff['front'].length-1;
 	
 	console.log('entry:',guy['ID'],guy['X'],guy['Y'],guy['Z']);
 }

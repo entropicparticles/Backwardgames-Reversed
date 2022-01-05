@@ -123,13 +123,13 @@ function makeActions(allactions){
 
  // PROCEDURES FOR WALLS, FLOORS AND DOORS --------------------------------------------------------
  
-function putSquareFloor(lx0,lx,ly0,ly,z,ids,b,c,vi,rank,bg) {
+function putSquareFloor(lx0,lx,ly0,ly,z,ids,b,c,vi,state,bg) {
 	
 	var array = [];	
 	for (var x=lx0; x<lx; ++x) {
 		for (var y=ly0; y<ly; ++y) {
 			array.push(
-				[ids,'floors',b,c,1,B(x,0),B(y,0),z,true,false,false,vi,0,rank,bg]
+				[ids,'floors',b,c,1,B(x,0),B(y,0),z,true,false,false,vi,state,0,bg]
 			);
 		}
 	}	
@@ -138,10 +138,10 @@ function putSquareFloor(lx0,lx,ly0,ly,z,ids,b,c,vi,rank,bg) {
 
 function putWallAround(door,fol,fil,vis,LX,LY,z,rank) {
 	
-		var	walls =          putWallLine(door[0],'x',z,LX,LY,0,fol,fil,  vis,true,rank,0,0);
-		walls = walls.concat(putWallLine(door[3],'x',z,LX, 0,0,fol,fil,false,true,rank,0,0));
-		walls = walls.concat(putWallLine(door[1],'y',z,LY,LX,0,fol,fil,  vis,true,rank,0,0));
-		walls = walls.concat(putWallLine(door[2],'y',z,LY, 0,0,fol,fil,false,true,rank,0,0));
+		var	walls =          putWallLine(door[0],'x',0,LX,LY,z,fol,fil,  vis,true,rank,0,0);
+		walls = walls.concat(putWallLine(door[3],'x',0,LX, 0,z,fol,fil,false,true,rank,0,0));
+		walls = walls.concat(putWallLine(door[1],'y',0,LY,LX,z,fol,fil,  vis,true,rank,0,0));
+		walls = walls.concat(putWallLine(door[2],'y',0,LY, 0,z,fol,fil,false,true,rank,0,0));
 		return walls;	
 		
 }
@@ -268,7 +268,7 @@ function createRoadSquaresFloorFromRGB(ground,z,lx,ly) {
 				
 				if (road) {
 					
-					floors.push(['road','floors','road','00',1,B(lx+x,0),B(ly+dy-y,0),z,true,false,false,true,0,0,'BG']);
+					floors.push(['road','floors','road','00',1,B(lx+x,0),B(ly+dy-y,0),z,true,false,false,true,'roaded',0,'BG']);
 				
 				} else {
 					
@@ -326,6 +326,7 @@ function createRoadSquaresFloorFromRGB(ground,z,lx,ly) {
 					     ground['png'].slice(sw,sw+4))
 					console.log(file)
 					*/
+					//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 					floors.push(['road','floors','squares',file,spin,B(lx+x,0),B(ly+dy-y,0),z,true,false,false,true,0,0,squaresBG ? 'BG' : 'VI']);					
 				}
 			}
