@@ -165,7 +165,7 @@ function givemeColors(row) {
 		ra =  [ [r+a*0.8,cl(0.8+a2/10),a2  ],   // ligtht
 		        [r+a*0.8,1           ,a2/5]];  // dark
 				
-	} else if (room.slice(0,-2)=='toilet') {  //------------------------------------------------------------------------ OTHER ROOMS
+	} else if (room.slice(0,-2)=='toilet') {  //-------------------------------------------------------- TOILET
 	
 		var r = 175+(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5-room.slice(-1)*5;
 		r = (r%255)/255;
@@ -252,7 +252,36 @@ function givemeColors(row) {
 				
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark
-	} else {  //------------------------------------------------------------------------ OTHER ROOMS
+				
+	} else if (room=='other_hotel_room_5') {  //--------------------------------------------- OTHER ROOM 5
+	
+		var rng = new RNG(t);
+		
+		var r = 245-(XYZ2J(-X,Y,0)/XYZ2J(5,5,0))*2;
+		r = (r%255)/255;
+		
+		//f1 = room['globalsets']['lamp']
+		f1 = [0,1][0];
+		
+		if (!row) {
+			var a = 0.95;
+		} else {
+			var L = 8;
+			var T = (32*(8-t))%255//Math.max(32*t%255,32*(t-8)%255);
+			var p = 8;
+			var T = (1 - 2*Math.abs(Math.round(t/p)-t/p))*0.5+0.2+0.1*rng.nextFloat();
+			var a  = gauss([X,Y],[1*L,4*L],3*L)*T*255 +  //tv
+					 gauss([X,Y],[3*L,3*L],3*L)*50 + //centre
+					 gauss([X,Y],[4*L,0],2*L)*10; //lamp
+			a = cl(a/255);
+			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
+		}  
+				
+		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
+		        [r,1            ,a/4]];  // dark
+				
+				
+	} else {  //------------------------------------------------------------------------ OTHERS
 	
 		var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
 		r = (r%255)/255;

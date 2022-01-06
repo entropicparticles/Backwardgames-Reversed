@@ -387,12 +387,11 @@ function loadRoom(inroom) {
 		allstuff = [
 			['tv'   ,'objects','computers'    ,'tv'    ,-1,B(1,0),B(4,1),D(1,0), true,false,false,false,'whitenoised', 0,'VI'],
 			['box'  ,'objects','tables'       ,'111'   ,-1,B(1,0),B(4,0),     0, true, true,false,false,0, 0,'VI'],
-			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(1,4),     0, true, true,false,false,0, 0,'VI'],
-			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(4,2),     0, true, true,false,false,0, 0,'BG'],
-			['phone','objects','phones'       ,'phone' , 1,B(4,5),B(4,2),D(1,0), true,false,false,false,0, 0,'BG'],
-			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(2,2),     0, true, true,false,false,0, 0,'VI'],
+			['table','objects','tables'       ,'05051' ,-1,B(4,4),B(2,4),     0, true, true,false,false,0, 0,'VI'],
+			['phone','objects','phones'       ,'phone' , 1,B(4,4),B(2,4),D(1,0), true,false,false,false,0, 0,'BG'],
+			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(3,2),     0, true, true,false,false,0, 0,'VI'],
 			['lamp' ,'objects','lamps'        ,'lamp'  , 1,B(4,2),B(0,4),     0, true, true, true,false,'broken', 0,'VI'],
-			['ddude','people' ,'gangster_dude','dd_00N',-1,B(1,1),B(3,0),     0, true, true,false,false,0, 0,'VI'],
+			['ddude','people' ,'gangster_dude','dd_00N',-1,B(1,-2),B(2,3),     0, true, true,false,false,0, 0,'VI'],
 			['dude' ,'people' ,'gangster_dude','g0_01N',-1,B(4,2),B(0,4),     0,false, true, true,false,0, 0,'VI']
 			];
 		
@@ -406,6 +405,10 @@ function loadRoom(inroom) {
 		// Doors	
 		doors = putDoor(B(1,0),B(0,0),0,1,1,'hotel_corridor_5','rooms','door','back','open_always',10,2);
 		allstuff = allstuff.concat(doors);	
+		
+		for (var k=0;k<allstuff.length;++k) {
+			allstuff[k][14] = 'VI';
+		}
 		
 	} else if (room.slice(0,-2)=='toilet') {  //------------------------------------------------- TOILET
 		
@@ -769,6 +772,7 @@ function loadRoom(inroom) {
 			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(15,7),D(1,3),true,false,false,false,0,0,'VI'],
 			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(14,2),D(1,3),true,false,false,false,0,0,'VI'],
 			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(12,7),D(1,2),true,false,false,false,0,0,'VI'],
+			['stuff','structures','street','postersonthewall',-1,B( 6,0),B(11,2),D(1,3),true,false,false,false,0,0,'VI'],
 			['stuff','structures','street','pasadena_hotel_83',1,B(6,5),B(9,-1),D(4,3),true,false,false,false,0,0,'VI'],
 			['stuff','objects'   ,'plants','05051'       , 1,B( 6,6),B( 9,2), 3,true, true,false,false,0,0,'VI'],
 			['stuff','objects'   ,'plants','05051'       , 1,B( 9,6),B( 9,2), 3,true, true,false,false,0,0,'VI']

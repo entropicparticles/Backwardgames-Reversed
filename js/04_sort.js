@@ -128,6 +128,8 @@ function printAllIsometric(objects,which) {
 			if (row['spin']==-1) tilerow['png'] = inverted(tilerow);
 			var rowt = {...row, ...tilerow};
 			
+			rowt['png'] = specialEffects(rowt,k);
+			
 			// loop for all the other objects to be drawn and check those with tile overlap
 			for (var q=0;q<objects.length; q+=1) {
 				obj = objects[q];
@@ -150,7 +152,6 @@ function printAllIsometric(objects,which) {
 				} 
 			}
 			
-			rowt['png'] = specialEffects(rowt,k);
 			
 			// get the colors and draw it at the canvas
 			var the3colors = givemeColors(rowt);
