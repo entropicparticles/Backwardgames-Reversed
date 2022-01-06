@@ -336,30 +336,37 @@ function loadRoom(inroom) {
 	
 		menuIndex   = 0;
 		objectIndex = 0;
-		objects     = ['mano','gun','maletin','roomkey']
+		//objects     = ['mano','gun']
 		
 		LX = 5, LY = 5;
 		
-		entryPoint['X']    = B(2,3);
+		entryPoint['X']    = B(2,4);
 		entryPoint['Y']    = B(0,1);
 		entryPoint['Z']    = 0;
-		entryPoint['file'] = 'm0_01N';
+		entryPoint['file'] = '00_01N';
+		
+		// take the case
+		allactions = allactions.concat([['case'   ,'takethecase',[B(2,2),B(2,4)],B(2,2),B(2,2),0,B(2+1,6),B(3+1,0)],
+										['startit','walkout',[preRoom!='hotel_corridor_5']]
+										]);
 				
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
+		// put maletin if the guy doesn't have it already
+		var cased = !objects.includes('maletin');
 		allstuff = [
-			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(0,0),B(1,0),     0,true, true,false,false,   0, 0,'VI'],
-			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,5),     0,true, true,false,false,   0, 0,'VI'],
-			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0,true, true,false,false,   0, 0,'BG'],
-			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0),true,false,false,false,   0, 0,'BG'],
-			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0,true, true,false,false,   0, 0,'VI'],
-			['lamp' ,'objects'   ,'lamps'      ,'lamp'   , 1,B(0,2),B(4,2),     0,true, true,false,false,'on', 0,'VI'],
-			['lock' ,'objects'   ,'lockers'    ,'00'     ,-1,B(4,6),B(0,4),D(0,6),true,false,false,false,   0, 0,'BG'],
-			['case' ,'objects'   ,'case'       ,'maletin', 1,B(2,1),B(2,4),D(0,6),true,false,false,false,   0, 0,'VI'],
-			['case' ,'structures','hotelwindow','window' , 1,B(1,0),B(0,-1),    0,true,false,false,false,   0, 0,'VI'],
-			['case' ,'structures','hotelwindow','brillo' , 1,B(1,0),B(0,-1),    0,true,false,false,false,   0, 0,'BG'],
-			['dude' ,'people'    ,'drug_dealer','g0_01N' , 1,B(1,1),B(3,5) ,    0,true, true,false,false,   0, 0,'VI'],
-			['girl' ,'people' ,'kidnapped_girl','0_01N'  ,-1,B(4,2),B(0,4) ,    0,true, true,false,false,   0, 0,'VI']
+			['box'  ,'objects'   ,'tables'     ,'111'    ,-1,B(0,0),B(1,0),     0, true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(1,5),     0, true, true,false,false,   0, 0,'VI'],
+			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0, true, true,false,false,   0, 0,'BG'],
+			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0), true,false,false,false,   0, 0,'BG'],
+			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0, true, true,false,false,   0, 0,'VI'],
+			['lamp' ,'objects'   ,'lamps'      ,'lamp'   , 1,B(0,2),B(4,2),     0, true, true,false,false,'on', 0,'VI'],
+			['lock' ,'objects'   ,'lockers'    ,'00'     ,-1,B(4,6),B(0,4),D(0,6), true,false,false,false,   0, 0,'BG'],
+			['case' ,'objects'   ,'case'       ,'maletin', 1,B(2,2),B(2,4),     0,cased,false,false,false,0,0,'VI'],
+			['win'  ,'structures','hotelwindow','window' , 1,B(1,0),B(0,-1),    0, true,false,false,false,   0, 0,'VI'],
+			['win'  ,'structures','hotelwindow','brillo' , 1,B(1,0),B(0,-1),    0, true,false,false,false,   0, 0,'BG'],
+			['dude' ,'people'    ,'drug_dealer','g0_01N' , 1,B(1,1),B(3,1) ,    0, true, true,false,false,   0, 0,'VI'],
+			['girl' ,'people' ,'kidnapped_girl','0_01N'  ,-1,B(4,2),B(0,4) ,    0, true, true,false,false,   0, 0,'VI']
 			];
 		
 		// Floors

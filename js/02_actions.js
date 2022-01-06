@@ -89,7 +89,7 @@ function walking(step,indk) {
 				im = stuff['front'][indk];
 				console.log(n,'>',stuff['front'][indk]['ID'],stuff['front'][indk]['X'],stuff['front'][indk]['Y'],stuff['front'][indk]['Z'],
 								  [Math.floor(stuff['front'][indk]['X']/8),Math.floor(stuff['front'][indk]['Y']/8),Math.floor(stuff['front'][indk]['Z']/8)],dz)
-				updateAction();	
+				//updateAction();	
 				if (firstEntry) break; //stop loop if room changed
 				
 			} else {
@@ -101,8 +101,45 @@ function walking(step,indk) {
 		}		
 	}
 	
-	
 }
+
+// walk form an itial point to a destination point in manhattan metric without obstacles
+function walkThereFrom(whoIndex,x0,y0,x,y,n,first) {
+	
+	var X = x - x0,
+		Y = y - y0;
+	//console.log('X',X,'Y',Y)
+		
+	var step = X>0?'upx'+n:'dwx'+n;
+	var xmove = [];
+	for (var k=0;k<Math.abs(X);++k) xmove.push('walking("'+step+'",'+whoIndex+')');
+	
+	var step = Y>0?'upy'+n:'dwy'+n;
+	var ymove = [];
+	for (var k=0;k<Math.abs(Y);++k) xmove.push('walking("'+step+'",'+whoIndex+')');
+	
+	var allmoves = [];
+	if (first=='x') {
+		allmoves = xmove.concat(ymove);
+	} else if (first=='y') {
+		allmoves = ymove.concat(xmove);		
+	} else if (Math.abs(X)>Math.abs(Y)) {
+		allmoves = xmove.concat(ymove);		
+	} else {
+		allmoves = ymove.concat(xmove);			
+	}
+	
+	//console.log(allmoves)
+	return allmoves;
+}
+
+// walk to a destination point in manhattan metric without obstacles
+function walkThere(whoIndex,x,y,n,first) {
+	var g = stuff['front'][whoIndex];
+	return walkThereFrom(whoIndex,g.X,g.Y,x,y,n,first);	
+}
+
+// DOOR ACTION STUFF >>>>>>>>>>>>>>>>>>>
 
 function sliders(col,Zbol,acton,key1,key2) {
 	if (col&Zbol) {
@@ -223,6 +260,12 @@ function verynormaldoor(col,Zbol,actOn,id) {
 	}	
 }
 
+
+// DOOR ACTION STUFF <<<<<<<<<<<<<<<<<<<<<<<
+
+
+// SPECIAL ACTIONS/ROOMS >>>>>>>>>
+
 function menuCover() {
 	
 	// write start menu
@@ -269,8 +312,81 @@ function elevatorMirror(){
 }
 
 
-function cameraZ() {
+// FUNCTIONS RELATED WITH CHANGES IN STUFF STATE >>>>>
+
+function getObject(item) {
+	if (objects.includes(item)) {
+		objects.splice(objects.indexOf(item),1);
+		objectIndex = 0;
+	} else {
+		objects.push(item);
+	}
+}
+
+function setFile(file,ind) {
+	stuff['front'][ind]['file'] = file;
+}
+
+function hideshowItem(id,solid) {	
+
+	var items = stuff['front'].flatMap((it, i) => it['ID'] == id ? i : []);
+	//console.log(items)
+	for (var k=0;k<items.length;++k) {
+		stuff['front'][items[k]]['visible'] = !stuff['front'][items[k]]['visible'];
+		if (solid) stuff['front'][items[k]]['solid']   =  stuff['front'][items[k]]['visible'];
+	}
+	//console.log(stuff['front'][items[0]])
 	
+}
+
+// FOR CINEMATICS join any new cinematics to the one running at that moment
+function setCinematics(newcine) {
+	cinematics = newcine.concat(cinematics)
+	blockKeys  = true;
+	actionOn   = false;
+}
+
+// CINEMATIC EVENTS >>>>>>>>>>>>>>>>>>>>>>>>>
+function takethecase(col,Zbol,actOn,X,Y) {
+	
+	if (col&&Zbol&&actOn&&(!objects.includes('maletin')||objects[objectIndex]=='maletin')) {		
+
+		var file = stuff['front'][guyIndex]['file'].slice(0,2)=='00'?'m0_01N':'00_01N';
+		var walkit = walkThere(guyIndex,X+2,Y,1,0);
+		var takeit = ['walking("upy0",guyIndex)',
+					  'walking("stp0",guyIndex)',
+					  'setFile("w0_01N",guyIndex)',
+					  'hideshowItem("case",false)',
+					  'setFile("'+file+'",guyIndex);getObject("maletin")'];
+		setCinematics(walkit.concat(takeit));
+		console.log(cinematics)
+	
+	}
+
+}
+
+// Take the case and leave the room
+function walkout(col,Zbol,actOn,startgame) {
+	if (startgame&&actOn) {
+		// 1. walk and take the maletin
+		// 2. walk to the door, open it
+		// 3. go and close the door, get the key
+		// 4. move forward and stops
+		
+		var walkit1 = walkThere(guyIndex,B(2,4),B(2,4),1,0);
+		var walkit2 = walkThereFrom(guyIndex,B(2,4),B(2,4),B(2,4),B(4,4),1,0);
+		var walkit8 = Array(8).fill('walking("upy1",guyIndex)')
+		var act = ['actionOn=true'];
+		setCinematics(
+					  walkit1.concat(act)
+					  .concat(walkit2).concat(act)
+					  .concat(walkit8).concat('walking("stp0",guyIndex)').concat(act)
+					  .concat('getObject("roomkey")')
+					  .concat(walkit8)
+					  );
+		console.log(cinematics);
+		
+	}
 }
 
 

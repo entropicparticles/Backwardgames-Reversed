@@ -38,11 +38,14 @@ var LI = 320, LJ = 180, width, height, scale;
 
 // time, chapter, rooms, room or cover?
 var t, chapter, room, preRoom, RGBcover=0;
+
 // first frame in the room? first time in teleporter because you just apperaed there?
-var firstEntry = true, firstTimeOnTeleporter = true;
+var firstEntry = true, 
+	firstTimeOnTeleporter = true;
 
 // Objects
-var objects = ['mano','gun','maletin','roomkey'];
+var objects = ['mano','gun'], 
+    objectIndex = 0;
 
 // List of text and properties
 var listText = [];
@@ -51,23 +54,26 @@ var listText = [];
 var actions = [];
 
 // List of stuff in the room. Index to find the guy in the list. The guy.
-var stuff = {'background':[],'front':[]};
-var guyIndex;
-var guy   = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
-var space = {'open':[],'solid':[]};
+var stuff = {'background':[],'front':[]},
+	guyIndex,
+	guy   = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0},
+	space = {'open':[],'solid':[]};
 
 // Keys down and other control variables
-var keys = [];
-var mute  = false;
-var pause = false;
-var blockKeys = false;
-var menuIndex, objectIndex, songIndex;
+var keys = [],
+	mute  = false,
+	pause = false,
+	menuIndex, songIndex;
 
 // Actions are on? and other action stuff
 var actionOn  = false; keyOn = 'stp0';
 
+// Cinematics? Array witha sequence of actions. Keep keys block during cinematics.
+var cinematics = [], 
+	blockKeys = false;
+
 // debugging
-var tempo=0,n=0;
+var tempo=0,nt=0;
 
 
 // Pixel functions ----------------------------------------------------------------------------------
@@ -133,7 +139,7 @@ function start() {
 	height = canvas.height;
 	
 	// Set CSS size
-	scale = 1;
+	scale = 2;
 	setSize3()
 	
 	// Initiate time
@@ -155,9 +161,10 @@ function start() {
 	//music.play();
 	
 	// enter in the room for the first time
+	objects = ['mano','gun'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["other_hotel_room_5"]}]; 
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_room_5"]}]; 
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -178,7 +185,7 @@ function updateit() {
 	updateKeys();	
 	updateMusic();
 	if (!pause) {	
-		walkingGuy();
+		if (!blockKeys) walkingGuy();
 		updateAction();	
 		updateImage();
 	}
@@ -193,25 +200,25 @@ function updateKeys() {
 		keys[e.keyCode] += 1;
 		
 		// Pause, mute, +, - : have efect only the first time
-		if        ( keys[actionKeys.pause] == 1 ) {
+		if        ( keys[actionKeys.pause] == 1 ) {                           // PAUSE
 			pause = !pause;
-		} else if ( keys[actionKeys.mute ] == 1 && !pause ) {
+		} else if ( keys[actionKeys.mute ] == 1 && !pause ) {                 // MUTE MUSIC
 			mute = !mute;			
-		} else if ( keys[actionKeys.plus ] == 1 ) {
+		} else if ( keys[actionKeys.plus ] == 1 ) {                           // RESOLUTION UP
 			scale += 1;		
-		} else if ( keys[actionKeys.minus] == 1 ) {
+		} else if ( keys[actionKeys.minus] == 1 ) {                           // RESOLUTION DOWN
 			scale = Math.max(1,scale-1);
-		} else if ( keys[actionKeys.next] == 1 && !pause ) {
+		} else if ( keys[actionKeys.next] == 1 && !pause ) {                  // NEXT SONG
 			songIndex = (songIndex+1)%songs.length;
-		} else if ( keys[actionKeys.up]   == 1 && !pause && !blockKeys ) {
+		} else if ( keys[actionKeys.up]   == 1 && !pause && !blockKeys ) {    // MENU UP
 			menuIndex = Math.min(2,menuIndex+1);
-		} else if ( keys[actionKeys.down] == 1 && !pause && !blockKeys ) {
+		} else if ( keys[actionKeys.down] == 1 && !pause && !blockKeys ) {    // MENU DOWN
 			menuIndex = Math.max(0,menuIndex-1);
-		} else if ( keys[actionKeys.right]   == 1 && !pause ) {
+		} else if ( keys[actionKeys.right] == 1 && !pause ) {                 // OBJECT RIGHT
 			objectIndex = Math.min(objects.length-1,objectIndex+1);
-		} else if ( keys[actionKeys.left] == 1 && !pause ) {
+		} else if ( keys[actionKeys.left]  == 1 && !pause ) {                 // OBJECT LEFT
 			objectIndex = Math.max(0,objectIndex-1);
-		} else if ( keys[actionKeys.act] == 1 && !pause ) {
+		} else if ( keys[actionKeys.act] == 1 && !pause && !blockKeys  ) {    // ACTION
 			actionOn = !actionOn;	
 		}		
 		
@@ -265,20 +272,35 @@ function updateMusic() {
 
 function updateAction() {
 	
-	// Evaluate actions
+	
+	// Evaluate cinematics if it's on
+	if (cinematics.length>0) {
+		
+		//console.log(t,'A',cinematics.length,blockKeys,cinematics[0])
+		eval(cinematics[0]+';');
+		cinematics.shift();
+		blockKeys = !(cinematics.length==0);
+		
+	}
+	
+	// Evaluate actions array
 	for (var k=0; k<actions.length; ++k) {
 		
+		// Get guys position in case
+		var g = stuff['front'][guyIndex];
+		// get action and check collision if needed
 		var act  = actions[k];
-		var g    = stuff['front'][guyIndex];
 		var col  = 'Z' in act ? collision(g,act) : true ;
-		var Zbol = 'Z' in act ? g.Z==act.Z             : true ;
+		var Zbol = 'Z' in act ? g.Z==act.Z       : true ;
 		
-		// add collision and Z as arguments to evaluate. Check strings in the argument list
+		// add collision and Z as arguments to evaluate. Check numbers and strings in the argument list
 		var args = [col,Zbol,actionOn];
 		var argsact = act['arguments'].map(function(x){return (typeof x === 'string' || x instanceof String) ? '"'+x+'"' : x });
 		
+		// evaluate the function, taking care of the JS syntax
 		eval(act['function']+'('+args.concat(argsact).join(',')+')');
 	}	
+		
 	actionOn = false;
 
 		
@@ -299,9 +321,9 @@ function drawCanvasTime(bo) {
 		drawCanvas()
 		var endTime = performance.now()
 		tempo += endTime - startTime
-		++n
+		++nt
 		console.log(`Call createImage ${endTime - startTime} ms`)
-		console.log(tempo/n)	
+		console.log(tempo/nt)	
 	} else { 
 		drawCanvas(); 
 	}

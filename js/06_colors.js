@@ -149,13 +149,18 @@ function givemeColors(row) {
 	
 	} else if (room.slice(0,-2)=='hotel_street') { //--------------------------------- HOTEL STREET
 		
-		var r = 50-(20*X+20*(Y-8*4)+Z)/200;
-		r = (r%255)/255;
 		
 		if (!row) {
-			var a  = 0.95;
+			
+			var r = 0.12;
+			var a  = 1;
 			var a2 = a;
+			
 		} else {
+			
+			var r = 50-(20*X+20*(Y-8*4)+Z)/200;
+			r = (r%255)/255;
+			
 			var a  = 235-(XYZ2J(X,Y,0)/XYZ2J(35,35,0))*20;
 			a = (a%255)/255;
 			a = cl(a);
@@ -281,6 +286,21 @@ function givemeColors(row) {
 		        [r,1            ,a/4]];  // dark
 				
 				
+	} else if (room.slice(0,-2)=='hotel_corridor') {  //--------------------------------------- HOTEL CORRIDOR
+	
+		if (!row) {
+			var r = 0.9;
+			var a = 0.95;
+		} else {
+			var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
+			r = (r%255)/255;
+			var a = cl(220/255);
+			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
+		}  
+				
+		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
+		        [r,1            ,a/4]];  // dark
+				
 	} else {  //------------------------------------------------------------------------ OTHERS
 	
 		var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
@@ -290,6 +310,7 @@ function givemeColors(row) {
 		f1 = [0,1][0];
 		
 		if (!row) {
+			
 			var a = 0.95;
 		} else {
 			var L = 8;
@@ -303,7 +324,9 @@ function givemeColors(row) {
 				
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark
+				
 	}
+	
 	//console.log(ra)
 	var lightColor = HSVtoRGB(ra[0][0],ra[0][1],ra[0][2]);
 	var darkColor  = HSVtoRGB(ra[1][0],ra[1][1],ra[1][2]);
