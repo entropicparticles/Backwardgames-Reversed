@@ -103,7 +103,7 @@ function makeText(alltext) {
 	// Update text list
 	for (var k=0; k<alltext.length; ++k) {
 		txt = alltext[k];
-		listText.push({'text':txt[0],'I0':txt[1],'J0':txt[2],'type':txt[3],'centered':txt[4],'bubble':txt[5],'pointer':txt[6],'time':txt[7]});
+		listText.push({'text':txt[0],'I0':txt[1],'J0':txt[2],'type':txt[3],'centered':txt[4],'bubble':txt[5],'pointer':txt[6]});
 	}
 }
 

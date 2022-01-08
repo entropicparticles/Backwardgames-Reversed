@@ -66,6 +66,13 @@ function specialEffects(rowt,idx) {
 			}
 		}
 				
+	} if (rowt['state'] == 'itsOn') {
+		for (var k=0; k<png.length; ++k) {
+			if (png[k]==3) {
+				png[k] = t%2==0 ? 2 : 2;
+			}
+		}
+				
 	}
 	
 	return png;
@@ -260,6 +267,8 @@ function givemeColors(row) {
 				
 	} else if (room=='other_hotel_room_5') {  //--------------------------------------------- OTHER ROOM 5
 	
+		// lights => tv and lamp. If tv is off, we have white noise, 
+	
 		var rng = new RNG(t);
 		
 		var r = 245-(XYZ2J(-X,Y,0)/XYZ2J(5,5,0))*2;
@@ -269,16 +278,19 @@ function givemeColors(row) {
 		f1 = [0,1][0];
 		
 		if (!row) {
+			var r = 0.9;
 			var a = 0.95;
 		} else {
 			var L = 8;
-			var T = (32*(8-t))%255//Math.max(32*t%255,32*(t-8)%255);
 			var p = 8;
-			var T = (1 - 2*Math.abs(Math.round(t/p)-t/p))*0.5+0.2+0.1*rng.nextFloat();
+			var tvoff   = stuff['front'][getIndexFromID('tv')[0]]['state'] == 'whitenoised';
+			var lampoff = stuff['front'][getIndexFromID('lamp')[0]]['state'] == 'broken';
+			var T       = tvoff ? (1 - 2*Math.abs(Math.round(t/p)-t/p))*0.5+0.2+0.1*rng.nextFloat() : (t%2?0.75:0.8);
+			var K       = lampoff ? 0 : 150 ;
 			var a  = gauss([X,Y],[1*L,4*L],3*L)*T*255 +  //tv
-					 gauss([X,Y],[3*L,3*L],3*L)*50 + //centre
-					 gauss([X,Y],[4*L,0],2*L)*10; //lamp
-			a = cl(a/255);
+					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
+					 gauss([X,Y],[4*L,0],4*L)*(10+K); //lamp
+			a = cl(a/255)*0.9;
 			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
 		}  
 				
@@ -288,17 +300,19 @@ function givemeColors(row) {
 				
 	} else if (room.slice(0,-2)=='hotel_corridor') {  //--------------------------------------- HOTEL CORRIDOR
 	
+		var level = room.slice(-1);
 		if (!row) {
 			var r = 0.9;
 			var a = 0.95;
 		} else {
-			var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
+			
+			var r = (level==0) ? 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5 :  255+50-(XYZ2J(X+Y,Y-X,0)/XYZ2J(7,7,0))*3+(-level)*10;
 			r = (r%255)/255;
 			var a = cl(220/255);
 			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
 		}  
 				
-		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
+		ra =  [ [r,cl(0.8+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark
 				
 	} else {  //------------------------------------------------------------------------ OTHERS

@@ -73,7 +73,7 @@ var cinematics = [],
 	blockKeys = false;
 
 // debugging
-var tempo=0,nt=0;
+var tempo=0,nt=0,testing=false;
 
 
 // Pixel functions ----------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ function start() {
 	chapter = 0;
 		
 	// Initiate indices
-    menuIndex   = 0;
+    menuIndex   = 1;
 	objectIndex = 0;
 	
 	// Initiate key list
@@ -161,10 +161,10 @@ function start() {
 	//music.play();
 	
 	// enter in the room for the first time
-	objects = ['mano','gun'];
+	objects = ['mano','gun','maletin'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_room_5"]}]; 
+	actions = [{'ID':'room','function':'changeroom','arguments':["other_hotel_room_5"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -270,8 +270,7 @@ function updateMusic() {
 
 
 
-function updateAction() {
-	
+function updateAction() {	
 	
 	// Evaluate cinematics if it's on
 	if (cinematics.length>0) {
@@ -302,7 +301,6 @@ function updateAction() {
 	}	
 		
 	actionOn = false;
-
 		
 }//----------------------------------------------------------------------------------------------
 
@@ -313,6 +311,7 @@ function updateImage() {
 			
     // Create the image and draw the image data to the canvas
 	drawCanvasTime(false)
+	
 }
 
 function drawCanvasTime(bo) {

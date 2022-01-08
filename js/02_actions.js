@@ -64,13 +64,15 @@ function walking(step,indk) {
 			}
 			// if in the next move there is only floor lower than 3 or hight than 3 (rare), it's too much
 			go = !(godown < -3);
-			
+			console.log('1',im['ID'],go)
 			// solid 
 			if (go) {
 				dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 ) ;
 				testa.Z  += dz;
 				testa.ZM += dz;
-				go = go && !space['solid'].some( obj => collision(testa,obj) && ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z)) );
+				go = go && !space['solid'].some( obj => collision(testa,obj) 
+														&& ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z)) 
+														&& im['ID']!=obj['ID'] );
 			}
 			
 			// if go, check action and continue; if not, stop here
@@ -87,8 +89,7 @@ function walking(step,indk) {
 				stuff['front'][indk]['IM'] += move.ij[0];		
 				stuff['front'][indk]['JM'] += move.ij[1]+dz;
 				im = stuff['front'][indk];
-				console.log(n,'>',stuff['front'][indk]['ID'],stuff['front'][indk]['X'],stuff['front'][indk]['Y'],stuff['front'][indk]['Z'],
-								  [Math.floor(stuff['front'][indk]['X']/8),Math.floor(stuff['front'][indk]['Y']/8),Math.floor(stuff['front'][indk]['Z']/8)],dz)
+				console.log(n,'>',im['ID'],im['X'],im['Y'],im['Z'],[Math.floor(im['X']/8),Math.floor(im['Y']/8),Math.floor(im['Z']/8)],dz)
 				//updateAction();	
 				if (firstEntry) break; //stop loop if room changed
 				
@@ -116,13 +117,13 @@ function walkThereFrom(whoIndex,x0,y0,x,y,n,first) {
 	
 	var step = Y>0?'upy'+n:'dwy'+n;
 	var ymove = [];
-	for (var k=0;k<Math.abs(Y);++k) xmove.push('walking("'+step+'",'+whoIndex+')');
+	for (var k=0;k<Math.abs(Y);++k) ymove.push('walking("'+step+'",'+whoIndex+')');
 	
 	var allmoves = [];
 	if (first=='x') {
 		allmoves = xmove.concat(ymove);
 	} else if (first=='y') {
-		allmoves = ymove.concat(xmove);		
+		allmoves = ymove.concat(xmove);	
 	} else if (Math.abs(X)>Math.abs(Y)) {
 		allmoves = xmove.concat(ymove);		
 	} else {
@@ -186,7 +187,7 @@ function normaldoor(col,Zbol,actOn,id,keepit) {
 				actionOn = false;
 			}
 		}
-	} else if (!(col&&Zbol)){
+	} else if (!(col)){
 		// close door when guy outside the square
 		for (var k=0; k<stuff['front'].length; ++k) {
 			s = stuff['front'][k];
@@ -314,6 +315,19 @@ function elevatorMirror(){
 
 // FUNCTIONS RELATED WITH CHANGES IN STUFF STATE >>>>>
 
+
+function getIndexFromID(id){
+	return stuff['front'].flatMap((it, i) => it['ID'] == id ? i : []);
+}
+
+function whoTalks(who,txt,tt,point) {
+	var st = stuff['front'][getIndexFromID(who)[0]];
+	var lines = (txt.split("|").length) // make space if there are several lines
+	var i = (st['I0']+st['IM'])/2,
+	    j = st['JM']+11*lines;  //put it on top of the one speaking
+	listText.push({'text':txt,'I0':i,'J0':j,'type':'text_normal','centered':true,'bubble':true,'pointer':point,'time':tt});
+}
+
 function getObject(item) {
 	if (objects.includes(item)) {
 		objects.splice(objects.indexOf(item),1);
@@ -323,32 +337,82 @@ function getObject(item) {
 	}
 }
 
+function setFileByID(file,id) {
+	setFile(file,getIndexFromID(id)[0]);
+}
 function setFile(file,ind) {
 	stuff['front'][ind]['file'] = file;
+}
+function setStateByID(state,id) {
+	stuff['front'][getIndexFromID(id)[0]]['state'] = state;
 }
 
 function hideshowItem(id,solid) {	
 
-	var items = stuff['front'].flatMap((it, i) => it['ID'] == id ? i : []);
+	var items = getIndexFromID(id);
 	//console.log(items)
 	for (var k=0;k<items.length;++k) {
-		stuff['front'][items[k]]['visible'] = !stuff['front'][items[k]]['visible'];
-		if (solid) stuff['front'][items[k]]['solid']   =  stuff['front'][items[k]]['visible'];
+		var st = stuff['front'][items[k]];
+		st['visible'] = !st['visible'];
+		if (solid) {
+			st['solid'] = !st['solid'];
+			if (!st['solid']) space['solid'] = space['solid'].filter(obj => obj['ID']!=st['ID']);
+		}
 	}
 	//console.log(stuff['front'][items[0]])
 	
 }
 
+function walkigByID(step,id){
+	console.log(step,id)
+	walking(step,getIndexFromID(id)[0])
+}
+
+function moveItemByID(step,id) {
+	
+	// get the index
+	var indk = getIndexFromID(id)[0];	
+	
+	//define the deltas in IJ space
+    var delta = {'upy':{'xyz':[ 0, 1, 0],'ij':[-2, 1]},
+				 'dwy':{'xyz':[ 0,-1, 0],'ij':[ 2,-1]},
+				 'upx':{'xyz':[ 1, 0, 0],'ij':[ 2, 1]},
+				 'dwx':{'xyz':[-1, 0, 0],'ij':[-2,-1]},
+				 'upz':{'xyz':[ 0, 0, 1],'ij':[ 0, 1]},
+				 'dwz':{'xyz':[ 0, 0,-1],'ij':[ 0,-1]}};
+	var move = delta[step.slice(0,-1)];
+	
+	// take how many pixels
+	var q = step.slice(-1);
+	
+	// apply movement
+	stuff['front'][indk]['X']  += q*move.xyz[0];
+	stuff['front'][indk]['Y']  += q*move.xyz[1];
+	stuff['front'][indk]['Z']  += q*move.xyz[2];
+	stuff['front'][indk]['XM'] += q*move.xyz[0];
+	stuff['front'][indk]['YM'] += q*move.xyz[1];
+	stuff['front'][indk]['ZM'] += q*move.xyz[2];
+	stuff['front'][indk]['I0'] += q*move.ij[0];		
+	stuff['front'][indk]['J0'] += q*move.ij[1];
+	stuff['front'][indk]['IM'] += q*move.ij[0];		
+	stuff['front'][indk]['JM'] += q*move.ij[1];
+	
+}
+
+
+// CINEMATIC EVENTS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // FOR CINEMATICS join any new cinematics to the one running at that moment
+
 function setCinematics(newcine) {
 	cinematics = newcine.concat(cinematics)
 	blockKeys  = true;
 	actionOn   = false;
 }
 
-// CINEMATIC EVENTS >>>>>>>>>>>>>>>>>>>>>>>>>
 function takethecase(col,Zbol,actOn,X,Y) {
-	
+	console.log(col,Zbol,actOn,objects.includes('maletin'),objects[objectIndex]=='maletin')
+	console.log(col&&Zbol&&actOn&&(!objects.includes('maletin')||objects[objectIndex]=='maletin'))
 	if (col&&Zbol&&actOn&&(!objects.includes('maletin')||objects[objectIndex]=='maletin')) {		
 
 		var file = stuff['front'][guyIndex]['file'].slice(0,2)=='00'?'m0_01N':'00_01N';
@@ -388,6 +452,43 @@ function walkout(col,Zbol,actOn,startgame) {
 		
 	}
 }
+
+function killthegangsterdude(col,Zbol,actOn) {
+	
+	if(actOn&&objects[objectIndex]=='gun') {
+		var walkit1  = walkThere(guyIndex,B(3,2),B(2,1),1,'y');
+		var gunit    = ['walking("upx0",guyIndex)','setFile("mg_00N",guyIndex)'];
+		var deaddude = Array(10*4).fill('');
+		for (var k=0;k<8;++k) deaddude[4*k] = 'setFileByID("d'+k+'_00N","ddude")';
+		var talk1    = ['whoTalks("ddude","F*CK! I'+"'"+'m dying...|you son of a...",40,true)'].concat(Array(50).fill(''));
+		var shoots1  = ['hideshowItem("ddude",true);hideshowItem("dude",false);setFileByID("ss_10L","dude")',
+						'whoTalks("dude","AAARGG!!",15,true);setFile("mp_00N",guyIndex)','whoTalks("guy","BANG!!",10,false)','',
+						'walkigByID("dwy1","dude");moveItemByID("upz2","tv");moveItemByID("upz2","box")','moveItemByID("dwz1","box")',
+						'walkigByID("dwy1","dude");moveItemByID("dwz1","box");moveItemByID("dwz1","tv")','moveItemByID("dwz1","tv")',
+						'walkigByID("dwy1","dude");setStateByID("itsOn","tv")','','walkigByID("dwy1","dude")','',
+						'setFileByID("g0_01N","dude");setFile("mp_00N",guyIndex);setFile("mg_00N",guyIndex)'].concat(Array(10).fill(''));
+		var shoots2  = ['whoTalks("dude","BANG!!",10,false);setFileByID("p0_01N","dude");moveItemByID("upz2","lamp");moveItemByID("dwx1","lamp");moveItemByID("upy1","lamp")',
+						'moveItemByID("dwz1","lamp");setFile("m0_00N",guyIndex)','moveItemByID("dwz1","lamp")','setFileByID("lampon","lamp");setStateByID("on","lamp")',
+						'','','','','','','setFileByID("g0_01N","dude")','whoTalks("dude","Then die, punk!",30,true)'].concat(Array(30).fill(''));
+		var talk2    = ['whoTalks("guy","I'+"'"+'m not scared, you will|miss and you'+"'"+'ll die.",50,true)'].concat(Array(50).fill(''));
+		var talk3    = ['whoTalks("dude","Give me the case NOW or|I'+"'"+'ll kill you just here.",50,true)'].concat(Array(50).fill(''));
+		var runguy   = walkThereFrom(guyIndex,B(2,2),B(1,1),10,-1,2,'x');
+		var run = ['whoTalks("dude","Stop there, punk!",40,true);setFileByID("00_10L","dude")'].concat(Array(11).fill('walkigByID("dwy2","dude");')).concat(Array(11).fill(''));
+		for (var k=0;k<runguy.length;++k) run[5+k] = run[5+k]+runguy[k];
+		console.log(run)
+		setCinematics(
+					  walkit1.concat(gunit).concat(deaddude)
+					  .concat(talk1)
+					  .concat(shoots1).concat(shoots2)
+					  .concat(talk2).concat(talk3)
+					  .concat(run)
+					  );
+		console.log(cinematics);
+		
+	}
+	
+}
+
 
 
 

@@ -129,7 +129,7 @@ function drawPanel() {
 	// Draw the frame border
 	var im = tiles['panel']['panel']['frame'];
 	//var tile = txtcontext.createImageData(im['DI'],im['DJ']);
-	drawTile(im,0,0,0,false,'text',the3colors)
+	if (!testing) drawTile(im,0,0,0,false,'text',the3colors)
 	
 	if (RGBcover==0) {
 		
@@ -255,10 +255,14 @@ function drawText() {
 	
 	for (var k=0; k<listText.length; ++k) {
 		var txt = listText[k];
-		if (txt['type']=='gothic') {
-			writeGothic(txt['text'],txt['I0'],txt['J0']);
-		} else {
-			writeText(txt['text'],txt['I0'],txt['J0'],txt['type'],txt['centered'],txt['bubble'],txt['pointer']);
+		var tim = 'time' in txt ? txt['time'] : 0 ;
+		if ( tim>=0 ) {
+			if (txt['type']=='gothic') {
+				writeGothic(txt['text'],txt['I0'],txt['J0']);
+			} else {
+				writeText(txt['text'],txt['I0'],txt['J0'],txt['type'],txt['centered'],txt['bubble'],txt['pointer']);
+			}
+			if ('time' in txt ) txt['time']+=-1;
 		}
 	}
 	
