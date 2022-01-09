@@ -271,16 +271,15 @@ function givemeColors(row) {
 	
 		var rng = new RNG(t);
 		
-		var r = 245-(XYZ2J(-X,Y,0)/XYZ2J(5,5,0))*2;
-		r = (r%255)/255;
-		
-		//f1 = room['globalsets']['lamp']
-		f1 = [0,1][0];
-		
+				
 		if (!row) {
-			var r = 0.9;
+			var r = 0.99;
 			var a = 0.95;
 		} else {
+			
+			var r = 235-(XYZ2J(-X,Y,0)/XYZ2J(5,5,0))*2;
+			r = (r%255)/255;
+			
 			var L = 8;
 			var p = 8;
 			var tvoff   = stuff['front'][getIndexFromID('tv')[0]]['state'] == 'whitenoised';
@@ -291,7 +290,8 @@ function givemeColors(row) {
 					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
 					 gauss([X,Y],[4*L,0],4*L)*(10+K); //lamp
 			a = cl(a/255)*0.9;
-			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
+			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ;
+			
 		}  
 				
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht

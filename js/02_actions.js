@@ -325,7 +325,7 @@ function whoTalks(who,txt,tt,point) {
 	var lines = (txt.split("|").length) // make space if there are several lines
 	var i = (st['I0']+st['IM'])/2,
 	    j = st['JM']+11*lines;  //put it on top of the one speaking
-	listText.push({'text':txt,'I0':i,'J0':j,'type':'text_normal','centered':true,'bubble':true,'pointer':point,'time':tt});
+	listText.push({'text':txt,'I0':i,'J0':j,'type':'text_normal','centered':true,'bubble':true,'pointer':point,'time':tt,'who':who});
 }
 
 function getObject(item) {
@@ -468,20 +468,20 @@ function killthegangsterdude(col,Zbol,actOn) {
 						'walkigByID("dwy1","dude");setStateByID("itsOn","tv")','','walkigByID("dwy1","dude")','',
 						'setFileByID("g0_01N","dude");setFile("mp_00N",guyIndex);setFile("mg_00N",guyIndex)'].concat(Array(10).fill(''));
 		var shoots2  = ['whoTalks("dude","BANG!!",10,false);setFileByID("p0_01N","dude");moveItemByID("upz2","lamp");moveItemByID("dwx1","lamp");moveItemByID("upy1","lamp")',
-						'moveItemByID("dwz1","lamp");setFile("m0_00N",guyIndex)','moveItemByID("dwz1","lamp")','setFileByID("lampon","lamp");setStateByID("on","lamp")',
+						'moveItemByID("dwz1","lamp")','moveItemByID("dwz1","lamp")','setFileByID("lampon","lamp");setStateByID("on","lamp")',
 						'','','','','','','setFileByID("g0_01N","dude")','whoTalks("dude","Then die, punk!",30,true)'].concat(Array(30).fill(''));
 		var talk2    = ['whoTalks("guy","I'+"'"+'m not scared, you will|miss and you'+"'"+'ll die.",50,true)'].concat(Array(50).fill(''));
 		var talk3    = ['whoTalks("dude","Give me the case NOW or|I'+"'"+'ll kill you just here.",50,true)'].concat(Array(50).fill(''));
-		var runguy   = walkThereFrom(guyIndex,B(2,2),B(1,1),10,-1,2,'x');
-		var run = ['whoTalks("dude","Stop there, punk!",40,true);setFileByID("00_10L","dude")'].concat(Array(11).fill('walkigByID("dwy2","dude");')).concat(Array(11).fill(''));
-		for (var k=0;k<runguy.length;++k) run[5+k] = run[5+k]+runguy[k];
-		console.log(run)
+		//var runguy   = walkThereFrom(guyIndex,B(2,2),B(1,1),10,-1,2,'x');
+		//var run      = ['whoTalks("dude","Stop there, punk!",40,true);setFileByID("00_10L","dude");setFile("m0_00N",guyIndex)']
+		//				.concat(Array(11).fill('walkigByID("dwy2","dude");')).concat(Array(11).fill(''));
+		//for (var k=0;k<runguy.length;++k) run[5+k] = run[5+k]+runguy[k];
 		setCinematics(
 					  walkit1.concat(gunit).concat(deaddude)
 					  .concat(talk1)
 					  .concat(shoots1).concat(shoots2)
 					  .concat(talk2).concat(talk3)
-					  .concat(run)
+					  //.concat(run)
 					  );
 		console.log(cinematics);
 		

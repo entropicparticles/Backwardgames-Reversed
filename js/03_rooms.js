@@ -473,7 +473,8 @@ function loadRoom(inroom) {
 		allstuff = [
 			['tv'   ,'objects','signs','roomnumber', 1,B(1,2),B(6,7),D(3,1), true,false,false,false,0, 6,'BG'],
 			['box'  ,'objects','signs','exit'      , 1,B(6,2),B(6,7),D(3,2), true,false,false,false,0, 5,'BG'],
-			['box'  ,'objects','signs','toilet'    ,-1,B(7,7),B(5,1),D(3,2), true,false,false,false,0, 4,'BG'],
+			['box'  ,'objects','signs','toilet'    ,-1,B(7,7),B(5,1),D(3,2), true,false,false,false,0, 4,'BG'],,
+			['dude' ,'people' ,'gangster_dude','00_00L', 1,B(3,0),B(5,2),     0,false,false, true,false,0, 0,'VI']
 			];
 			
 		// Floors

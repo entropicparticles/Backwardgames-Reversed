@@ -257,12 +257,22 @@ function drawText() {
 		var txt = listText[k];
 		var tim = 'time' in txt ? txt['time'] : 0 ;
 		if ( tim>=0 ) {
+			if ('time' in txt ) { // time goes down until 0
+				txt['time']+=-1;
+			}
+			if ('who' in txt) { // reposition if the guy is moving
+				var st = stuff['front'][getIndexFromID(txt['who'])[0]];
+				var lines = (txt['text'].split("|").length)
+				var i = (st['I0']+st['IM'])/2,
+					j = st['JM']+11*lines;
+				txt['I0'] = i;
+				txt['J0'] = j;
+			}
 			if (txt['type']=='gothic') {
 				writeGothic(txt['text'],txt['I0'],txt['J0']);
 			} else {
 				writeText(txt['text'],txt['I0'],txt['J0'],txt['type'],txt['centered'],txt['bubble'],txt['pointer']);
 			}
-			if ('time' in txt ) txt['time']+=-1;
 		}
 	}
 	
