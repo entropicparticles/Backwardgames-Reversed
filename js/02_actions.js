@@ -70,9 +70,8 @@ function walking(step,indk) {
 				dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 ) ;
 				testa.Z  += dz;
 				testa.ZM += dz;
-				go = go && !space['solid'].some( obj => collision(testa,obj) 
-														&& ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z)) 
-														&& im['ID']!=obj['ID'] );
+				go = go && !space['solid'].some( obj => collision(testa,obj) && ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z)) && im['ID']!=obj['ID'] );
+				//console.log(space['solid'].filter( obj => collision(testa,obj)&& ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z))&& im['ID']!=obj['ID'] ))
 			}
 			
 			// if go, check action and continue; if not, stop here
@@ -113,11 +112,11 @@ function walkThereFrom(whoIndex,x0,y0,x,y,n,first) {
 		
 	var step = X>0?'upx'+n:'dwx'+n;
 	var xmove = [];
-	for (var k=0;k<Math.abs(X);++k) xmove.push('walking("'+step+'",'+whoIndex+')');
+	for (var k=0;k<Math.abs(X/n);++k) xmove.push('walking("'+step+'",'+whoIndex+')');
 	
 	var step = Y>0?'upy'+n:'dwy'+n;
 	var ymove = [];
-	for (var k=0;k<Math.abs(Y);++k) ymove.push('walking("'+step+'",'+whoIndex+')');
+	for (var k=0;k<Math.abs(Y/n);++k) ymove.push('walking("'+step+'",'+whoIndex+')');
 	
 	var allmoves = [];
 	if (first=='x') {
@@ -322,8 +321,8 @@ function getIndexFromID(id){
 
 function whoTalks(who,txt,tt,point) {
 	var st = stuff['front'][getIndexFromID(who)[0]];
-	var lines = (txt.split("|").length) // make space if there are several lines
-	var i = (st['I0']+st['IM'])/2,
+	var lines = txt.split("|").length // make space if there are several lines
+	var i = Math.floor((st['I0']+st['IM'])/2),
 	    j = st['JM']+11*lines;  //put it on top of the one speaking
 	listText.push({'text':txt,'I0':i,'J0':j,'type':'text_normal','centered':true,'bubble':true,'pointer':point,'time':tt,'who':who});
 }
@@ -363,8 +362,7 @@ function hideshowItem(id,solid) {
 	
 }
 
-function walkigByID(step,id){
-	console.log(step,id)
+function walkingByID(step,id){
 	walking(step,getIndexFromID(id)[0])
 }
 
@@ -411,8 +409,7 @@ function setCinematics(newcine) {
 }
 
 function takethecase(col,Zbol,actOn,X,Y) {
-	console.log(col,Zbol,actOn,objects.includes('maletin'),objects[objectIndex]=='maletin')
-	console.log(col&&Zbol&&actOn&&(!objects.includes('maletin')||objects[objectIndex]=='maletin'))
+	
 	if (col&&Zbol&&actOn&&(!objects.includes('maletin')||objects[objectIndex]=='maletin')) {		
 
 		var file = stuff['front'][guyIndex]['file'].slice(0,2)=='00'?'m0_01N':'00_01N';
@@ -430,8 +427,9 @@ function takethecase(col,Zbol,actOn,X,Y) {
 }
 
 // Take the case and leave the room
-function walkout(col,Zbol,actOn,startgame) {
-	if (startgame&&actOn) {
+function walkout(col,Zbol,actOn) {
+	if (chapter==0&&actOn) {
+		++chapter;
 		// 1. walk and take the maletin
 		// 2. walk to the door, open it
 		// 3. go and close the door, get the key
@@ -441,12 +439,32 @@ function walkout(col,Zbol,actOn,startgame) {
 		var walkit2 = walkThereFrom(guyIndex,B(2,4),B(2,4),B(2,4),B(4,4),1,0);
 		var walkit8 = Array(8).fill('walking("upy1",guyIndex)')
 		var act = ['actionOn=true'];
+		
+		var walkit1 =  ['moveItemByID("upx2","guy");moveItemByID("dwy1","guy");whoTalks("girl","NOOOOOOOOOOOOOOOOOOOO!!",11,true);setFileByID("1_01N","girl")',
+					    'moveItemByID("dwy1","guy")',
+					    'moveItemByID("dwy1","guy")',
+						'setFile("ff_00L",guyIndex);walking("upx2",guyIndex);moveItemByID("dwy1","guy");setFileByID("p0_00N","dealer");whoTalks("dealer","BANG!!",3,false)',
+						'walking("upx1",guyIndex);moveItemByID("dwy1","guy")',
+						'walking("upx1",guyIndex);moveItemByID("dwy1","guy")',
+						'setFile("00_01N",guyIndex);walking("stp0",guyIndex);setFileByID("g0_00N","dealer")','',
+						'setFile("ff_00L",guyIndex);walking("upx2",guyIndex);moveItemByID("dwy1","guy");setFileByID("p0_00N","dealer");whoTalks("dealer","BANG!!",10,false)',
+						'walking("upx1",guyIndex);moveItemByID("dwy1","guy")',
+						'walking("upx1",guyIndex);moveItemByID("dwy1","guy")',
+						'setFile("00_01N",guyIndex);walking("stp0",guyIndex);setFileByID("g0_00N","dealer");setFileByID("0_01N","girl")'].concat(Array(15).fill(''));
+		var talkit1 = ['actionOn=true'].concat(Array(4).fill('')).concat(['whoTalks("dealer","Put the case down, NOW!",40,true)']).concat(Array(44).fill(''));
+		var talkit2 = ['whoTalks("dealer","Don'+"'"+'t move or she dies.",40,true)'].concat(Array(44).fill(''));
+		var talkit3 = ['whoTalks("dealer","Surprise motherfucker",20,true)'].concat(Array(7).fill('walkingByID("upx1","dealer")'))
+						.concat(['walkingByID("stp0","dealer");setFileByID("00_00N","dealer")','','','']);
+		var enter1  = ['setFileByID("l0_00N","dealer");whoTalks("lamp","CLICK",6,false);setStateByID("off","lamp")'].concat(Array(5).fill(''));
+		var enter2  = ['setFileByID("00_00N","dealer")'].concat(Array(8).fill(''));
+		var walkit2  = ['setFileByID("1_01N","girl");whoTalks("girl","Behind you!!!",20,false);walking("dwy0",guyIndex);walking("stp0",guyIndex)']
+						.concat(Array(20).fill(''));
+		var walkit3  = ['setFileByID("0_01N","girl");whoTalks("guy","Babe, are you here?",20,false)'].concat(Array(14).fill('walking("dwy1",guyIndex)'));
+		var walkit4  = ['actionOn=true;walking("dwy1",guyIndex)'].concat(Array(11).fill('walking("dwy1",guyIndex)'))
+	.concat(['openclosedoor(true,true,true,"hotel_room_5","door","closed");whoTalks("guy","CLICK",5,false);objects.push("roomkey");objectIndex=3']);
 		setCinematics(
-					  walkit1.concat(act)
-					  .concat(walkit2).concat(act)
-					  .concat(walkit8).concat('walking("stp0",guyIndex)').concat(act)
-					  .concat('getObject("roomkey")')
-					  .concat(walkit8)
+					  walkit1.concat(talkit1).concat(talkit2).concat(talkit3).concat(enter1)
+					  .concat(enter2).concat(walkit2).concat(walkit3).concat(walkit4)
 					  );
 		console.log(cinematics);
 		
@@ -455,33 +473,67 @@ function walkout(col,Zbol,actOn,startgame) {
 
 function killthegangsterdude(col,Zbol,actOn) {
 	
-	if(actOn&&objects[objectIndex]=='gun') {
-		var walkit1  = walkThere(guyIndex,B(3,2),B(2,1),1,'y');
+	if(actOn&&objects[objectIndex]=='gun'&&chapter<=1) {
+		
+		++chapter;
+		
+		guy = stuff['front'][guyIndex];		
+		var walkit0a = walkThere(guyIndex,21,30,1,'y').concat(walkThereFrom(guyIndex,21,30,B(3,6),B(1,0),1,'y'));
+		var walkit0b = walkThere(guyIndex,B(3,6),B(1,0),1,'y');
+		var walkit1  = guy.X>21&&guy.Y>B(3,0) ? walkit0a : walkit0b ;
 		var gunit    = ['walking("upx0",guyIndex)','setFile("mg_00N",guyIndex)'];
 		var deaddude = Array(10*4).fill('');
 		for (var k=0;k<8;++k) deaddude[4*k] = 'setFileByID("d'+k+'_00N","ddude")';
 		var talk1    = ['whoTalks("ddude","F*CK! I'+"'"+'m dying...|you son of a...",40,true)'].concat(Array(50).fill(''));
-		var shoots1  = ['hideshowItem("ddude",true);hideshowItem("dude",false);setFileByID("ss_10L","dude")',
-						'whoTalks("dude","AAARGG!!",15,true);setFile("mp_00N",guyIndex)','whoTalks("guy","BANG!!",10,false)','',
-						'walkigByID("dwy1","dude");moveItemByID("upz2","tv");moveItemByID("upz2","box")','moveItemByID("dwz1","box")',
-						'walkigByID("dwy1","dude");moveItemByID("dwz1","box");moveItemByID("dwz1","tv")','moveItemByID("dwz1","tv")',
-						'walkigByID("dwy1","dude");setStateByID("itsOn","tv")','','walkigByID("dwy1","dude")','',
-						'setFileByID("g0_01N","dude");setFile("mp_00N",guyIndex);setFile("mg_00N",guyIndex)'].concat(Array(10).fill(''));
+		var shoots1  = ['hideshowItem("ddude",true);hideshowItem("dude",false);setFileByID("00_01N","dude")',
+				'whoTalks("dude","AAARGG!!",15,true);setFile("mp_00N",guyIndex)','whoTalks("guy","BANG!!",10,false)','',
+				'moveItemByID("dwy1","dude");moveItemByID("upx1","dude");setFileByID("ss_10R","dude");moveItemByID("upz2","tv");moveItemByID("upz2","box")',
+				'moveItemByID("dwy1","dude");moveItemByID("upx1","dude");setFileByID("ss_10L","dude");moveItemByID("dwz1","box")',
+				'moveItemByID("dwy1","dude");moveItemByID("upx1","dude");setFileByID("ss_10R","dude");moveItemByID("dwz1","box");moveItemByID("dwz1","tv")',
+				'moveItemByID("dwz1","tv") ;setFileByID("ss_10L","dude")',
+				'setStateByID("itsOn","tv");setFileByID("ss_10R","dude")','',
+				'moveItemByID("dwy0","dude")','',
+				'setFileByID("g0_01N","dude");setFile("mp_00N",guyIndex);setFile("mg_00N",guyIndex)'].concat(Array(10).fill(''));
 		var shoots2  = ['whoTalks("dude","BANG!!",10,false);setFileByID("p0_01N","dude");moveItemByID("upz2","lamp");moveItemByID("dwx1","lamp");moveItemByID("upy1","lamp")',
 						'moveItemByID("dwz1","lamp")','moveItemByID("dwz1","lamp")','setFileByID("lampon","lamp");setStateByID("on","lamp")',
-						'','','','','','','setFileByID("g0_01N","dude")','whoTalks("dude","Then die, punk!",30,true)'].concat(Array(30).fill(''));
-		var talk2    = ['whoTalks("guy","I'+"'"+'m not scared, you will|miss and you'+"'"+'ll die.",50,true)'].concat(Array(50).fill(''));
-		var talk3    = ['whoTalks("dude","Give me the case NOW or|I'+"'"+'ll kill you just here.",50,true)'].concat(Array(50).fill(''));
-		//var runguy   = walkThereFrom(guyIndex,B(2,2),B(1,1),10,-1,2,'x');
-		//var run      = ['whoTalks("dude","Stop there, punk!",40,true);setFileByID("00_10L","dude");setFile("m0_00N",guyIndex)']
-		//				.concat(Array(11).fill('walkigByID("dwy2","dude");')).concat(Array(11).fill(''));
-		//for (var k=0;k<runguy.length;++k) run[5+k] = run[5+k]+runguy[k];
+						'','','','','','','setFileByID("g0_01N","dude")','whoTalks("dude","Then die, punk!",30,true)'].concat(Array(32).fill(''));
+		var talk2    = ['whoTalks("guy","I'+"'"+'m not scared, you will|miss and I'+"'"+'ll shoot you.",50,true)'].concat(Array(52).fill(''));
+		var talk3    = ['whoTalks("dude","Give me the case NOW or|I'+"'"+'ll kill you just here.",50,true)'].concat(Array(52).fill(''));
+		var run      = ['setFile("m0_00N",guyIndex);setFileByID("00_01N","dude")']
+						.concat(Array(7).fill('walkingByID("upy2","dude")'))
+						.concat(['hideshowItem("dude",false)']);
+		var walkit2  = walkThereFrom(guyIndex,B(3,6),B(1,0),B(2,2),B(5,0),2,'x');
+						
 		setCinematics(
 					  walkit1.concat(gunit).concat(deaddude)
 					  .concat(talk1)
 					  .concat(shoots1).concat(shoots2)
 					  .concat(talk2).concat(talk3)
-					  //.concat(run)
+					  .concat(run).concat(walkit2)
+					  );
+		console.log(cinematics);
+		
+	}
+	
+}
+
+function dudegototoilet(col,Zbol,actOn) {
+	
+	if (chapter==2) {
+		
+		++chapter;
+		
+		var walk1 = Array(4).fill('walking("upy2",guyIndex);walkingByID("upx2","dude")');
+		var talk1 = ['walking("dwx0",guyIndex);walking("stp0",guyIndex);walkingByID("stp0","dude")','','whoTalks("guy","Come and take it!",30,true)'].concat(Array(32).fill(''));
+		var talk2 = ['whoTalks("dude","Did you bring the case? GIVE IT TO ME!",50,true);setFileByID("f0_00N","dude")'].concat(Array(52).fill(''));
+		var talk3 = ['whoTalks("dude","Why are you dressed as one|of the El Jefe'+"'"+'s guys?",50,true);setFileByID("00_00N","dude")'].concat(Array(52).fill(''));
+		var talk4 = ['whoTalks("dude","YOU! HAHAHA! You are dumber|than what I thought, punk!",50,true)'].concat(Array(54).fill(''));
+		var talk5 = Array(11).fill('walkingByID("upx1","dude")')
+					.concat(['walkingByID("stp0","dude");whoTalks("dude","HEY WHO ARE YOU!!",20,true)']).concat(Array(20).fill(''))
+					.concat(Array(10).fill('walkingByID("upx1","dude")')).concat('whoTalks("toilet_5","FUSSSSHHHH",54,false);walkingByID("upx1","dude")')
+					.concat(['openclosedoor(true,true,true,"toilet_5","door","closed");hideshowItem("dude",false)']);
+		setCinematics(
+					  walk1.concat(talk1).concat(talk2).concat(talk3).concat(talk4).concat(talk5)
 					  );
 		console.log(cinematics);
 		

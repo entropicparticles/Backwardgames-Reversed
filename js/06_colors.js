@@ -221,22 +221,29 @@ function givemeColors(row) {
 				
 	} else if (room=='hotel_room_5') {  //-------------------------------------------------------------  ROOM
 	
-		var r = 210+(XYZ2J(-0.5*X+Y,Y,0)/XYZ2J(5,5,0))*3;
+		if (row['ID']=='brillo') X = B(0,-1), Y = B(2,-1) ;
+		
+		var r = 220+(XYZ2J(Y,-0.5*Y+X,0)/XYZ2J(5,5,0))*3;
 		r = (r%255)/255;
-		
-		//f1 = room['globalsets']['lamp']
-		f1 = [0,1][0];
-		
+				
 		if (!row) {
 			var a = 0.95;
 		} else {
+			var lampon = stuff['front'][getIndexFromID('lamp')[0]]['state'] == 'on';
+			var ll = lampon ? 170 : 0 ;
 			var L = 8;
-			var a  = gauss([X,Y],[0,4*L],4*L)*150 +  //lamp
-					 gauss([X,Y],[3*L,3*L],3*L)*50 + //centre
-					 gauss([X,Y],[4*L,0],1*L)*0 + //girl
-					 gauss([X,Y],[2*L,0],2*L)*150;  //window
+			var a  = gauss([X,Y],[4.5*L,1.5],3*L)*ll +  //lamp
+					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
+					 gauss([X,Y],[3*L,4*L],0.5*L)*(0) + //girl
+					 gauss([X,Y],[0,2.5*L],2*L)*(160);  //window
 			a = cl(a/255);
-			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
+			if (lampon) {
+				a = ['people'].includes(row['type']) ? 0.6 + 0.4*a : a ; 
+				a = ['objects'].includes(row['type']) ? 0.2 + 0.8*a : a ;
+				a = row['ID']=='lamp'  ? 0.2 + 0.8*a : a ; 
+			} else {
+				a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
+			}				
 		}  
 				
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
@@ -274,7 +281,8 @@ function givemeColors(row) {
 				
 		if (!row) {
 			var r = 0.99;
-			var a = 0.95;
+			var a = 0.7;
+			var b = 0.95
 		} else {
 			
 			var r = 235-(XYZ2J(-X,Y,0)/XYZ2J(5,5,0))*2;
@@ -289,20 +297,22 @@ function givemeColors(row) {
 			var a  = gauss([X,Y],[1*L,4*L],3*L)*T*255 +  //tv
 					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
 					 gauss([X,Y],[4*L,0],4*L)*(10+K); //lamp
-			a = cl(a/255)*0.9;
+			a = cl(a/255*0.9);
 			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ;
+			var b = cl(a*1.1)
 			
 		}  
 				
-		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
-		        [r,1            ,a/4]];  // dark
+		ra =  [ [r,cl(0.85+a/10),b  ],   // ligtht
+		        [r,1            ,b/4]];  // dark
 				
 				
 	} else if (room.slice(0,-2)=='hotel_corridor') {  //--------------------------------------- HOTEL CORRIDOR
 	
 		var level = room.slice(-1);
 		if (!row) {
-			var r = 0.9;
+			var r = 270-(level)*10;
+			r = (r%255)/255;
 			var a = 0.95;
 		} else {
 			

@@ -37,7 +37,7 @@ var music;
 var LI = 320, LJ = 180, width, height, scale;
 
 // time, chapter, rooms, room or cover?
-var t, chapter, room, preRoom, RGBcover=0;
+var t, room, preRoom, RGBcover=0;
 
 // first frame in the room? first time in teleporter because you just apperaed there?
 var firstEntry = true, 
@@ -144,7 +144,6 @@ function start() {
 	
 	// Initiate time
 	t = 0; 
-	chapter = 0;
 		
 	// Initiate indices
     menuIndex   = 1;
@@ -161,10 +160,13 @@ function start() {
 	//music.play();
 	
 	// enter in the room for the first time
-	objects = ['mano','gun','maletin'];
+	
+	chapter = 0;
+	
+	objects = ['mano','gun'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["other_hotel_room_5"]}];    //start: "hotel_room_5"
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_room_5"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -276,6 +278,7 @@ function updateAction() {
 	if (cinematics.length>0) {
 		
 		//console.log(t,'A',cinematics.length,blockKeys,cinematics[0])
+		console.log(cinematics[0])
 		eval(cinematics[0]+';');
 		cinematics.shift();
 		blockKeys = !(cinematics.length==0);
