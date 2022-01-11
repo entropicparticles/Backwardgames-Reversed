@@ -66,10 +66,10 @@ function specialEffects(rowt,idx) {
 			}
 		}
 				
-	} if (rowt['state'] == 'itsOn') {
+	} if (rowt['state'] == 'itsOn' || rowt['state'] == 'itsOff') {
 		for (var k=0; k<png.length; ++k) {
 			if (png[k]==3) {
-				png[k] = t%2==0 ? 2 : 2;
+				png[k] = rowt['state'] =='itsOn'?2:1;
 			}
 		}
 				
@@ -159,7 +159,7 @@ function givemeColors(row) {
 		
 		if (!row) {
 			
-			var r = 0.12;
+			var r = room.slice(-1)==6 ? 0.97 : 0.12;
 			var a  = 1;
 			var a2 = a;
 			
@@ -232,7 +232,7 @@ function givemeColors(row) {
 			var lampon = stuff['front'][getIndexFromID('lamp')[0]]['state'] == 'on';
 			var ll = lampon ? 170 : 0 ;
 			var L = 8;
-			var a  = gauss([X,Y],[4.5*L,1.5],3*L)*ll +  //lamp
+			var a  = gauss([X,Y],[4.5*L,1.5*L],3*L)*ll +  //lamp
 					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
 					 gauss([X,Y],[3*L,4*L],0.5*L)*(0) + //girl
 					 gauss([X,Y],[0,2.5*L],2*L)*(160);  //window
@@ -249,24 +249,29 @@ function givemeColors(row) {
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark
 				
-	} else if (room=='hotel_room_1') {  //-------------------------------------------------------------  ROOM 2nd floor
+	} else if (room=='other_hotel_room_1') {  //-------------------------------------------------------------  ROOM 2nd floor
 	
 		var r = 35+(XYZ2J(-0.5*X+Y,Y,0)/XYZ2J(5,5,0))*2;
 		r = (r%255)/255;
-		
-		//f1 = room['globalsets']['lamp']
-		f1 = [0,1][0];
-		
+				
 		if (!row) {
 			var a = 0.95;
 		} else {
+			var lampon = stuff['front'][getIndexFromID('lamp')[0]]['state'] == 'on';
+			var ll = lampon ? 170 : 0 ;
 			var L = 8;
-			var a  = gauss([X,Y],[0,4*L],4*L)*0 +  //lamp
-					 gauss([X,Y],[3*L,3*L],3*L)*50 + //centre
-					 gauss([X,Y],[4*L,0],1*L)*0 + //girl
-					 gauss([X,Y],[2*L,0],2*L)*150;  //window
+			var a  = gauss([X,Y],[0.5*L,4.5*L],3*L)*ll +  //lamp
+					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
+					 gauss([X,Y],[4.5*L,4.5*L],0.5*L)*(100) + //phone
+					 gauss([X,Y],[1.5*L,0],2*L)*(160);  //window
 			a = cl(a/255);
-			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
+			if (lampon) {
+				a = ['people'].includes(row['type']) ? 0.6 + 0.4*a : a ; 
+				a = ['objects'].includes(row['type']) ? 0.2 + 0.8*a : a ;
+				a = row['ID']=='lamp'  ? 0.2 + 0.8*a : a ; 
+			} else {
+				a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ; 
+			}
 		}  
 				
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
@@ -290,9 +295,9 @@ function givemeColors(row) {
 			
 			var L = 8;
 			var p = 8;
-			var tvoff   = stuff['front'][getIndexFromID('tv')[0]]['state'] == 'whitenoised';
-			var lampoff = stuff['front'][getIndexFromID('lamp')[0]]['state'] == 'broken';
-			var T       = tvoff ? (1 - 2*Math.abs(Math.round(t/p)-t/p))*0.5+0.2+0.1*rng.nextFloat() : (t%2?0.75:0.8);
+			var tvoff   = stuff['front'][getIndexFromID('tv')[0]]['state'];
+			var lampoff = stuff['front'][getIndexFromID('lamp')[0]]['state'] != 'on';
+			var T       = tvoff == 'whitenoised' ? (1 - 2*Math.abs(Math.round(t/p)-t/p))*0.5+0.2+0.1*rng.nextFloat() : (tvoff=='itsOn'?(t%2?0.75:0.8):0);
 			var K       = lampoff ? 0 : 150 ;
 			var a  = gauss([X,Y],[1*L,4*L],3*L)*T*255 +  //tv
 					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
@@ -310,17 +315,44 @@ function givemeColors(row) {
 	} else if (room.slice(0,-2)=='hotel_corridor') {  //--------------------------------------- HOTEL CORRIDOR
 	
 		var level = room.slice(-1);
-		if (!row) {
-			var r = 270-(level)*10;
-			r = (r%255)/255;
-			var a = 0.95;
-		} else {
+		if (level==0) {
+			if (!row) {
+				
+				var r = 240;
+				r = (r%255)/255;
+				var a = 0.95;
+				
+			} else {
+				
+				var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5 ;
+				r = (r%255)/255;
+				
+				if (chapter <=2) {
+					var L = 8;
+					var a = gauss([X,Y],[7.5*L,3.5*L],3*L)*200+40 ;
+					a = cl(a/255);
+					a = ['people','objects','human'].includes(row['type']) ? 0.05 + 0.95*a : a ; 					
+				} else {
+					var a = cl(220/255);
+					a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
+				}
+			}  
 			
-			var r = (level==0) ? 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5 :  255+50-(XYZ2J(X+Y,Y-X,0)/XYZ2J(7,7,0))*3+(-level)*10;
-			r = (r%255)/255;
-			var a = cl(220/255);
-			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
-		}  
+		} else {
+			if (!row) {
+				
+				var r = 270-(level)*10 ;
+				r = (r%255)/255;
+				var a = 0.95;
+				
+			} else {
+				
+				var r = 255+50-(XYZ2J(X+Y,Y-X,0)/XYZ2J(7,7,0))*3+(-level)*10;
+				r = (r%255)/255;
+				var a = cl(220/255);
+				a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
+			}  
+		}
 				
 		ra =  [ [r,cl(0.8+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark

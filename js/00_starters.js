@@ -58,6 +58,7 @@ var stuff = {'background':[],'front':[]},
 	guyIndex,
 	guy   = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0},
 	space = {'open':[],'solid':[]};
+	memory = {};
 
 // Keys down and other control variables
 var keys = [],
@@ -166,7 +167,7 @@ function start() {
 	objects = ['mano','gun'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_room_5"]}];    //start: "hotel_room_5"
+	actions = [{'ID':'room','function':'changeroom','arguments':["cover"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop

@@ -297,18 +297,18 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(doors);
 
 		
-	} else if (room=='hotel_room_1') {  //------------------------------------------------- ROOM 2nd floor
-	
-		menuIndex   = 0;
-		objectIndex = 0;
-		objects     = ['mano','gun','maletin','roomkey']
-		
+	} else if (room=='other_hotel_room_1') {  //------------------------------------------------- ROOM 2nd floor
+			
 		LX = 5, LY = 5;
 		
 		entryPoint['X']    = B(2,3);
 		entryPoint['Y']    = B(0,1);
 		entryPoint['Z']    = 0;
 		entryPoint['file'] = 'm0_01N';
+		
+		// take the case
+		allactions = allactions.concat([['turnthelamp','turnItOnOff',['lamp','guy',true],B(0,0),B(3,7),0,B(1,3),B(5,0)]
+										]);
 				
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
@@ -319,7 +319,7 @@ function loadRoom(inroom) {
 			['table','objects'   ,'tables'     ,'05051'  ,-1,B(4,4),B(4,2),     0,true, true,false,false,   0, 0,'BG'],
 			['phone','objects'   ,'phones'     ,'phone'  , 1,B(4,5),B(4,2),D(1,0),true,false,false,false,   0, 0,'BG'],
 			['bed'  ,'objects'   ,'beds'       ,'bed'    , 1,B(3,1),B(2,2),     0,true, true,false,false,   0, 0,'VI'],
-			['lamp' ,'objects'   ,'lamps'      ,'lamp'   , 1,B(0,2),B(4,2),     0,true, true,false,false,'on', 0,'VI'],
+			['lamp' ,'objects'   ,'lamps'      ,'lampon',-1,B(0,2),B(4,2),     0,true, true,false,false,'on', 0,'VI'],
 			['lock' ,'objects'   ,'lockers'    ,'00'     ,-1,B(4,6),B(0,4),D(0,6),true,false,false,false,   0, 0,'BG']
 			];
 		
@@ -333,6 +333,10 @@ function loadRoom(inroom) {
 		// Doors	
 		doors = putDoor(B(2,0),B(LY,0),0,1,1,'hotel_corridor_1','rooms','door','front','closed',4);
 		allstuff = allstuff.concat(doors);	
+		
+		for (var k=0;k<allstuff.length;++k) {
+			allstuff[k][14] = 'VI';
+		}
 	
 	} else if (room=='hotel_room_5') {  //------------------------------------------------- ROOM
 	
@@ -385,8 +389,17 @@ function loadRoom(inroom) {
 		}
 	
 	} else if (room=='other_hotel_room_5') {  //------------------------------------------------- OTHER ROOM
-		
-		var ch1 = chapter<=1;
+	
+		if (!(room in memory)) {	
+			if (chapter<=1) { 
+				memory[room] = {'tv':'whitenoised','lamp':'broken','ddude':true}
+			} else { 
+				memory[room] = {'tv':'itsOn'      ,'lamp':'on'    ,'ddude':false}
+			}
+		}
+		var tv  = memory[room]['tv'],
+		    lst = memory[room]['lamp'],
+			dd  = memory[room]['ddude'];
 		
 		LX = 5, LY = 5;
 		
@@ -396,13 +409,17 @@ function loadRoom(inroom) {
 		entryPoint['file'] = 'm0_01N';
 		
 		// take the case
-		allactions = allactions.concat([['killhim','killthegangsterdude',[]]]);
+		allactions = allactions.concat([['killhim','killthegangsterdude',[]],
+										['turnthelamp','turnItOnOff',['lamp','guy',tv!='whitenoised'],B(3,7),B(0,0),0,B(5,0),B(1,3)],
+										['turnthetv'  ,'turnItOnOff',['tv'  ,'guy',lst!='broken'    ],B(0,5),B(3,6),0,B(2,0),B(5,0)]
+										]);
 				
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
+			
 		
-		var tv  = ch1 ? 'whitenoised' : 'itsOn',
-		    lst = ch1 ? 'broken' : 'on',
-			lfl = ch1 ? 'lampshoot' : 'lampon';
+		var l   = tv=='broken'? 0 : 1;
+		    lfl = lst=='broken'? 'lampshoot' : (lst=='on'? 'lampon' : 'lampoff');
+			
 		allstuff = [
 			['tv'   ,'objects','computers'    ,'tv'    ,-1,B(0,7),B(4,1),D(1,0), true,false,false,false,tv , 0,'VI'],
 			['box'  ,'objects','tables'       ,'111'   ,-1,B(0,7),B(4,0),     0, true, true,false,false,0  , 0,'VI'],
@@ -410,8 +427,8 @@ function loadRoom(inroom) {
 			['lock' ,'objects','lockers'      ,'00'    ,-1,B(4,6),B(4,0),D(0,6), true,false,false,false,0  , 0,'VI'],
 			['phone','objects','phones'       ,'phone' , 1,B(4,4),B(1,4),D(1,0), true,false,false,false,0  , 0,'VI'],
 			['bed'  ,'objects','beds'         ,'bed'   , 1,B(3,1),B(2,2),     0, true, true,false,false,0  , 0,'VI'],
-			['lamp' ,'objects','lamps'        ,lfl     , 1,B(4,3),B(0,1),     0, true, true, true,false,lst, 0,'VI'],
-			['ddude','people' ,'gangster_dude','d0_00N',-1,B(1,0),B(2,6),     0,  ch1,  ch1,false,false,0  , 0,'VI'],
+			['lamp' ,'objects','lamps'        ,lfl     , 1,B(4,3-l),B(0,1+l), 0, true, true, true,false,lst, 0,'VI'],
+			['ddude','people' ,'gangster_dude','d0_00N',-1,B(1,0),B(2,6),     0,   dd,   dd,false,false,0  , 0,'VI'],
 			['dude' ,'people' ,'gangster_dude','g0_01N', 1,B(1,6),B(3,3),     0,false,false, true,false,0  , 0,'VI']
 			];
 		
@@ -464,6 +481,31 @@ function loadRoom(inroom) {
 	} else if ( room.slice(0,-2)=='hotel_corridor' && room.slice(-1)!=0 ) {  //------------------------------------------------- CORRIDOR
 		
 		var level = room.slice(-1);
+		
+		if ( !(room in memory) ) {
+			var name1 = ('other_hotel_room_'+level), name2 = ('toilet_'+level)
+			memory[room] = {'dude':[0,0,false],name1:'closed',name2:'closed'};
+			
+			if ( level==5 ) {	
+		
+				memory[room] = {'dude':[0,0,false],'toilet_5':'open_always','hotel_room_5':'closed_always','other_hotel_room_5':'open_always'};
+			
+				if (chapter==2) { 
+					memory[room]['dude'] = [B(4,4),B(5,2), true];
+				} else if (chapter>=4) { 
+					memory[room]['dude'] = [B(7,-2),B(5,2),true];
+					memory[room]['toilet_5'] = 'closed_always';
+				}
+			
+			} else if ( level==1 ) {
+				memory[room] = {'dude':[0,0,false],'other_hotel_room_1':'closed','toilet_1':'closed'};
+			} 
+		}
+
+		var dudepos = memory[room]['dude'];
+		var tst = memory[room]['toilet_'+level];	
+		var rst = memory[room]['other_hotel_room_'+level];
+			
 	
 		LX = 8, LY = 7;
 		
@@ -479,7 +521,6 @@ function loadRoom(inroom) {
 		
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
-		var dudepos = chapter==2 ? [B(4,4),B(5,2), true] : (chapter>=4 ? [B(7,-2),B(5,2),true] : [0,0,false]);
 		allstuff = [
 			['tv'  ,'objects','signs'        ,'roomnumber', 1,B(1,2),B(6,7),D(3,1), true,false,false,false,0, 6,'BG'],
 			['box' ,'objects','signs'        ,'exit'      , 1,B(6,2),B(6,7),D(3,2), true,false,false,false,0, 5,'BG'],
@@ -509,6 +550,11 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(doors);	
 
 	} else if (room == 'hotel_corridor_0') {  //----------------------------------------------------------------- LOBBY
+	
+		var ch2 = chapter<=2;
+		if ( !(room in memory) || firstEntry ) {
+			memory[room] = {'bellboy':'enter','istalking':false};
+		}	
 		
 		LX = 8, LY = 7;
 		J0 = 5;
@@ -517,9 +563,22 @@ function loadRoom(inroom) {
 		entryPoint['Y']    = B(5,4);
 		entryPoint['Z']    = 0;
 		entryPoint['file'] = 'm0_01N';
+		
+		if (!ch2) {
+			allactions = allactions.concat([  ['hefollows','follows',['bellboy','guy']],
+													['belly','bellboytalks'     ,[],B(3,0),B(4,-1),0,B(4,5),B(5,3)],
+													['recep','recepcionisttalks',[],B(1,2),B(4,2),0,B(2,2),B(5,0)],
+													['stop1','nowayStaff',[!ch2&&chapter<7],B(4,2),B(5,2),0,B(5,0),B(7,0)],
+													['stop2','nowayGuest',[chapter>7],B(4,2),B(0,0),0,B(5,0),B(7,0)]
+												]);
+		} else {
+			allactions = allactions.concat([  ['thephone','lobbyphone',[],B(2,0),B(4,-1),0,B(4,0),B(7,0)] ]);
+		}
+		
 				
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
+		var fp = ch2 ? 'phoneoff': 'phone' ;
 		allstuff = [
 			['sofa' ,'objects','sofas'    ,'111'     , 1,B(5,2),B(0,2),     0, true, true,false,false,0, 0,'VI'],
 			['sofa' ,'objects','sofas'    ,'111'     ,-1,B(3,6),B(1,6),     0, true, true,false,false,0, 0,'VI'],
@@ -529,8 +588,10 @@ function loadRoom(inroom) {
 			['desk' ,'objects','hoteldesk','desk'    , 1,B(0,0),B(5,0),     0, true, true,false,false,0, 0,'VI'],
 			['box'  ,'objects','signs'    ,'stairs'  , 1,B(6,2),B(6,7),D(3,2), true,false,false,false,0, 5,'BG'],
 			['box'  ,'objects','signs'    ,'toilet'  ,-1,B(7,7),B(5,1),D(3,2), true,false,false,false,0, 4,'BG'],
-			['phone','objects','phones'   ,'phone'   , 1,B(2,4),B(5,0),D(1,0), true, true,false,false,0, 0,'VI'],
-			['keys' ,'objects','keyshell' ,'keyshell', 1,B(2,4),B(6,4),     0, true, true,false,false,0, 0,'VI']
+			['phone','objects','phones'   ,fp        , 1,B(2,4),B(5,0),D(1,0), true, true,false,false,0, 0,'VI'],
+			['keys' ,'objects','keyshell' ,'keyshell', 1,B(2,4),B(6,4),     0, true, true,false,false,0, 0,'VI'],
+			['bellboy'      ,'people','bellboy'      ,'00_01N', 1,B(3,4),B(4,3),0,!ch2,!ch2,false,false,0, 0,'VI'],
+			['recepcionist' ,'people','recepcionist' ,'00_01N', 1,B(1,2),B(6,1),0,!ch2,!ch2,false,false,0, 0,'VI']
 			];
 		
 		// Floors
@@ -541,11 +602,12 @@ function loadRoom(inroom) {
 		allstuff = allstuff.concat(putWallAround([[1,6],[1,5],[],[1,2]],'wall','room',true,LX,LY,0,0));
 		
 		// Doors	
+		var strt = ch2?'_always':'';
 		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'dabox'         ,'rooms'        ,'door'     ,'front','closed'       ,0,1).concat(
 		        putDoor(B( 6,0),B(LY,0),0, 1,1,'stairs_0'      ,'rooms'        ,'door'     ,'front','closed'       ,0,1)).concat(
 				putDoor(B(LX,0),B( 5,0),0,-1,1,'toilet_0'      ,'rooms'        ,'door'     ,'front','closed'       ,0,1)).concat(
 				putDoor(B(LX,0),B( 1,0),0,-1,1,'elevator'      ,'elevatorhotel','elevator' ,'front','closed'       ,0,1)).concat(
-				putDoor(B( 1,0),B( 0,0),0, 1,2,'hotel_street_0','maindoorhotel','automatic','back' ,'closed'       ,0,1));
+				putDoor(B( 1,0),B( 0,0),0, 1,2,'hotel_street_0','maindoorhotel','automatic','back' ,'closed'+strt  ,0,1));
 		allstuff = allstuff.concat(doors);			
 		
 	} else if (room.slice(0,-2)=='stairs') {  //------------------------------------------------- STAIRS
@@ -921,8 +983,19 @@ function loadRoom(inroom) {
 		allstuff.push(['varanda','structures','stairs','varanda',1,B(12,4),B(13,4),D(Z,3),true,true,false,false,0,0,'VI'])
 		allstuff.push(['varanda','structures','stairs','varanda',1,B(11,1),B(13,4),D(Z,3),true,true,false,false,0,0,'VI'])
 		
+		
+		// gangster girl action stuff
+		if ( !(room in memory) || firstEntry ) {
+			memory[room] = {'ggirl':'enter','istalking':false};
+		}	
+		
+		if (level==6) {
+			allactions = allactions.concat([['shefollows','follows',['ggirl','guy']],
+										    ['shetalks'  ,'ggirltalks',[],B(7,0),B(11,0),D(Z,3),B(9,4),B(13,4)]]);
+		}
 		// gangster girl
 		allstuff.push(['ggirl','people','gangster_girl','00_11N',1,B(8,0),B(12,0),D(Z,3),true,true,true,false,0,0,'VI']);
+			
 		
 		// Roof boxes		
 		allstuff = allstuff.concat([	
@@ -956,6 +1029,7 @@ function loadRoom(inroom) {
 		Z=6*5+5;
 		// Roof Floors
 		floors   = floors.concat(putSquareFloor(11.5,17,16.5,22,D(Z,3),'floor','road','00',true,'roaded','BG'));
+	
 		
 		// ---------------------------------------- ROOF STUFF <<
 		

@@ -7,7 +7,7 @@ function writeText(string,i,j,textType,align,bubble,pointer) {
 	var the3colors = givemeColors(false);
 		
 	// string: text; i,j: position; textType=['text_normal','text_gothic','text_gothic_fat']
-	// align: centered?; bubble: ariund the letters; pointer: when someone talks
+	// align: centered?; bubble: around the letters; pointer: when someone talks
 	// if pointer==true, also bubble and align
 	
 	var dp = (textType == 'text_gothic_fat') ? 8 : 0;	
@@ -38,7 +38,7 @@ function writeText(string,i,j,textType,align,bubble,pointer) {
 	
 	
 	// i0,j0 should be corrected to be inside canvas
-	if (i+icum0<0) {
+	if (i+icum0-6<0) {
 		icum0 += -icum0-i+7
 	} else if (i+isize+icum0>width) {
 		icum0 += (width-i-isize-icum0)-6
@@ -47,6 +47,7 @@ function writeText(string,i,j,textType,align,bubble,pointer) {
 	// correct j direction
 	jj = height-dj-j
 	
+	//console.log('in',i,icum0,isize,jj,jsize)
 	//build bubble using native lines
 	if (bubble) {		
 		txtcontext.lineWidth = 4;
@@ -263,7 +264,7 @@ function drawText() {
 			if ('who' in txt) { // reposition if the guy is moving
 				var st = stuff['front'][getIndexFromID(txt['who'])[0]];
 				var lines = (txt['text'].split("|").length)
-				var i = (st['I0']+st['IM'])/2,
+				var i = Math.floor((st['I0']+st['IM'])/2),
 					j = st['JM']+11*lines;
 				txt['I0'] = i;
 				txt['J0'] = j;
@@ -275,5 +276,6 @@ function drawText() {
 			}
 		}
 	}
+	listText = listText.filter(it => !('time' in it) || ('time' in it && it['time']>=0))
 	
 } //----------------------------------------------------------------------------------------------
