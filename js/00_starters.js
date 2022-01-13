@@ -37,7 +37,7 @@ var music;
 var LI = 320, LJ = 180, width, height, scale;
 
 // time, chapter, rooms, room or cover?
-var t, room, preRoom, RGBcover=0;
+var t, subt, room, preRoom, RGBcover=0;
 
 // first frame in the room? first time in teleporter because you just apperaed there?
 var firstEntry = true, 
@@ -71,7 +71,7 @@ var actionOn  = false; keyOn = 'stp0';
 
 // Cinematics? Array witha sequence of actions. Keep keys block during cinematics.
 var cinematics = [], 
-	blockKeys = false;
+	blockKeys = false, fullControl = false;
 
 // debugging
 var tempo=0,nt=0,testing=false;
@@ -162,12 +162,12 @@ function start() {
 	
 	// enter in the room for the first time
 	
-	chapter = 0;
+	chapter = 3;
 	
-	objects = ['mano','gun'];
+	objects = ['mano','gun','maletin','roomkey'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["cover"]}];    //start: "hotel_room_5"
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_corridor_5"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -181,7 +181,7 @@ function updateit() {
 
 	// Update time to whatever is convenient
 	if (!pause) {
-		t = (t+1)%256;
+		t = (t+1)%(256*256);
 	}
 	
 	// update all stuff
@@ -281,6 +281,7 @@ function updateAction() {
 		//console.log(t,'A',cinematics.length,blockKeys,cinematics[0])
 		console.log(cinematics[0])
 		eval(cinematics[0]+';');
+		
 		cinematics.shift();
 		blockKeys = !(cinematics.length==0);
 		

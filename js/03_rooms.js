@@ -42,7 +42,7 @@ function loadRoom(inroom) {
 		LX = 4, LY = 6;
 		I0 = 170, J0 = 4;		
 			
-		RGBcover = 'RGB_LA';
+		RGBcover = 'RGB_cover';
 		entryPoint['X']    = B(2,2);
 		entryPoint['Y']    = B(3,1);
 		entryPoint['Z']    = 3;
@@ -342,7 +342,7 @@ function loadRoom(inroom) {
 	
 		menuIndex   = 0;
 		objectIndex = 0;
-		//objects     = ['mano','gun']
+		objects     = ['mano','gun']
 		
 		LX = 5, LY = 5;
 		
@@ -500,8 +500,18 @@ function loadRoom(inroom) {
 			} else if ( level==1 ) {
 				memory[room] = {'dude':[0,0,false],'other_hotel_room_1':'closed','toilet_1':'closed'};
 			} 
+		} else {
+			if ('time' in memory[room]) {
+				var tt = new Date()
+				var tim = (tt-memory[room]['time'])/1000;
+				if (tim>10){
+					memory[room]['dude'] = [B(7,-2),B(4,2),true];
+					memory[room]['toilet_5'] = 'closed_always';					
+				}
+			}
+			memory[room]["istalking"]=false;
 		}
-
+	
 		var dudepos = memory[room]['dude'];
 		var tst = memory[room]['toilet_'+level];	
 		var rst = memory[room]['other_hotel_room_'+level];
@@ -517,7 +527,8 @@ function loadRoom(inroom) {
 		// sliders at the corridor corner
 		allactions = allactions.concat([['sliderA' ,'sliders',['dwx','upy'],B(6,1),B(5,0),0,B(6,2),B(5,1)],
 										['sliderB' ,'sliders',['dwy','upx'],B(6,0),B(5,1),0,B(6,1),B(5,2)],
-										['dudetoilet','dudegototoilet',[]]]);
+										['dudetoilet','dudegototoilet',[]],
+										['dude','dudegoout',[chapter>=4||tim>10]]]);
 		
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 		
@@ -548,8 +559,10 @@ function loadRoom(inroom) {
 				putDoor(B(LX,0),B( 1,0),0,-1,1,'elevator'         ,'elevatorhotel','elevator','front','closed',1)).concat(
 				putDoor(B( 2,0),B( 5,0),0, 1,1,'other_hotel_room_'+level,'rooms','door','back',rst,1));
 		allstuff = allstuff.concat(doors);	
+		
 
 	} else if (room == 'hotel_corridor_0') {  //----------------------------------------------------------------- LOBBY
+	
 	
 		var ch2 = chapter<=2;
 		if ( !(room in memory) || firstEntry ) {
@@ -617,7 +630,7 @@ function loadRoom(inroom) {
 		console.log(level,screenLevel)
 		
 		LX = 5, LY = 5;
-		J0 = 10 - 60*screenLevel + 4*level;
+		J0 = 10 - 60*screenLevel + 5*level;
 		
 		// For teleporters: if guy arrives from the same room, use his XYZ as it is
 		if (preRoom.slice(0,-2)!='stairs') {
@@ -631,8 +644,6 @@ function loadRoom(inroom) {
 			entryPoint['Z']    = guy.Z;	
 			entryPoint['must'] = true;	
 		}
-		//allactions = allactions.concat([['sliderA' ,'sliders',['dwx','upy'],B(6,1),B(5,0),0,B(6,3),B(5,1)],
-		//								['sliderB' ,'sliders',['dwy','upx'],B(6,0),B(5,1),0,B(6,1),B(5,2)]]);
 
 		allactions = allactions.concat([
 										['from012to234','changeroom', [screenLevel == 0 ? 'stairs_2' : 'stairs_0'] ,
@@ -642,7 +653,12 @@ function loadRoom(inroom) {
 										['from456to6'  ,'changeroom', [screenLevel == 4 ? 'stairs_6' : 'stairs_4'] ,
 											B(2,4),B(3,4),60*5+30-3+(screenLevel == 4 ? 0 : -3),B(3,0),B(5,0)]
 									   ]);
-									   
+
+		if (chapter==4 && subt<=131) {
+			// gangster girl
+			allactions = allactions.concat([['ggirlrun','ggirlrun', []]]);		
+			allstuff.push(['ggirl','people','gangster_girl','00_10N',1,B(0,2),B(0,4),D(30,0),true,false,false,false,0,0,'VI']);
+		}									   
 
 		
 		// internal walls (mind the first floor distribution) // rehacer esta parte por el filtro de pantalla
@@ -736,7 +752,7 @@ function loadRoom(inroom) {
 						['STAIRS','structures','stairs','3halfsquare'     , 1,B(0,0),B(3,4),D(Z,15-6), z!=0, true,false, true,0, 0,'VI'],
 						];
 			allstuff = allstuff.concat(squares);
-			
+						
 		}
 	
 	} else if (room.slice(0,-2)=='hotel_street') {  //------------------------------------------------- HOTEL STREET
@@ -989,12 +1005,13 @@ function loadRoom(inroom) {
 			memory[room] = {'ggirl':'enter','istalking':false};
 		}	
 		
-		if (level==6) {
+		if (level==6 && chapter<=3) {
 			allactions = allactions.concat([['shefollows','follows',['ggirl','guy']],
-										    ['shetalks'  ,'ggirltalks',[],B(7,0),B(11,0),D(Z,3),B(9,4),B(13,4)]]);
+										    ['shetalks'  ,'ggirltalks',[],B(6,3),B(10,3),D(Z,3),B(8,7),B(12,7)]]);
+		
+			// gangster girl
+			allstuff.push(['ggirl','people','gangster_girl','00_10N',1,B(7,3),B(11,3),D(Z,3),true,true,false,false,0,0,'VI']);
 		}
-		// gangster girl
-		allstuff.push(['ggirl','people','gangster_girl','00_11N',1,B(8,0),B(12,0),D(Z,3),true,true,true,false,0,0,'VI']);
 			
 		
 		// Roof boxes		

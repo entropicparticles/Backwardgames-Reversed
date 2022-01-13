@@ -297,7 +297,8 @@ function givemeColors(row) {
 			var p = 8;
 			var tvoff   = stuff['front'][getIndexFromID('tv')[0]]['state'];
 			var lampoff = stuff['front'][getIndexFromID('lamp')[0]]['state'] != 'on';
-			var T       = tvoff == 'whitenoised' ? (1 - 2*Math.abs(Math.round(t/p)-t/p))*0.5+0.2+0.1*rng.nextFloat() : (tvoff=='itsOn'?(t%2?0.75:0.8):0);
+			var tt = t%255;
+			var T       = tvoff == 'whitenoised' ? (1 - 2*Math.abs(Math.round(tt/p)-tt/p))*0.5+0.2+0.1*rng.nextFloat() : (tvoff=='itsOn'?(tt%2?0.75:0.8):0);
 			var K       = lampoff ? 0 : 150 ;
 			var a  = gauss([X,Y],[1*L,4*L],3*L)*T*255 +  //tv
 					 gauss([X,Y],[3*L,3*L],3*L)*(50) + //centre
