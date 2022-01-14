@@ -162,12 +162,12 @@ function start() {
 	
 	// enter in the room for the first time
 	
-	chapter = 3;
+	chapter = 5;
 	
-	objects = ['mano','gun','maletin','roomkey'];
+	objects = ['mano','gun','maletin','report'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_corridor_5"]}];    //start: "hotel_room_5"
+	actions = [{'ID':'room','function':'changeroom','arguments':["other_hotel_room_1"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -279,10 +279,11 @@ function updateAction() {
 	if (cinematics.length>0) {
 		
 		//console.log(t,'A',cinematics.length,blockKeys,cinematics[0])
-		console.log(cinematics[0])
-		eval(cinematics[0]+';');
-		
+		var cine = cinematics[0];
+		console.log(cine)
 		cinematics.shift();
+		eval(cine+';');
+		
 		blockKeys = !(cinematics.length==0);
 		
 	}

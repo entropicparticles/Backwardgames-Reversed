@@ -40,7 +40,7 @@ function writeText(string,i,j,textType,align,bubble,pointer) {
 	// i0,j0 should be corrected to be inside canvas
 	if (i+icum0-6<0) {
 		icum0 += -icum0-i+7
-	} else if (i+isize+icum0>width) {
+	} else if (i+isize+icum0+6>width) {
 		icum0 += (width-i-isize-icum0)-6
 	}
 	

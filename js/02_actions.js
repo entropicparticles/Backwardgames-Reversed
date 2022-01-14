@@ -64,14 +64,14 @@ function walking(step,indk) {
 			}
 			// if in the next move there is only floor lower than 3 or hight than 3 (rare), it's too much
 			go = !(godown < -3);
-			console.log(q,im['ID'],go)
+			//console.log(q,im['ID'],go)
 			// solid 
 			if (go) {
 				dz = goup <=3 ? goup : (godown >=-3 ? godown : 0 ) ;
 				testa.Z  += dz;
 				testa.ZM += dz;
 				go = go && !space['solid'].some( obj => collision(testa,obj) && ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z)) && im['ID']!=obj['ID'] );
-				console.log(space['solid'].filter( obj => collision(testa,obj)&& ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z))&& im['ID']!=obj['ID'] ))
+				//console.log(space['solid'].filter( obj => collision(testa,obj)&& ((testa.Z>=obj.Z&&testa.Z<obj.ZM)||(testa.Z<=obj.Z && testa.ZM>obj.Z))&& im['ID']!=obj['ID'] ))
 			}
 			
 			// if go, check action and continue; if not, stop here
@@ -207,7 +207,7 @@ function elevatordoor(col,Zbol,actOn,id) {
 				stuff['front'][k]['visible'] = s['state']=='open';	
 			}
 		}
-	} else if (!(col&&Zbol)){
+	} else if (!(col&&Zbol) && !fullControl ){
 		// close door when guy outside the square
 		for (var k=0; k<stuff['front'].length; ++k) {
 			s = stuff['front'][k];
@@ -233,8 +233,7 @@ function automaticdoor(col,Zbol,id) {
 				stuff['front'][k]['visible'] = s['state']=='closed';
 			}
 		}
-	}
-	
+	}	
 }
 	
 function verynormaldoor(col,Zbol,actOn,id) {
@@ -494,8 +493,7 @@ function followMe(who,whom,eachother) {
 
 function turnItOnOff(col,Zbol,actOn,what,who,go) {
 
-	if (col&&Zbol&&actOn&&go&&objects[objectIndex]=='mano') {		
-	
+	if (col&&Zbol&&actOn&&go&&objects[objectIndex]=='mano') {	
 		var lamp = stuff['front'].filter(it => it['ID']==what)[0];
 		var fl = what;
 		if (what=='lamp') {
@@ -503,7 +501,8 @@ function turnItOnOff(col,Zbol,actOn,what,who,go) {
 			fl += st;
 		} else if(what=='tv') {
 			var st = lamp['state']=='itsOff'?'itsOn':'itsOff';
-		}
+		}	
+	console.log(st)
 		
 		memory[room][what] = st;
 		
@@ -660,12 +659,12 @@ function dudegototoilet(col,Zbol,actOn) {
 }
 
 function dudegoout(col,Zbol,actOn,doit) {
-	if(doit&&!memory["hotel_corridor_5"]["istalking"]) {
+	if(doit&&!memory["hotel_corridor_5"]["istalking"]&&room=="hotel_corridor_5") {
 		memory["hotel_corridor_5"]["istalking"]=true;
 		var w = preRoom.slice(0,-2)=='stairs'? 'upy1' : 'upx1' ;
 		var walk1 = ['followMe("dude","guy",true);followMe("dude","guy",true);walking("stp0",guyIndex);setFile02ByID("g0","dude")',
 					 'whoTalks("dude","Private floor. Get the fuck out of here.",40,true)'].concat(Array(41).fill(''))
-					 .concat(Array(8).fill('walking("'+w+'",guyIndex)')).concat(['actionOn=true;memory["hotel_corridor_5"]["istalking"]=false'])
+					 .concat(Array(8).fill('walking("'+w+'",guyIndex)')).concat(['openclosedoor(true,true,true,"hotel_corridor_5","door","closed");memory["hotel_corridor_5"]["istalking"]=false'])
 		setCinematics(
 					  walk1
 					  );
@@ -731,13 +730,13 @@ function ggirltalks(col,Zbol,actOn) {
 					   ['followMe("ggirl","guy",true);walking("stp0",guyIndex);setFile02("mo",guyIndex)',
 						'whoTalks("guy","I know, I'+"'"+'ll take care of it.|Thanks for the help.",60,true)'].concat(Array(62).fill(''))
 				 .concat(['whoTalks("ggirl","...Use the key to enter in the room,|but once inside, you are in your own.",120,true)'].concat(Array(122).fill('')))
-				 .concat(['whoTalks("ggirl","...If he is facing to the light without|his sunglasses, he will miss the shoot...",120,true)'].concat(Array(122).fill('')))
+				 .concat(['whoTalks("ggirl","...If he is facing to the light he doesn'+"'"+'t|see shit, he will miss the shoot...",120,true)'].concat(Array(122).fill('')))
 				 .concat(['whoTalks("ggirl","...If you want to kill that psyco make sure you|enter in the corridor while he is in the toilet...",120,true)'].concat(Array(122).fill('')))
 				 .concat(['whoTalks("ggirl","It'+"'"+'s not gonna be that easy. They will|kill you as soon they see the case...",120,true)'].concat(Array(122).fill('')))
 			
 				 .concat(['setFile02ByID("0f","ggirl")',
-			              'whoTalks("guy","It'+"'"+'s a deal.",60,true)'].concat(Array(62).fill(''))
-			             .concat(['setFile02("mf",guyIndex);objects[objectIndex]="report";setFile02ByID("0o","ggirl")']))
+			              'whoTalks("guy","It'+"'"+'s a deal.",60,true)'].concat(Array(31).fill(''))
+			             .concat(['setFile02("mf",guyIndex);objects[objectIndex]="report";setFile02ByID("0o","ggirl")'])).concat(Array(31).fill(''))
 			
 				 .concat(['whoTalks("ggirl","She'+"'"+'s downstairs in one of the rooms. I can give|you the key but you give me the file NOW.",120,true)'].concat(Array(122).fill(''))
 			             .concat(['setFile02ByID("00","ggirl")']))
@@ -757,7 +756,7 @@ function ggirltalks(col,Zbol,actOn) {
 			}
 			
 			talks1 = talks1.concat(walks1);
-			talks1 = walks1;
+			//talks1 = walks1;
 			
 			talks1 = talks1.concat(Array(11).fill('walkingByID("upx1","ggirl")').concat(['setFile02ByID("00","ggirl");walkingByID("stp0","ggirl")']))	
 			
@@ -923,6 +922,74 @@ function recepcionisttalks(col,Zbol,actOn) {
 		console.log(cinematics);
 		
 	}
+}
+
+function roo1stfloorphone(col,Zbol,actOn) {
+	
+	if (col&&Zbol&&actOn&&objects[objectIndex]=='mano') {
+				
+		listText = [];
+		var talks1 = ['setFileByID("phoneuse","phone");followMe("guy","phone",false);walking("stp0",guyIndex);setFile02("mt",guyIndex)',
+					  'whoTalks("phone","**Wait!!...**",30,false)'].concat(Array(32).fill(''));
+		var talks2 = ['whoTalks("guy","El Jefe has a message to you: This|is the last time you fucked up.",120,true)'].concat(Array(122).fill(''));
+		var talks3 = ['whoTalks("phone","**Who'+"'"+'s calling**",80,true)'].concat(Array(86).fill(''));
+		var talks4 = ['whoTalks("phone","toooooot",30,true)'].concat(Array(32).fill(''));
+		var talks5 = ['whoTalks("phone","CLICK CLICK CLICK",70,false)'].concat(Array(72).fill(''));
+		var end    = ['setFileByID("phone","phone");setFile02("m0",guyIndex);memory["other_hotel_room_1"]["phone"]=true'];
+		setCinematics(
+					  talks1.concat(talks2).concat(talks3).concat(talks4).concat(talks5).concat(end)
+					  );
+		console.log(cinematics);
+		
+	}
+}
+
+function gotolobby(col,Zbol,actOn) {
+	
+	if (!memory["other_hotel_room_1"]["istalking"]||(memory["other_hotel_room_1"]["phone"]&&memory["other_hotel_room_1"]["lamp"]=='on'&&col&&Zbol&&!memory["other_hotel_room_1"]["istalking"])) {
+		++chapter;
+		memory["other_hotel_room_1"]["istalking"] = true;
+		var walks1 = ['hideshowItem("bellboy",false);fullControl=true;openclosedoor(true,true,true,"hotel_corridor_1","door","open")',
+					  'followMe("guy","bellboy",false);walkingByID("dwy1","bellboy")','followMe("guy","bellboy",true);walkingByID("dwy1","bellboy")'
+					  ].concat(Array(10).fill('walkingByID("dwy1","bellboy")')).concat(['walkingByID("upy0","bellboy");walkingByID("stp0","bellboy")'])
+					  .concat(['whoTalks("bellboy","Enjoy your stay, sir.",40,true)']).concat(Array(42).fill(''))
+					  .concat(Array(12).fill('walkingByID("dwx1","bellboy")'))
+					  .concat(['walkingByID("upx0","bellboy");walkingByID("stp0","bellboy");turnItOnOff(true,true,true,"lamp","bellboy",true)'])
+					  .concat(walkThere(guyIndex,B(2,2),B(5,0),1,'x')).concat(Array(11).fill('walking("upy1",guyIndex)'))
+					  .concat(['walking("stp0",guyIndex)'])
+					  .concat(Array(8).fill('walkingByID("upy1","bellboy")'))
+					  .concat(['openclosedoor(true,true,true,"other_hotel_room_1","door","closed")',
+					  'whoTalks("other_hotel_room_1","CLICK",20,false)'])
+					  .concat(Array(8*2).fill('walking("upx1",guyIndex)'))
+					  .concat(Array(8*2).fill('walkingByID("upx1","bellboy");walking("upx1",guyIndex)'))
+					  .concat(Array(8*2).fill('walkingByID("upx1","bellboy");walking("dwy1",guyIndex)'))				  
+					  .concat(Array(8*3).fill('walkingByID("dwy1","bellboy");walking("dwy1",guyIndex)'))
+					  .concat(Array(3).fill('walkingByID("dwy1","bellboy");walking("upx1",guyIndex)'))				  
+					  .concat(['walkingByID("dwy1","bellboy");walking("upx1",guyIndex);actionOn=true'])	
+					  .concat(Array(4).fill('walkingByID("dwy1","bellboy");walking("upx1",guyIndex)'))				  					  
+					  .concat(Array(5).fill('walkingByID("upx1","bellboy");walking("upx1",guyIndex)'))			  					  
+					  .concat(['walkingByID("stp0","bellboy");walking("stp0",guyIndex)'])					  					  
+					  .concat(Array(32).fill(''))				
+					  .concat(['openclosedoor(true,true,true,"hotel_corridor_0","elevator","whatever")'])	  					  
+					  .concat(Array(8).fill('walkingByID("dwx1","bellboy");walking("dwx1",guyIndex)'))				  					  
+					  .concat(['loadRoom("hotel_corridor_0");fullControl=false'])					  					  
+					  .concat(Array(8).fill('walkingByID("dwx1","bellboy");walking("dwx1",guyIndex)'))	
+					  .concat(Array(8).fill('walkingByID("dwy1","bellboy");walking("dwx1",guyIndex)'))	
+					  .concat(['walkingByID("stp0","bellboy");walking("upy0",guyIndex);walking("stp0",guyIndex);whoTalks("bellboy","This way, sir.",30,true)'])	
+					  .concat(Array(20).fill(''))	
+					  .concat(Array(8*3).fill('walkingByID("upy1","bellboy");walking("upy1",guyIndex)'))
+					  .concat(Array(8).fill('walkingByID("upy1","bellboy");walking("dwx1",guyIndex)'))
+					  .concat(Array(8*3-3).fill('walkingByID("dwx1","bellboy");walking("dwx1",guyIndex)'))	
+					  .concat(['walkingByID("upx0","bellboy");walkingByID("stp0","bellboy");walking("dwx1",guyIndex)'])
+					  .concat(Array(6).fill('walking("dwx1",guyIndex)'))
+					  .concat(['walking("stp0",guyIndex);whoTalks("bellboy","Please, follow me. I will take you to your room.",50,true)']).concat(Array(52).fill(''))
+					  .concat(['actionOn=true;memory["hotel_corridor_0"]["istalking"] = false;++chapter'])		
+		setCinematics(
+					  walks1
+					  );
+		console.log(cinematics);		
+	}
+	
 }
 
 
