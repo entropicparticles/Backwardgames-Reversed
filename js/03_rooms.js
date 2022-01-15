@@ -33,10 +33,37 @@ function loadRoom(inroom) {
     space   = {'open':[],'solid':[]};
 	listText = [];
 	
-	playMusic(room);
 	
 	if (room=='cover') {  //------------------------------------------------------------- COVER	
 	
+		//playIntroAndLoop('cover','cover_loop');
+		
+		menuIndex   = 2;
+		
+		LX = 4, LY = 4;
+		I0 = 0, J0 = 0;		
+			
+		RGBcover = 'RGB_cover';
+		entryPoint['X']    = B(0,0);
+		entryPoint['Y']    = B(0,0);
+		entryPoint['Z']    = 0;
+		entryPoint['file'] = '00_01N';
+		
+		objects = ['mano','gun'];
+		
+		alltext = [
+			[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false],
+			['Reversed',LI/2,110,'gothic',true,false,false],
+			['Start||Help||Quit',40,62,'text_normal',false,false,false]];
+			
+		allactions = allactions.concat([['menu' ,'menuCover',[]]]);
+
+
+		
+	} else if (room=='cover0') {  //------------------------------------------------------------- COVER	
+	
+		playIntroAndLoop('cover','cover_loop');
+		
 		menuIndex   = 2;
 		
 		LX = 4, LY = 6;
@@ -55,7 +82,7 @@ function loadRoom(inroom) {
 			['Reversed',LI/2,110,'gothic',true,false,false],
 			['Start||Help||Quit',250,62,'text_normal',false,false,false]];
 			
-		allactions = allactions.concat([['menu' ,'menuCover',[]]]);
+		allactions = allactions.concat([['menu' ,'menuCover0',[]]]);
 	
 		
 		allstuff = [
@@ -354,6 +381,8 @@ function loadRoom(inroom) {
 	
 	} else if (room=='hotel_room_5') {  //------------------------------------------------- ROOM
 	
+		playIntroAndLoop('beginning','main_loop');
+		
 		menuIndex   = 0;
 		objectIndex = 0;
 		objects     = ['mano','gun']
@@ -431,7 +460,7 @@ function loadRoom(inroom) {
 		//{'ID', 'type':,'folder','file','spin', 'X','Y','Z', 'visible','solid','mobile','walkable', 'state','order','BG'}
 			
 		
-		var l   = tv=='broken'? 0 : 1;
+		var l   = lst=='broken'? 0 : 1;
 		    lfl = lst=='broken'? 'lampshoot' : (lst=='on'? 'lampon' : 'lampoff');
 			
 		allstuff = [
@@ -508,7 +537,7 @@ function loadRoom(inroom) {
 				if (chapter==2) { 
 					memory[room]['dude'] = [B(4,4) ,B(5,2),true];
 				} else if (chapter>=4) { 
-					memory[room]['ggirl'] = [B(7,-2),B(3,2),true];
+					memory[room]['ggirl'] = [B(5,-2),B(6,-2),true];
 					memory[room]['dude'] = [B(7,-2),B(3,2),true];
 					memory[room]['toilet_5'] = 'closed_always';
 				}
@@ -650,7 +679,7 @@ function loadRoom(inroom) {
 		
 		// Doors	
 		var strt = ch2?'_always':'';
-		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'dabox'         ,'rooms'        ,'door'     ,'front','closed'       ,0,1).concat(
+		doors = putDoor(B( 1,0),B(LY,0),0, 1,1,'dabox'         ,'rooms'        ,'door'     ,'front','closed_always',0,1).concat(
 		        putDoor(B( 6,0),B(LY,0),0, 1,1,'stairs_0'      ,'rooms'        ,'door'     ,'front','closed'       ,0,1)).concat(
 				putDoor(B(LX,0),B( 5,0),0,-1,1,'toilet_0'      ,'rooms'        ,'door'     ,'front','closed'       ,0,1)).concat(
 				putDoor(B(LX,0),B( 1,0),0,-1,1,'elevator'      ,'elevatorhotel','elevator' ,'front','closed'       ,0,1)).concat(
@@ -858,9 +887,19 @@ function loadRoom(inroom) {
 						['cars','structures','vehicles','taxi'      , 1,B(13,0),B( 6,-2),0,true, true,false,false,0,0,'VI'],
 						['cars','structures','vehicles','taxi'      , 1,B(20,0),B( 6,-4),0,true, true,false,false,0,0,'VI'],
 						['cars','structures','vehicles','heisenberg',-1,B(24,0),B(11,4),0,true,false,false,false,0,0,'BG'],
-						['cars','structures','vehicles','normal'    ,-1,B(20,6),B(11,7),0,true,false,false,false,0,0,'BG'],
-						['cars','structures','vehicles','limo'      , 1,B( 6,0),B(2,3),0,true,true,false,false,0,0,'VI'],
+						['cars','structures','vehicles','normal'    ,-1,B(20,6),B(11,7),0,true,false,false,false,0,0,'BG']
 		]);
+		if (chapter>=7) {
+			allstuff = allstuff.concat([
+						['limo'     ,'structures','vehicles','limo'    ,1,B(6,0),B(2,3),0,true,true,false,false,0,0,'VI'],
+						['limodoor' ,'structures','vehicles','limodoor',1,B(7,5),B(1,3),0,false,false,false,false,0,0,'VI'],
+						['bodyguard','people','bodyguard','00_00N',1,B(7,5),B(2,-1),0,true,true,false,false,0,0,'VI']
+						]);
+			allactions = allactions.concat([
+								['bodyguard','watching',['bodyguard']],
+								['tolimo'   ,'takelimo',[],B(6,0),B(3,0),0,B(11,0),B(5,0)]
+						]);
+		}
 		
 		// Road lines
 		for (var x=0; x<36; x+=3) floors.push(['lines','floors','road','line', 1,B( x,0),B(2,-3),0,true,false,false,false,0,0,'BG']);

@@ -22,16 +22,17 @@ let actionKeys = {esc:   27, //escape
 				  };
 				  
 var pathmusic  = './music/';
-var songs = {'cover'        :'majestygood.mp3',
-			 'club'         :'sweet.mp3',
-			 'policestation':'gangsta.mp3',
-			 'motel'        :'nothing.mp3'};
+var songs = {'cover'       : new Audio(pathmusic+'cover.mp3'),
+			 'cover_loop'  : new Audio(pathmusic+'cover_loop.mp3'),
+			 'beginning'   : new Audio(pathmusic+'beginning.mp3'),
+			 'main_loop'   : new Audio(pathmusic+'main_loop.mp3'),
+			 'theend'      : new Audio(pathmusic+'theend.mp3')};
+var music = new Audio();
 			 
 // Define html elements: canvas, context and music
 var     canvas,     context;
 var  txtcanvas,  txtcontext;
 var backcanvas, backcontext;
-var music;
  
 // Define the image dimensions
 var LI = 320, LJ = 180, width, height, scale;
@@ -71,7 +72,7 @@ var actionOn  = false; keyOn = 'stp0';
 
 // Cinematics? Array witha sequence of actions. Keep keys block during cinematics.
 var cinematics = [], 
-	blockKeys = false, fullControl = false;
+	blockKeys = false, fullControl = false, printcine = true;
 
 // debugging
 var tempo=0,nt=0,testing=false;
@@ -132,9 +133,7 @@ function start() {
 	txtcontext  = txtcanvas.getContext("2d");
 	backcanvas  = document.getElementById("back"); 
 	backcontext = backcanvas.getContext("2d");
-	
-	music = document.getElementById('music');
-		
+			
 	// Define the image dimensions
 	width  = canvas.width;
 	height = canvas.height;
@@ -162,12 +161,12 @@ function start() {
 	
 	// enter in the room for the first time
 	
-	chapter = 5;
+	chapter = 0;
 	
 	objects = ['mano','gun','maletin','report'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["other_hotel_room_1"]}];    //start: "hotel_room_5"
+	actions = [{'ID':'room','function':'changeroom','arguments':["cover"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -203,7 +202,7 @@ function updateKeys() {
 		keys[e.keyCode] += 1;
 		
 		// Pause, mute, +, - : have efect only the first time
-		if        ( keys[actionKeys.pause] == 1 ) {                           // PAUSE
+		if        ( keys[actionKeys.pause] == 1 && room!='cover' ) {                           // PAUSE
 			pause = !pause;
 		} else if ( keys[actionKeys.mute ] == 1 && !pause ) {                 // MUTE MUSIC
 			mute = !mute;			
