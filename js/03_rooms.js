@@ -4,7 +4,7 @@
 
 // SHIT HAPPENS HERE -----------------------------------------------------------------------------
 function loadRoom(inroom) {
-	console.log('ROOM > ',inroom, 'CHAPTER:',chapter);
+	if (testing) console.log('ROOM > ',inroom, 'CHAPTER:',chapter);
 	
 	// set values after action
 	preRoom     = room;
@@ -34,7 +34,7 @@ function loadRoom(inroom) {
 	listText = [];
 	
 	
-	if (room=='cover') {  //------------------------------------------------------------- COVER	
+	if (room=='cover00') {  //------------------------------------------------------------- COVER	
 	
 		//playIntroAndLoop('cover','cover_loop');
 		
@@ -524,7 +524,7 @@ function loadRoom(inroom) {
 	} else if ( room.slice(0,-2)=='hotel_corridor' && room.slice(-1)!=0 ) {  //------------------------------------------------- CORRIDOR
 		
 		var level = room.slice(-1);
-		console.log(room in memory)
+		//console.log(room in memory)
 		if ( !(room in memory) ) {
 			
 			var name1 = ('other_hotel_room_'+level), name2 = ('toilet_'+level)
@@ -564,7 +564,7 @@ function loadRoom(inroom) {
 			memory[room]["istalking"]=false;
 			
 		}
-		console.log(memory[room])
+		//console.log(memory[room])
 	
 		var dudepos = memory[room]['dude'];
 		var ggpos   = memory[room]['ggirl'];
@@ -690,7 +690,7 @@ function loadRoom(inroom) {
 		
 		var level       = room.slice(-1);
 		var screenLevel = Math.floor(level/2)*2;
-		console.log(level,screenLevel)
+		//console.log(level,screenLevel)
 		
 		LX = 5, LY = 5;
 		J0 = 10 - 60*screenLevel + 5*level;
@@ -832,6 +832,8 @@ function loadRoom(inroom) {
 			I0 = -50,J0 = -145
 		} else if (level==3) {
 			I0 = -150,J0 = -240;
+		} else if (level==9) {    // cover
+			I0 = 343,J0 = -482;   // I0 = 343,J0 = -482;
 		} else {
 			I0 = 400, J0 = -1;
 		}
@@ -848,6 +850,25 @@ function loadRoom(inroom) {
 			entryPoint['Z']    = guy.Z;	
 			entryPoint['must'] = true;	
 		}		
+		
+		if (level==9) {                 //cover
+		
+			entryPoint['X']    = B(5,4);
+			entryPoint['Y']    = B(21,4);
+			entryPoint['Z']    = D(5*3+2,0);
+			entryPoint['file'] = '1F_01N';
+			
+			RGBcover = 'RGB_degrad';
+			menuIndex   = 2;
+			
+			playIntroAndLoop('cover','cover_loop');
+			alltext = [
+				[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false],
+				['Reversed',LI/2,110,'gothic',true,false,false],
+				['   Start ||   Help',5,150,'text_normal',false,false,false]];			
+			allactions = allactions.concat([['menu' ,'menuCover',[]]]);
+			
+		}
 		
 		var delta  = (level==0?0:5);
 		var delta1 = (level==2?0:5);
@@ -973,25 +994,26 @@ function loadRoom(inroom) {
 		}
 		
 		// TRAIN
-
-		// concrete
-		walls.push(['trainwall','walls','concrete','10shadow' ,1,B(32,0),B(5,0),0,true, true,false,false,0,0,'BG']);
-		walls.push(['trainwall','walls','concrete','00Bshadow',1,B(33,0),B(5,0),0,true, true,false,false,0,0,'BG']);
-		walls.push(['trainwall','walls','concrete','00Ashadow',1,B(34,0),B(5,0),0,true, true,false,false,0,0,'BG']);
-		walls.push(['trainwall','walls','concrete','01shadow' ,1,B(35,0),B(5,0),0,true, true,false,false,0,0,'BG']);
-		for (var x=0; x<11; ++x){
-			walls.push(['trainwall','walls','concrete','10' ,-1,B(32,0),B(5+4*x,0),0,true, true,false,false,0,0,'BG']);
-			walls.push(['trainwall','walls','concrete','00B',-1,B(32,0),B(6+4*x,0),0,true, true,false,false,0,0,'BG']);
-			walls.push(['trainwall','walls','concrete','00A',-1,B(32,0),B(7+4*x,0),0,true, true,false,false,0,0,'BG']);
-			walls.push(['trainwall','walls','concrete','01' ,-1,B(32,0),B(8+4*x,0),0,true, true,false,false,0,0,'BG']);			
+		if (level!=9) {
+			// concrete
+			walls.push(['trainwall','walls','concrete','10shadow' ,1,B(32,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+			walls.push(['trainwall','walls','concrete','00Bshadow',1,B(33,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+			walls.push(['trainwall','walls','concrete','00Ashadow',1,B(34,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+			walls.push(['trainwall','walls','concrete','01shadow' ,1,B(35,0),B(5,0),0,true, true,false,false,0,0,'BG']);
+			for (var x=0; x<11; ++x){
+				walls.push(['trainwall','walls','concrete','10' ,-1,B(32,0),B(5+4*x,0),0,true, true,false,false,0,0,'BG']);
+				walls.push(['trainwall','walls','concrete','00B',-1,B(32,0),B(6+4*x,0),0,true, true,false,false,0,0,'BG']);
+				walls.push(['trainwall','walls','concrete','00A',-1,B(32,0),B(7+4*x,0),0,true, true,false,false,0,0,'BG']);
+				walls.push(['trainwall','walls','concrete','01' ,-1,B(32,0),B(8+4*x,0),0,true, true,false,false,0,0,'BG']);			
+			}
+			for (var x=0; x<4; ++x) walls.push(['lisghts','structures','street','lights' ,1,B(32,-2),B(1+12*x,3),D(8,1),true, false,false,false,0,0,x==0?'VI':'BG']);	
+			
+			// train
+			for (var x=-2; x<11; ++x) {
+				walls.push(['trainA','structures','train','trainA',1,B(32,-2),B(5+4*x  ,0),D(5,5),true,false,false,false,0,0,x<=-1?'VI':'BG']);
+				walls.push(['trainB','structures','train','trainB',1,B(32,-2),B(5+4*x+2,0),D(5,5),true,false,false,false,0,0,x<=-1?'VI':'BG']);
+			}			
 		}
-		for (var x=0; x<4; ++x) walls.push(['lisghts','structures','street','lights' ,1,B(32,-2),B(1+12*x,3),D(8,1),true, false,false,false,0,0,x==0?'VI':'BG']);	
-		
-		// train
-		for (var x=-2; x<11; ++x) {
-			walls.push(['trainA','structures','train','trainA',1,B(32,-2),B(5+4*x  ,0),D(5,5),true,false,false,false,0,0,x<=-1?'VI':'BG']);
-			walls.push(['trainB','structures','train','trainB',1,B(32,-2),B(5+4*x+2,0),D(5,5),true,false,false,false,0,0,x<=-1?'VI':'BG']);
-		}			
 		
 		// LOOP Z
 		var zmin = Math.max(0,level-3-6),
@@ -1020,8 +1042,9 @@ function loadRoom(inroom) {
 			
 			// windows						
 			if (z!=6) {
+				var whichwin = (level!=9)||(level==9&&z!=5) ? 'window2' : 'windowguy' ;
 				walls.push(['window','structures','hotelwindow','window2', 1,z>0 ? B(7,4) : B(11,4),B(10,0),D(Z+1.5,3),true,false,false,false,0,0,'BG']);
-				walls.push(['window','structures','hotelwindow','window2',-1,B(6,0),B(19,4),D(Z+1.5,3),true,false,false,false,0,0,'BG']);
+				walls.push(['window','structures','hotelwindow',whichwin,-1,B(6,0),B(19,4),D(Z+1.5,3),true,false,false,false,0,0,'BG']);
 				walls.push(['window','structures','hotelwindow','window1',-1,B(6,0),B(16,0),D(Z+1.5,3),z>0,false,false,false,0,0,'VI']);
 			}
 			
@@ -1078,12 +1101,13 @@ function loadRoom(inroom) {
 			memory[room] = {'ggirl':'enter','istalking':false};
 		}	
 		
-		if (level==6 && chapter<=3) {
-			allactions = allactions.concat([['shefollows','follows',['ggirl','guy']],
+		if ( (level==6||level==9) && chapter<=3) {
+			if (level==6) {
+				allactions = allactions.concat([['shefollows','follows',['ggirl','guy']],
 										    ['shetalks'  ,'ggirltalks',[],B(6,3),B(10,3),D(Z,3),B(8,7),B(12,7)]]);
-		
+			}
 			// gangster girl
-			allstuff.push(['ggirl','people','gangster_girl','00_10N',1,B(7,3),B(11,3),D(Z,3),true,true,false,false,0,0,'VI']);
+			allstuff.push(['ggirl','people','gangster_girl','00_00N',1,B(7,3),B(11,3),D(Z,3),true,true,false,false,0,0,'VI']);
 		}
 			
 		
@@ -1151,7 +1175,7 @@ function loadRoom(inroom) {
 	// All other things
 	makeText(alltext);
 	makeActions(allactions);	
-	console.log(actions)
+	if (testing) console.log(actions)
 	makeSpace();
 		
 
@@ -1207,7 +1231,7 @@ function putGuyAtRoom(entryPoint,entryPreDoor,entryPoint) {
 							'visible':txt[8],'solid':txt[9],'mobile':txt[10],'walkable':txt[11],'state':txt[12],'order':txt[13]});
 	guyIndex = stuff['front'].length-1;
 	
-	console.log('entry:',guy['ID'],guy['X'],guy['Y'],guy['Z']);
+	if (testing) console.log('entry:',guy['ID'],guy['X'],guy['Y'],guy['Z']);
 }
 
 

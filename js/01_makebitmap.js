@@ -171,7 +171,7 @@ function drawPanel() {
 		// Draw the help menu when asked
 		// only appears after action at index=1 (2nd of menu of 3 options)
 		if (menuIndex==1) {		
-			im = tiles['panel']['panel']['panelcoverjs']
+			im = tiles['panel']['panel']['panelcoverH']
 			drawTile(im,0,0,0,false,'text',the3colors)		
 		}
 		

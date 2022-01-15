@@ -72,7 +72,7 @@ var actionOn  = false; keyOn = 'stp0';
 
 // Cinematics? Array witha sequence of actions. Keep keys block during cinematics.
 var cinematics = [], 
-	blockKeys = false, fullControl = false, printcine = true;
+	blockKeys = false, fullControl = false, printcine = false;
 
 // debugging
 var tempo=0,nt=0,testing=false;
@@ -166,7 +166,7 @@ function start() {
 	objects = ['mano','gun','maletin','report'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["cover"]}];    //start: "hotel_room_5"
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_street_9"]}];    //start: "hotel_room_5"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
 	 
     // Initiate loop
@@ -256,9 +256,7 @@ function updateMusic() {
 	
 	// mute the song: times continues
 	if (keys[actionKeys.mute] && mute) {
-		music.volume=0;
-	} else if (keys[actionKeys.mute] && !mute) {
-		music.volume=1;
+		music.volume=mute?0:1;
 	}
 	
 	// pause the song: time stops
@@ -279,7 +277,7 @@ function updateAction() {
 		
 		//console.log(t,'A',cinematics.length,blockKeys,cinematics[0])
 		var cine = cinematics[0];
-		console.log(cine)
+		if (testing) console.log(cine)
 		cinematics.shift();
 		eval(cine+';');
 		

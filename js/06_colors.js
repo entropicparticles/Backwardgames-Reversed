@@ -45,7 +45,7 @@ console.log(rng.nextFloat())
 
 function specialEffects(rowt,idx) {
 	
-	
+	//console.log(rowt['file'])
 	// FOR RANDOM SERIES
 	var rng = new RNG(rowt['X']+100*rowt['Y']+10000*rowt['Z']+100000);
 	var png = [...rowt['png']];
@@ -172,6 +172,7 @@ function givemeColors(row) {
 			a = (a%255)/255;
 			a = cl(a);
 			var a2 = ['people','objects'].includes(row['type']) || ['street','firestairs','vehicles'].includes(row['folder']) ? 0.4 + 0.6*a : a ; 
+			if (room.slice(-1)==9 && row['ID']=='guy') a2 = 0.8 + 0.2*a
 		}
 		
 		ra =  [ [r+a*0.8,cl(0.8+a2/10),a2  ],   // ligtht
