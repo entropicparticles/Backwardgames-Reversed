@@ -6,7 +6,7 @@ DEMO: An adventure game inspired in the pixelart of Batman and Head Over Hells (
 - 8-bit: All fits in a screen of 320x180 pixels and music is chiptuned.
 - Isometric: Yeah, it is isometric.
 - Noir: That is the spirit of the story.
-- Adverutre: Because what is life without adventures? 
+- Adventure: Because what is life without adventures? 
 
 Special note: The game is played backwards!! Yes, that is the reason of the name. Instead of doing things, you have to UNDO things. It sounds weird, and indeed it is! You have to unravel the secuence of events that push to your murder and why.
 
