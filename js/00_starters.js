@@ -72,10 +72,10 @@ var actionOn  = false; keyOn = 'stp0';
 
 // Cinematics? Array witha sequence of actions. Keep keys block during cinematics.
 var cinematics = [], 
-	blockKeys = false, fullControl = false, printcine = false;
+	blockKeys = false, fullControl = false, printcine = true;
 
 // debugging
-var tempo=0,nt=0,testing=false;
+var tempo=0,nt=0,testing=true;
 
 
 // Pixel functions ----------------------------------------------------------------------------------

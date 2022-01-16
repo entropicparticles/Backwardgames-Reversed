@@ -47,7 +47,7 @@ function specialEffects(rowt,idx) {
 	
 	//console.log(rowt['file'])
 	// FOR RANDOM SERIES
-	var rng = new RNG(rowt['X']+100*rowt['Y']+10000*rowt['Z']+100000);
+	var rng = new RNG(rowt['X']+100*rowt['Y']+10000*rowt['Z']+100000*rowt['I0']+10000000*rowt['J0']);
 	var png = [...rowt['png']];
 	
 	if (rowt['state'] == 'roaded') {
@@ -71,6 +71,15 @@ function specialEffects(rowt,idx) {
 			if (png[k]==3) {
 				png[k] = rowt['state'] =='itsOn'?2:1;
 			}
+		}
+				
+	} if (rowt['state'] == 'glass') {
+		var IP = tiles[rowt['type']][rowt['folder']][rowt['file']]['I'];
+		var JP = tiles[rowt['type']][rowt['folder']][rowt['file']]['J'];
+		rng = new RNG(Math.abs(IP+1000*JP));
+		for (var k=0; k<png.length; ++k) {
+			if (png[k]!=0) png[k] = rng.nextFloat()<0.3? 1 : 2 ;
+			if (Math.floor(rng.nextFloat()*png.length)==k) png[k] = Math.random()<0.3? 1 : 2 ;
 		}
 				
 	}
@@ -172,7 +181,7 @@ function givemeColors(row) {
 			a = (a%255)/255;
 			a = cl(a);
 			var a2 = ['people','objects'].includes(row['type']) || ['street','firestairs','vehicles'].includes(row['folder']) ? 0.4 + 0.6*a : a ; 
-			if (room.slice(-1)==9 && row['ID']=='guy') a2 = 0.8 + 0.2*a
+			if (room.slice(-1)==9 && ( row['ID']=='guy' || row['ID']=='windowglass' ) ) {a2 = 0.8 + 0.2*a; a=a2;}
 		}
 		
 		ra =  [ [r+a*0.8,cl(0.8+a2/10),a2  ],   // ligtht

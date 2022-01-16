@@ -717,10 +717,10 @@ function loadRoom(inroom) {
 											B(2,4),B(3,4),60*5+30-3+(screenLevel == 4 ? 0 : -3),B(3,0),B(5,0)]
 									   ]);
 
-		if (chapter==4 && subt<=131) {
+		if (chapter==4 && subt<=132) {
 			// gangster girl
 			allactions = allactions.concat([['ggirlrun','ggirlrun', []]]);		
-			allstuff.push(['ggirl','people','gangster_girl','00_10N',1,B(0,2),B(0,4),D(30,0),true,false,false,false,0,0,'VI']);
+			allstuff.push(['ggirl','people','gangster_girl','00_10N',1,B(0,2),B(0,4),D(30,0),false,false,false,false,0,0,'VI']);
 		}									   
 
 		
@@ -851,11 +851,13 @@ function loadRoom(inroom) {
 			entryPoint['must'] = true;	
 		}		
 		
+		memory[room] = {};
 		if (level==9) {                 //cover
 		
-			entryPoint['X']    = B(5,4);
-			entryPoint['Y']    = B(21,4);
-			entryPoint['Z']    = D(5*3+2,0);
+			var d = 7; // UGLY TRICK
+			entryPoint['X']    = B(6,1)-d;
+			entryPoint['Y']    = B(21,0)-d;
+			entryPoint['Z']    = D(5*5*0,6+5)+2*d;
 			entryPoint['file'] = '1F_01N';
 			
 			RGBcover = 'RGB_degrad';
@@ -866,8 +868,34 @@ function loadRoom(inroom) {
 				[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false],
 				['Reversed',LI/2,110,'gothic',true,false,false],
 				['   Start ||   Help',5,150,'text_normal',false,false,false]];			
-			allactions = allactions.concat([['menu' ,'menuCover',[]]]);
+			allactions = allactions.concat([['menu' ,'menuCover',[]]]);			
+			allactions = allactions.concat([['intro','intro',[]]]);
 			
+			memory[room]['isTalking'] = false;
+			memory[room]["moveglass"] = false;
+			memory[room]["posglass"]  = [[],[],[]];
+			memory[room]["posguy"]  = [];
+			
+			// guy copy
+			allstuff.push(['guyfall','people','guy_cool','1F_01N',1,B(6,1)-d-1,B(21,0)-d-1,D(5*5,11)+2*d+2,false,false,false,false,0,0,'VI']);
+			//allstuff.push(['window','structures','hotelwindow','windowglass',1,B(6,0),B(19,4),D(5*5+1.5,3),true,false,false,false,0,0,'VI']);
+			
+			// exploiting glass from the window
+			var p = 2;
+			for (var k=0;k<1584/p/p;++k) {
+				if ('windowglass_'+k in tiles['structures']['hotelwindow']) {
+					var ik = k%p, jk = Math.floor(k/p);
+					allstuff.push(['windowglass2','structures','hotelwindow','windowglass_'+k,-1,B(6,0)-d,B(19,4)-d,D(5*5+1.5,3)+2*d,false,false,false,false,'glass',0,'VI']);
+					memory["hotel_street_9"]["posglass"][2].push([]);
+					if (k%2==0) {
+						allstuff.push(['windowglass1','structures','hotelwindow','windowglass_'+k,-1,B(6,0)-d-1,B(19,4)-d-1,D(5*5+1.5,3)+2*d+2,false,false,false,false,'glass',0,'VI']);
+						memory["hotel_street_9"]["posglass"][1].push([]);
+					} else {						
+						allstuff.push(['windowglass0','structures','hotelwindow','windowglass_'+k,-1,B(6,0)-d+1,B(19,4)-d+1,D(5*5+1.5,3)+2*d-2,false,false,false,false,'glass',0,'VI']);
+						memory["hotel_street_9"]["posglass"][0].push([]);
+					}					
+				}
+			}			
 		}
 		
 		var delta  = (level==0?0:5);
@@ -1043,9 +1071,9 @@ function loadRoom(inroom) {
 			// windows						
 			if (z!=6) {
 				var whichwin = (level!=9)||(level==9&&z!=5) ? 'window2' : 'windowguy' ;
-				walls.push(['window','structures','hotelwindow','window2', 1,z>0 ? B(7,4) : B(11,4),B(10,0),D(Z+1.5,3),true,false,false,false,0,0,'BG']);
-				walls.push(['window','structures','hotelwindow',whichwin,-1,B(6,0),B(19,4),D(Z+1.5,3),true,false,false,false,0,0,'BG']);
-				walls.push(['window','structures','hotelwindow','window1',-1,B(6,0),B(16,0),D(Z+1.5,3),z>0,false,false,false,0,0,'VI']);
+				walls.push(['window2','structures','hotelwindow','window2', 1,z>0 ? B(7,4) : B(11,4),B(10,0),D(Z+1.5,3),true,false,false,false,0,0,'BG']);
+				walls.push([whichwin,'structures','hotelwindow',whichwin,-1,B(6,0),B(19,4),D(Z+1.5,3),true,false,false,false,0,0,'VI']);
+				walls.push(['window1','structures','hotelwindow','window1',-1,B(6,0),B(16,0),D(Z+1.5,3),z>0,false,false,false,0,0,'VI']);
 			}
 			
 			// firestairs
@@ -1097,17 +1125,18 @@ function loadRoom(inroom) {
 		
 		
 		// gangster girl action stuff
-		if ( !(room in memory) || firstEntry ) {
-			memory[room] = {'ggirl':'enter','istalking':false};
+		if ( firstEntry ) {
+			memory[room]['ggirl'] = 'enter';
+			memory[room]['istalking'] = false;
 		}	
 		
-		if ( (level==6||level==9) && chapter<=3) {
+		if ( (level==6||level==9) && chapter<=4) {
 			if (level==6) {
 				allactions = allactions.concat([['shefollows','follows',['ggirl','guy']],
 										    ['shetalks'  ,'ggirltalks',[],B(6,3),B(10,3),D(Z,3),B(8,7),B(12,7)]]);
 			}
 			// gangster girl
-			allstuff.push(['ggirl','people','gangster_girl','00_00N',1,B(7,3),B(11,3),D(Z,3),true,true,false,false,0,0,'VI']);
+			allstuff.push(['ggirl','people','gangster_girl','00_00N',1,B(7,3),B(11,3),D(Z,3),chapter<4,chapter<4,false,false,0,0,'VI']);
 		}
 			
 		

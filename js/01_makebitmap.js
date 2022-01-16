@@ -130,7 +130,7 @@ function drawPanel() {
 	// Draw the frame border
 	var im = tiles['panel']['panel']['frame'];
 	//var tile = txtcontext.createImageData(im['DI'],im['DJ']);
-	if (!testing) drawTile(im,0,0,0,false,'text',the3colors)
+	drawTile(im,0,0,0,false,'text',the3colors)
 	
 	if (RGBcover==0) {
 		
