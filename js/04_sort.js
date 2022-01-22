@@ -49,68 +49,68 @@ function compareIsometric(r2,r1) {
 	var R1infrontofR2;
 	
 	if ( (r1.X==r1.XM && r1.XM==r2.X) || (r1.Y==r1.YM && r1.YM==r2.Y) ) {
-        if (print) console.log(' 1',r1['ID'],r1['file'],' pegado en frente de ',r2['ID'],r2['file'])
+        if (print) {console.log(' 1',r1['ID'],r1['file'],' pegado en frente de ',r2['ID'],r2['file']);}
         R1infrontofR2 = true;	
     } else if ( (r2.X==r2.XM && r2.XM==r1.X) || (r2.Y==r2.YM && r2.YM==r1.Y)) {
-        if (print) console.log(' 1',r2['ID'],r2['file'],' pegado en frente de ',r1['ID'],r1['file'])
+        if (print) {console.log(' 1',r2['ID'],r2['file'],' pegado en frente de ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;	
     } else if (r1.Z==r1.ZM && r1.ZM==r2.Z) {
-        if (print) console.log(' 1',r2['ID'],r2['file'],' pisa al plano ',r1['ID'],r1['file'])
+        if (print) {console.log(' 1',r2['ID'],r2['file'],' pisa al plano ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;	
     } else if (r2.Z==r2.ZM && r2.ZM==r1.Z) {
-        if (print) console.log(' 1',r1['ID'],r1['file'],' pisa al plano ',r2['ID'],r2['file'])
+        if (print) {console.log(' 1',r1['ID'],r1['file'],' pisa al plano ',r2['ID'],r2['file']);}
         R1infrontofR2 = true;	
     } else if (A0_detrasde_B0(r1,r2) && A0_detrasde_BM(r1,r2)) { 
-        if (print) console.log(' 1',r2['ID'],r2['file'],' totalmente delante de ',r1['ID'],r1['file'])
+        if (print) {console.log(' 1',r2['ID'],r2['file'],' totalmente delante de ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if ((A0_detrasde_B0(r1,r2) || A0_derechade_B0(r2,r1)) && AM_derechade_B0(r2,r1) && AM_detrasde_B0(r1,r2)) {
-        if (print) console.log(' 2',r2['ID'],r2['file'],' en frente y/o hacia la derecha de ',r1['ID'],r1['file'])
+        if (print) {console.log(' 2',r2['ID'],r2['file'],' en frente y/o hacia la derecha de ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if ((A0_detrasde_B0(r1,r2) || A0_derechade_B0(r1,r2)) && A0_derechade_BM(r1,r2) && AM_detrasde_B0(r1,r2)) {
-        if (print) console.log(' 3',r2['ID'],r2['file'],' > en frente y/o hacia la izquierda de ',r1['ID'],r1['file'])
+        if (print) {console.log(' 3',r2['ID'],r2['file'],' > en frente y/o hacia la izquierda de ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if (A0_detrasde_B0(r2,r1) && A0_detrasde_BM(r2,r1)) {
-        if (print) console.log(' 4',r1['ID'],r1['file'],' totalmente delante de ',r2['ID'],r2['file'])
+        if (print) {console.log(' 4',r1['ID'],r1['file'],' totalmente delante de ',r2['ID'],r2['file']);}
          R1infrontofR2 = true;
     } else if ((A0_detrasde_B0(r2,r1) || A0_derechade_B0(r2,r1)) && A0_derechade_BM(r2,r1) && AM_detrasde_B0(r2,r1)) {
-        if (print) console.log(' 5',r2['ID'],r2['file'],' detrás y a la derecha de ',r1['ID'],r1['file'])
+        if (print) {console.log(' 5',r2['ID'],r2['file'],' detrás y a la derecha de ',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
     } else if ((A0_detrasde_B0(r2,r1) || A0_derechade_B0(r1,r2)) && AM_derechade_B0(r1,r2) && AM_detrasde_B0(r2,r1)) {
-        if (print) console.log(' 6',r2['ID'],r2['file'],' detrás y a la izquierda de ',r1['ID'],r1['file'])
+        if (print) {console.log(' 6',r2['ID'],r2['file'],' detrás y a la izquierda de ',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
     } else if (A0_encimade_BM(r2,r1)) {
-        if (print) console.log('11',r2['ID'],r2['file'],' vuela sobre ',r1['ID'],r1['file'])
+        if (print) {console.log('11',r2['ID'],r2['file'],' vuela sobre ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if (A0_encimade_BM(r1,r2)) {
-        if (print) console.log('12',r2['ID'],r2['file'],' debajo de ',r1['ID'],r1['file'])
+        if (print) {console.log('12',r2['ID'],r2['file'],' debajo de ',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
     } else if (A0_detrasde_B0(r2,r1) && AM_detrasde_BM(r1,r2) && A0_encimade_BM(r2,r1)) {
-        if (print) console.log(' 7',r2['ID'],r2['file'],' pequeño sobre gran  ',r1['ID'],r1['file'])
+        if (print) {console.log(' 7',r2['ID'],r2['file'],' pequeño sobre gran  ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if (A0_detrasde_B0(r1,r2) && AM_detrasde_BM(r2,r1) && A0_encimade_BM(r1,r2)) {
-        if (print) console.log(' 8',r2['ID'],r2['file'],' > grande sostiene a pequeño ',r1['ID'],r1['file'])
+        if (print) {console.log(' 8',r2['ID'],r2['file'],' > grande sostiene a pequeño ',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
     } else if (A0_detrasde_B0(r2,r1) && AM_detrasde_BM(r1,r2) && A0_encimade_BM(r1,r2)) {
-        if (print) console.log(' 9',r2['ID'],r2['file'],' > pequeño debajo de gran',r1['ID'],r1['file'])
+        if (print) {console.log(' 9',r2['ID'],r2['file'],' > pequeño debajo de gran',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
     } else if (A0_detrasde_B0(r1,r2) && AM_detrasde_BM(r2,r1) && A0_encimade_BM(r2,r1)) {
-        if (print) console.log('10',r2['ID'],r2['file'],' grande cubriendo pequeño ',r1['ID'],r1['file'])
+        if (print) {console.log('10',r2['ID'],r2['file'],' grande cubriendo pequeño ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if (A0_encimade_BM(r2,r1)) {
-        if (print) console.log('11',r2['ID'],r2['file'],' vuela sobre ',r1['ID'],r1['file'])
+        if (print) {console.log('11',r2['ID'],r2['file'],' vuela sobre ',r1['ID'],r1['file']);}
         R1infrontofR2 = false;
     } else if (A0_encimade_BM(r1,r2)) {
-        if (print) console.log('12',r2['ID'],r2['file'],' debajo de ',r1['ID'],r1['file'])
+        if (print) {console.log('12',r2['ID'],r2['file'],' debajo de ',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
     } else if (r2.JC<=r1.JC) {
-		if (print) console.log('13 No overlap! ',r2['ID'],r2['file'],' podría estar delante de ',r1['ID'],r1['file']);
+		if (print) {console.log('13 No overlap! ',r2['ID'],r2['file'],' podría estar delante de ',r1['ID'],r1['file']);}
 		R1infrontofR2 = false;
 	} else {
-		if (print) console.log('14 No overlap! ',r2['ID'],r2['file'],' podría estar detras de ',r1['ID'],r1['file']);
+		if (print) {console.log('14 No overlap! ',r2['ID'],r2['file'],' podría estar detras de ',r1['ID'],r1['file']);}
         R1infrontofR2 = true;
 	}
-	if (print) console.log(' -> ',r1['ID'],' delante de ',r2['ID'],'?',R1infrontofR2)
-	return R1infrontofR2
+	if (print) {console.log(' -> ',r1['ID'],' delante de ',r2['ID'],'?',R1infrontofR2);}
+	return R1infrontofR2;
 }
 
 function printAllIsometric(objects,which) {
@@ -155,7 +155,7 @@ function printAllIsometric(objects,which) {
 			
 			// get the colors and draw it at the canvas
 			var the3colors = givemeColors(rowt);
-			drawTile(rowt,rowt['I0'],rowt['J0'],0,false,which,the3colors);
+			drawTile(rowt,rowt['I0'],rowt['J0'],0,false,which,the3colors,true);
 		}
 	}	
 	

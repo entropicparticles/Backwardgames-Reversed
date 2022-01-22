@@ -47,7 +47,7 @@ function specialEffects(rowt,idx) {
 	
 	//console.log(rowt['file'])
 	// FOR RANDOM SERIES
-	var rng = new RNG(rowt['X']+100*rowt['Y']+10000*rowt['Z']+100000*rowt['I0']+10000000*rowt['J0']);
+	var rng = new RNG(Math.abs(rowt['X']+100*rowt['Y']+10000*rowt['Z']));
 	var png = [...rowt['png']];
 	
 	if (rowt['state'] == 'roaded') {
@@ -181,7 +181,7 @@ function givemeColors(row) {
 			a = (a%255)/255;
 			a = cl(a);
 			var a2 = ['people','objects'].includes(row['type']) || ['street','firestairs','vehicles'].includes(row['folder']) ? 0.4 + 0.6*a : a ; 
-			if (room.slice(-1)==9 && ( row['ID']=='guy' || row['ID']=='windowglass' ) ) {a2 = 0.8 + 0.2*a; a=a2;}
+			if (room.slice(-1)==9 && ( row['ID']=='guy' || row['ID']=='windowglass') ) {a2 = 0.8 + 0.2*a; a=a2;}
 		}
 		
 		ra =  [ [r+a*0.8,cl(0.8+a2/10),a2  ],   // ligtht
@@ -259,6 +259,20 @@ function givemeColors(row) {
 		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark
 				
+		/*
+		if (row['ID']=='win'||row['ID']=='brillo') { // window
+			X=B(6,0),Y=B(19,4),Z=D(25+1.5,3);
+			var r = 50-(20*X+20*(Y-8*4)+Z)/200;
+			r = (r%255)/255;			
+			var a  = 235-(XYZ2J(X,Y,0)/XYZ2J(35,35,0))*20;
+			a = (a%255)/255;
+			a = cl(a);
+			var a2 = a ; 
+			ra =  [ [r+a*0.8,cl(0.8+a2/10),a2  ],   // ligtht
+					[r+a*0.8,1           ,a2/5]];  // dark
+		}
+		*/
+				
 	} else if (room=='other_hotel_room_1') {  //-------------------------------------------------------------  ROOM 2nd floor
 	
 		var r = 35+(XYZ2J(-0.5*X+Y,Y,0)/XYZ2J(5,5,0))*2;
@@ -315,7 +329,7 @@ function givemeColors(row) {
 					 gauss([X,Y],[4*L,0],4*L)*(10+K); //lamp
 			a = cl(a/255*0.9);
 			a = ['people','objects','human'].includes(row['type']) ? 0.2 + 0.8*a : a ;
-			var b = cl(a*1.1)
+			var b = cl(a*1.1);
 			
 		}  
 				

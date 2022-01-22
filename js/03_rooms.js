@@ -4,7 +4,7 @@
 
 // SHIT HAPPENS HERE -----------------------------------------------------------------------------
 function loadRoom(inroom) {
-	if (testing) console.log('ROOM > ',inroom, 'CHAPTER:',chapter);
+	if (testing){console.log('ROOM > ',inroom, 'CHAPTER:',chapter);}
 	
 	// set values after action
 	preRoom     = room;
@@ -52,8 +52,8 @@ function loadRoom(inroom) {
 		objects = ['mano','gun'];
 		
 		alltext = [
-			[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false],
-			['Reversed',LI/2,110,'gothic',true,false,false],
+			[' Created by Backward Games ',width/2,100-4,'text_normal',true,true,false],
+			['Reversed',width/2,110,'gothic',true,false,false],
 			['Start||Help||Quit',40,62,'text_normal',false,false,false]];
 			
 		allactions = allactions.concat([['menu' ,'menuCover',[]]]);
@@ -78,8 +78,8 @@ function loadRoom(inroom) {
 		objects = ['mano','gun'];
 		
 		alltext = [
-			[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false],
-			['Reversed',LI/2,110,'gothic',true,false,false],
+			[' Created by Backward Games ',width/2,100-4,'text_normal',true,true,false],
+			['Reversed',width/2,110,'gothic',true,false,false],
 			['Start||Help||Quit',250,62,'text_normal',false,false,false]];
 			
 		allactions = allactions.concat([['menu' ,'menuCover0',[]]]);
@@ -854,6 +854,8 @@ function loadRoom(inroom) {
 		memory[room] = {};
 		if (level==9) {                 //cover
 		
+			chapter = 0;
+		
 			var d = 7; // UGLY TRICK
 			entryPoint['X']    = B(6,1)-d;
 			entryPoint['Y']    = B(21,0)-d;
@@ -862,23 +864,26 @@ function loadRoom(inroom) {
 			
 			RGBcover = 'RGB_degrad';
 			menuIndex   = 2;
+			intro = true;
 			
 			playIntroAndLoop('cover','cover_loop');
 			alltext = [
-				[' Created by Backward Games ',LI/2,100-4,'text_normal',true,true,false],
-				['Reversed',LI/2,110,'gothic',true,false,false],
-				['   Start ||   Help',5,150,'text_normal',false,false,false]];			
+				[' Created by Backward Games ',width/2,100-4,'text_normal',true,true,false],
+				['Reversed',width/2,110,'gothic',true,false,false],
+				['   Start ||   Help',5,130,'text_normal',false,false,false]];			
 			allactions = allactions.concat([['menu' ,'menuCover',[]]]);			
-			allactions = allactions.concat([['intro','intro',[]]]);
+			allactions = allactions.concat([['intro','introf',[]]]);
 			
+			memory[room]['menu']      = true;
+			memory[room]['started']   = false;
 			memory[room]['isTalking'] = false;
 			memory[room]["moveglass"] = false;
 			memory[room]["posglass"]  = [[],[],[]];
-			memory[room]["posguy"]  = [];
+			memory[room]["posguy"]    = [];
 			
 			// guy copy
 			allstuff.push(['guyfall','people','guy_cool','1F_01N',1,B(6,1)-d-1,B(21,0)-d-1,D(5*5,11)+2*d+2,false,false,false,false,0,0,'VI']);
-			//allstuff.push(['window','structures','hotelwindow','windowglass',1,B(6,0),B(19,4),D(5*5+1.5,3),true,false,false,false,0,0,'VI']);
+			allstuff.push(['bang','structures','hotelwindow','BANG',1,B(6,0)-2*d-2,B(20,0)-2*d-2,D(5*5+1.5,3)+2*2*d+4,false,false,false,false,0,0,'VI']);
 			
 			// exploiting glass from the window
 			var p = 2;
@@ -938,7 +943,7 @@ function loadRoom(inroom) {
 						['cars','structures','vehicles','heisenberg',-1,B(24,0),B(11,4),0,true,false,false,false,0,0,'BG'],
 						['cars','structures','vehicles','normal'    ,-1,B(20,6),B(11,7),0,true,false,false,false,0,0,'BG']
 		]);
-		if (chapter>=7) {
+		if (chapter>=7&&level==0) {
 			allstuff = allstuff.concat([
 						['limo'     ,'structures','vehicles','limo'    ,1,B(6,0),B(2,3),0,true,true,false,false,0,0,'VI'],
 						['limodoor' ,'structures','vehicles','limodoor',1,B(7,5),B(1,3),0,false,false,false,false,0,0,'VI'],
@@ -1191,11 +1196,9 @@ function loadRoom(inroom) {
 	makeStuff(allstuff);
 	completeStuff(LX,LY,I0,J0);	
 	
-	if (!testing) {
-		// Keep only what is in the screen
-		stuff['background'] = stuff['background'].filter(st => doOverlap(st,{'I0':0,'J0':0,'IM':320,'JM':180}) || st['ID']=='fake' );
-		stuff['front'] = stuff['front'].filter(st => doOverlap(st,{'I0':0,'J0':0,'IM':320,'JM':180}) || st['ID']=='fake' );
-	}
+	// Keep only what is in the screen
+	stuff['background'] = stuff['background'].filter(st => doOverlap(st,{'I0':0,'J0':0,'IM':320,'JM':180}) || st['ID']=='fake' );
+	stuff['front'] = stuff['front'].filter(st => doOverlap(st,{'I0':0,'J0':0,'IM':320,'JM':180}) || st['ID']=='fake' );
 	
 	// Now the guy;
 	putGuyAtRoom(entryPoint,entryPreDoor,entryPoint);
@@ -1204,7 +1207,7 @@ function loadRoom(inroom) {
 	// All other things
 	makeText(alltext);
 	makeActions(allactions);	
-	if (testing) console.log(actions)
+	if (testing){console.log(actions);}
 	makeSpace();
 		
 
@@ -1260,7 +1263,7 @@ function putGuyAtRoom(entryPoint,entryPreDoor,entryPoint) {
 							'visible':txt[8],'solid':txt[9],'mobile':txt[10],'walkable':txt[11],'state':txt[12],'order':txt[13]});
 	guyIndex = stuff['front'].length-1;
 	
-	if (testing) console.log('entry:',guy['ID'],guy['X'],guy['Y'],guy['Z']);
+	if (testing) {console.log('entry:',guy['ID'],guy['X'],guy['Y'],guy['Z']);}
 }
 
 

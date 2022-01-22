@@ -13,7 +13,7 @@ function playIntroAndLoop(songIndex1,songIndex2) {
 	music = songs[songIndex1];
 	music.play();	
 	music.volume=mute?0:1;
-	music.addEventListener('ended', (e) => {playMusic(songIndex2,true)})
+	music.addEventListener('ended', (e) => {playMusic(songIndex2,true)});
 }
 
 /*
@@ -23,9 +23,33 @@ audioElement.addEventListener('ended', function() {
 }, false);
 */
 
-function walkingGuy() {
-	if (guyIndex>=0) walking(keyOn,guyIndex);
+function stpMouse() {
+	
+	guy  = stuff['front'][guyIndex];
+	var I = userI - guy.I0-16;
+	var J = userJ - height + guy.J0 + 8;
+	//console.log(I,J)
+	if      (Math.abs(I)<6&&J<0) { pos = 'upp';}
+	else if (Math.abs(I)<6&&J>0) { pos = 'dwn';}
+	else if (Math.abs(J)<6&&I>0) { pos = 'rgt';}
+	else if (Math.abs(J)<6&&I<0) { pos = 'lft';}
+	else if (I<=0&&J<=0) { pos = 'upy';}                
+	else if (I> 0&&J<=0) { pos = 'upx';}             
+	else if (I> 0&&J> 0) { pos = 'dwy';}
+	else if (I<=0&&J> 0) { pos = 'dwx';}
+	var dij = Math.pow(I,2)+Math.pow(J,2);
+		
+	return (dij>64) ? pos+'2' : (dij>16 ? pos+'1' : 'stp0');
 }
+
+function walkingGuy() {
+	if (guyIndex>=0){
+		var pos = (keyOn=='stp0' && mouseOn) ? stpMouse() : keyOn ;
+		walking(pos,guyIndex);
+	}
+}
+
+
 
 function walking(step,indk) {
 
@@ -33,11 +57,18 @@ function walking(step,indk) {
 	// define all possible movements and effects in XYZ and IJ spaces
     var F1 = im['file'].slice(0,-3);
 	var F2 = im['file'].slice(-1);
+	var F3 = im['file'].slice(-3,-1);
+	var F4 = im['file'].slice(0,-1)
     var delta = {'upy':{'xyz':[ 0, 1, 0],'ij':[-2, 1],'file':F1+'01','pos':['R','L']},
 				 'dwy':{'xyz':[ 0,-1, 0],'ij':[ 2,-1],'file':F1+'10','pos':['R','L']},
 				 'upx':{'xyz':[ 1, 0, 0],'ij':[ 2, 1],'file':F1+'00','pos':['R','L']},
 				 'dwx':{'xyz':[-1, 0, 0],'ij':[-2,-1],'file':F1+'11','pos':['R','L']},
-				 'stp':{'xyz':[ 0, 0, 0],'ij':[ 0, 0],'file':im['file'].slice(0,-1),'pos':['N']}};
+				 'upp':{'xyz':[ 1, 1, 0],'ij':[ 0, 2],'file':F1+'up','pos':['R','L']},
+				 'dwn':{'xyz':[-1,-1, 0],'ij':[ 0,-2],'file':F1+'dw','pos':['R','L']},
+				 'lft':{'xyz':[-1, 1, 0],'ij':[-4, 0],'file':F1+'01','pos':['R','L']},
+				 'rgt':{'xyz':[ 1,-1, 0],'ij':[ 4, 0],'file':F1+'00','pos':['R','L']},
+				 'stp':{'xyz':[ 0, 0, 0],'ij':[ 0, 0],
+				        'file':!['up','dw'].includes(F3)?F4:( F3=='up' ? F1+(F2=='R'?'00':'01') : F1+(F2=='R'?'11':'10') ),'pos':['N']}};
 				 
 	// apply the movement
 	var move = delta[step.slice(0,-1)];	
@@ -51,8 +82,10 @@ function walking(step,indk) {
 		// go for the movement		
 		// test move: we loop for all pixels done in the same movement
 		var qm  = step.slice(-1); 
-		var q = 0
+		var q = 0;
 		for (n=1;n<=qm;++n) { 
+		
+			var move = delta[step.slice(0,-1)];	
 		
 			var go     = false;
 			var godown = -8;
@@ -67,8 +100,8 @@ function walking(step,indk) {
 				var col = collision(testa,obj);
 				if (col) {
 					var dz = obj.ZM-testa.Z;
-					if (dz<=0) godown = Math.max(godown,dz);
-					if (dz> 0) goup   = Math.min(goup,dz);
+					if (dz<=0) {godown = Math.max(godown,dz);}
+					if (dz> 0) {goup   = Math.min(goup,dz);}
 					go = true;
 					//console.log('dz',dz,'up',goup,'down',godown);
 					//console.log('col ->',obj.Z);
@@ -107,7 +140,7 @@ function walking(step,indk) {
 				stuff['front'][indk]['IM'] += move.ij[0];		
 				stuff['front'][indk]['JM'] += move.ij[1]+dz;
 				im = stuff['front'][indk];
-				if (testing) console.log(n,'>',im['ID'],im['file'],im['X'],im['Y'],im['Z'],[Math.floor(im['X']/8),Math.floor(im['Y']/8),Math.floor(im['Z']/8)],dz)
+				if (testing){console.log(n,'>',im['ID'],im['file'],im['X'],im['Y'],im['Z'],[Math.floor(im['X']/8),Math.floor(im['Y']/8),Math.floor(im['Z']/8)],dz);}
 				//updateAction();	
 				if (firstEntry) break; //stop loop if room changed
 				
@@ -161,14 +194,17 @@ function walkThere(whoIndex,x,y,n,first) {
 // DOOR ACTION STUFF >>>>>>>>>>>>>>>>>>>
 
 function sliders(col,Zbol,acton,key1,key2) {
-	if (col&Zbol) {
+	if (col&Zbol) {		
+		var pos = (keyOn=='stp0' && mouseOn) ? stpMouse() : keyOn ;
 		//console.log(key1,'->',key2)
-		if (keyOn.slice(0,-1)==key1) walking(key2+'1',guyIndex);
+		var key1ext = {'upx':['upx','upp','rgt'],'dwx':['dwx','dwn','lft'],
+					   'upy':['upy','upp','lft'],'dwy':['dwy','dwn','rgt']}[key1];
+		if (key1ext.includes(pos.slice(0,-1))) {walking(key2+'1',guyIndex);}
 	}
 }
 
 function changeroom(col,Zbol,actOn,which) {
-	if (col&&Zbol) loadRoom(which);
+	if (col&&Zbol) {loadRoom(which);}
 }
 
 function teleporter(col,Zbol,actOn,room1,room2){
@@ -268,7 +304,7 @@ function verynormaldoor(col,Zbol,actOn,id) {
 				g = stuff['front'][guyIndex];
 				// Move the guy if it collaps with the door
 				if (collision(s,g)) {
-					var steps = ['upx'+(s['XM']-g['X']),'upy'+(s['YM']-g['Y'])]
+					var steps = ['upx'+(s['XM']-g['X']),'upy'+(s['YM']-g['Y'])];
 					var step = (s['state']=='open' ^ s['spin']==1) ? steps[1] : steps[0] ;
 					walking(step,guyIndex);
 				}				
@@ -283,30 +319,6 @@ function verynormaldoor(col,Zbol,actOn,id) {
 
 // SPECIAL ACTIONS/ROOMS >>>>>>>>>
 
-function menuCover() {
-	
-	menuIndex = Math.max(1,Math.min(menuIndex,2));
-	
-	// write start menu
-	var cursor = (menuIndex==2) ? '>>| | ' : ' | |>>' ;
-	writeText(cursor,5,150,'text_normal',false,false,false);
-	walking('upy0',guyIndex);
-		
-	if (actionOn) {
-		if (chapter==0) { 
-			if (menuIndex==2) {
-				// let's go
-				actionOn = false;
-				loadRoom('hotel_room_5');
-			} else if (menuIndex==1) {
-				// let's go for the menu
-			}
-		}
-	} else {
-		blockKeys = false;
-	}
-	
-}
 
 function elevatorMirror(){
 	
@@ -337,7 +349,7 @@ function getIndexFromID(id){
 
 function whoTalks(who,txt,tt,point) {
 	var st = stuff['front'][getIndexFromID(who)[0]];
-	var lines = txt.split("|").length // make space if there are several lines
+	var lines = txt.split("|").length; // make space if there are several lines
 	var i = Math.round((st['I0']+st['IM'])/2),
 	    j = st['JM']+11*lines;  //put it on top of the one speaking
 	listText.push({'text':txt,'I0':i,'J0':j,'type':'text_normal','centered':true,'bubble':true,'pointer':point,'time':tt,'who':who});
@@ -394,11 +406,11 @@ function hideshowItem(id,solid) {
 }
 
 function walkingByID(step,id){
-	walking(step,getIndexFromID(id)[0])
+	walking(step,getIndexFromID(id)[0]);
 }
 
 function moveItemByID(step,id) {
-	moveItem(step,getIndexFromID(id)[0])
+	moveItem(step,getIndexFromID(id)[0]);
 }
 
 function moveItem(step,indk) {	
@@ -413,6 +425,8 @@ function moveItem(step,indk) {
 	
 	// take how many pixels
 	var q = step.slice(3);
+	
+	//console.log('>',step,indk,move,q)
 	
 	// apply movement
 	stuff['front'][indk]['X']  += q*move.xyz[0];
@@ -434,13 +448,13 @@ function moveItem(step,indk) {
 // FOR CINEMATICS join any new cinematics to the one running at that moment
 
 function setCinematics(newcine) {
-	cinematics = newcine.concat(cinematics)
+	cinematics = newcine.concat(cinematics);
 	blockKeys  = true;
 	actionOn   = false;
 }
 
 function follows(col,Zbol,actOn,who,whom) {
-	if (!memory[room]['istalking']) followMe(who,whom,false)
+	if (!memory[room]['istalking']) {followMe(who,whom,false);}
 }
 function followMe(who,whom,eachother) {
 	
@@ -556,7 +570,7 @@ function takethecase(col,Zbol,actOn,X,Y) {
 					  'hideshowItem("case",false)',
 					  'setFile("'+file+'",guyIndex);getObject("maletin")'];
 		setCinematics(walkit.concat(takeit));
-		if (printcine) console.log(cinematics);
+		if (printcine) {console.log(cinematics);}
 	
 	}
 
@@ -574,7 +588,7 @@ function walkout(col,Zbol,actOn) {
 		
 		var walkit1 = walkThere(guyIndex,B(2,4),B(2,4),1,0);
 		var walkit2 = walkThereFrom(guyIndex,B(2,4),B(2,4),B(2,4),B(4,4),1,0);
-		var walkit8 = Array(8).fill('walking("upy1",guyIndex)')
+		var walkit8 = Array(8).fill('walking("upy1",guyIndex)');
 		var act = ['actionOn=true'];
 		
 		var walkit1 =  ['','','','','','','','','whoTalks("girl","NOOOOOOOOOOOOOOOOOOOO!!",20,true);setFileByID("1_01N","girl")','','','','','','','','',
@@ -593,19 +607,19 @@ function walkout(col,Zbol,actOn) {
 		var talkit2 = ['whoTalks("dealer","Don'+"'"+'t move or she dies.",40,true)'].concat(Array(44).fill(''));
 		var talkit3 = ['whoTalks("dealer","Surprise motherfucker",20,true)'].concat(Array(7).fill('walkingByID("upx1","dealer")'))
 						.concat(['walkingByID("stp0","dealer");setFileByID("00_00N","dealer");followMe("guy","girl",false)','followMe("guy","girl",false)','','']);
-		var enter1  = ['setFileByID("l0_00N","dealer");whoTalks("lamp","CLICK",6,false);setStateByID("off","lamp")'].concat(Array(5).fill(''));
+		var enter1  = ['setFileByID("l0_00N","dealer");whoTalks("lamp","CLICK",6,false);setStateByID("off","lamp");setFileByID("lampoff","lamp")'].concat(Array(5).fill(''));
 		var enter2  = ['setFileByID("00_00N","dealer")'].concat(Array(8).fill(''));
 		var walkit2  = ['setFileByID("1_01N","girl");whoTalks("girl","Behind you!!!",20,true)']
 						.concat(Array(20).fill(''));
 		var walkit3  = ['setFileByID("0_01N","girl");whoTalks("guy","Babe, are you here?",20,true)'].concat(Array(14).fill('walking("dwy1",guyIndex)'));
 		var walkit4  = ['actionOn=true;walking("dwy1",guyIndex)'].concat(Array(11).fill('walking("dwy1",guyIndex)')).concat(['walking("stp0",guyIndex)'])
 	.concat(['openclosedoor(true,true,true,"hotel_room_5","door","closed");whoTalks("guy","CLICK",10,false);objects.push("roomkey");objectIndex=3;setFile02("mo",guyIndex)']).concat(Array(10).fill(''));
-	    var title = ['chapterTitles(4,"Death")'].concat(Array(99).fill('')).concat(['objectIndex=0;setFile02("m0",guyIndex)']);
+	    var title = ['chapterTitles(4,"Death")'].concat(Array(99).fill('')).concat(['objectIndex=0;setFile02("m0",guyIndex);intro=false']);
 		setCinematics(
 					  walkit1.concat(talkit1).concat(talkit2).concat(talkit3).concat(enter1)
 					  .concat(enter2).concat(walkit2).concat(walkit3).concat(walkit4).concat(title)
 					  );
-		if (printcine) console.log(cinematics);
+		if (printcine) {console.log(cinematics);}
 		
 	}
 }
@@ -655,10 +669,10 @@ function killthegangsterdude(col,Zbol,actOn) {
 						.concat(talk2).concat(talk3)
 						.concat(run).concat(walkit2)
 						);
-			if (printcine) console.log(cinematics);
+			if (printcine) {console.log(cinematics);}
 			
 		} else {
-			whoTalks("guy","This is not what I need here.",30,true)
+			whoTalks("guy","This is not what I need here.",30,true);
 		}		
 	}
 	
@@ -681,7 +695,7 @@ function dudegototoilet(col,Zbol,actOn) {
 		setCinematics(
 					  walk1.concat(talk1).concat(talk2).concat(talk4).concat(talk5)
 					  );
-		if (printcine) console.log(cinematics);;
+		if (printcine) {console.log(cinematics);}
 		
 	}
 	
@@ -694,11 +708,11 @@ function dudegoout(col,Zbol,actOn,doit) {
 		var w = preRoom.slice(0,-2)=='stairs'? 'upy1' : 'upx1' ;
 		var walk1 = ['followMe("dude","guy",true);followMe("dude","guy",true);walking("stp0",guyIndex);setFile02ByID("g0","dude")',
 					 'whoTalks("dude","Private floor. Get the fuck out of here.",40,true)'].concat(Array(41).fill(''))
-					 .concat(Array(8).fill('walking("'+w+'",guyIndex)')).concat(['openclosedoor(true,true,true,"hotel_corridor_5","door","closed");memory["hotel_corridor_5"]["istalking"]=false'])
+					 .concat(Array(8).fill('walking("'+w+'",guyIndex)')).concat(['openclosedoor(true,true,true,"hotel_corridor_5","door","closed");memory["hotel_corridor_5"]["istalking"]=false']);
 		setCinematics(
 					  walk1
 					  );
-		if (printcine) console.log(cinematics);;		
+		if (printcine) {console.log(cinematics);}		
 	}
 }
 
@@ -784,7 +798,7 @@ function ggirltalks(col,Zbol,actOn) {
 					.concat(['whoTalks("guy","It'+"'"+'s your file from the police station.|Your daughter'+"'"+'s foster home address is there.",120,true)'].concat(Array(122).fill(''))
 							.concat(['setFile02("m0",guyIndex)']))
 				
-					.concat(['whoTalks("ggirl","What makes you think I want what you have?",120,true)'].concat(Array(122).fill('')))
+					.concat(['whoTalks("ggirl","What makes you think I want what you have?",120,true)'].concat(Array(122).fill('')));
 				
 				if ( Math.abs(guy.Y-girl.Y)<4 && girl.X<guy.X ) {
 					var dy = 8;
@@ -803,10 +817,10 @@ function ggirltalks(col,Zbol,actOn) {
 				
 					.concat(['setFile02ByID("0g","ggirl")'].concat(Array(8).fill('walkingByID("upx1","ggirl")')))
 				
-					.concat(['walkingByID("upx1","ggirl");whoTalks("ggirl","Don'+"'"+'t. Fucking. Move.",30,true)'])
+					.concat(['walkingByID("upx1","ggirl");whoTalks("ggirl","Don'+"'"+'t. Fucking. Move.",30,true)']);
 				
 				var dh1 = B(4,4)-21;
-				talks1 = talks1.concat(Array(dh1).fill('walkingByID("upx1","ggirl")').concat('walkingByID("upy0","ggirl");walkingByID("stp0","ggirl");setFile02ByID("0q","ggirl")'))
+				talks1 = talks1.concat(Array(dh1).fill('walkingByID("upx1","ggirl")').concat('walkingByID("upy0","ggirl");walkingByID("stp0","ggirl");setFile02ByID("0q","ggirl")'));
 				
 				var dh2 = B(4,1)-dy-16;
 				talks1 = talks1			
@@ -819,11 +833,11 @@ function ggirltalks(col,Zbol,actOn) {
 				
 					.concat(['setFile02ByID("00","ggirl")'].concat(Array(16).fill('walkingByID("upy1","ggirl")')))
 					
-					.concat(['hideshowItem("ggirl",true);openclosedoor(true,true,true,"stairs_6","door","open")','','','','','','','','fullControl=false;++chapter;subt=0'])
+					.concat(['hideshowItem("ggirl",true);openclosedoor(true,true,true,"stairs_6","door","open")','','','','','','','','fullControl=false;++chapter;subt=0']);
 					
 				
-				setCinematics(talks1)
-				if (printcine) console.log(cinematics);
+				setCinematics(talks1);
+				if (printcine) {console.log(cinematics);}
 						
 			} else {
 				whoTalks("guy","This is not what I need from her now.",30,true);
@@ -844,7 +858,7 @@ function ggirlrun(col,Zbol,actOn) {
 				.concat(Array(32).fill('walkingByID("dwy1","ggirl")'))
 				.concat(['fullControl=true;openclosedoor(true,true,true,"hotel_corridor_5","door","open");walkingByID("dwy1","ggirl")',
 						 'walkingByID("dwy1","ggirl")','walkingByID("dwy1","ggirl")','walkingByID("dwy1","ggirl")','hideshowItem("ggirl",false)','','',
-						 'openclosedoor(true,true,true,"hotel_corridor_5","door","closed");fullControl=false'])
+						 'openclosedoor(true,true,true,"hotel_corridor_5","door","closed");fullControl=false']);
 	
 	if (subt<=131) {
 		var gg = stuff['front'].filter(it=>it['ID']=='ggirl')[0];
@@ -897,7 +911,7 @@ function lobbyphone(col,Zbol,actOn) {
 			setCinematics(
 						talks1.concat(talks2).concat(talks3).concat(talks4).concat(talks5).concat(talks6).concat(end)
 						);
-			if (printcine) console.log(cinematics);
+			if (printcine) {console.log(cinematics);}
 		} else {
 			whoTalks("guy","This is not how to use a phone.",30,true);
 		}		
@@ -917,7 +931,7 @@ function nowayStaff(col,Zbol,actOn,now) {
 		setCinematics(
 					  talks1.concat(talks2).concat(walks).concat('memory["hotel_corridor_0"]["istalking"]=false')
 					  );
-		if (printcine) console.log(cinematics);
+		if (printcine) {console.log(cinematics);}
 	}
 	
 }
@@ -934,7 +948,7 @@ function nowayGuest(col,Zbol,actOn,now) {
 		setCinematics(
 					  talks1.concat(talks2).concat(walks).concat('memory["hotel_corridor_0"]["istalking"]=false')
 					  );
-		if (printcine) console.log(cinematics);
+		if (printcine) {console.log(cinematics);}
 	}
 	
 }
@@ -1028,7 +1042,7 @@ function roo1stfloorphone(col,Zbol,actOn) {
 				setCinematics(
 							talks1.concat(talks2).concat(talks3).concat(talks4).concat(talks5).concat(end)
 							);
-				if (printcine) console.log(cinematics);
+				if (printcine) {console.log(cinematics);}
 			
 			} else {
 				whoTalks("guy","It's not the moment for a call.",30,true);
@@ -1078,7 +1092,7 @@ function gotolobby(col,Zbol,actOn) {
 					  .concat(['walkingByID("upx0","bellboy");walkingByID("stp0","bellboy");walking("dwx1",guyIndex)'])
 					  .concat(Array(6).fill('walking("dwx1",guyIndex)'))
 					  .concat(['walking("stp0",guyIndex);whoTalks("bellboy","Please, follow me. I will take you to your room.",50,true)']).concat(Array(52).fill(''))
-					  .concat(['actionOn=true;memory["hotel_corridor_0"]["istalking"] = false;++chapter'])		
+					  .concat(['actionOn=true;memory["hotel_corridor_0"]["istalking"] = false;++chapter']);		
 		setCinematics(
 					  walks1
 					  );
@@ -1092,8 +1106,8 @@ function gotolobby(col,Zbol,actOn) {
 function watching(col,Zbol,actO,who) {
 	if (!memory["hotel_street_0"]["istalking"]) {
 		var iwho = stuff['front'].filter(it=>it['ID']==who)[0];
-		if (iwho['file'].slice(-1)=='N' && Math.random()<0.02) iwho['file'] = iwho['file'].slice(0,-1)+'H';
-		if (iwho['file'].slice(-1)=='H' && Math.random()<0.1) iwho['file'] = iwho['file'].slice(0,-1)+'N';
+		if (iwho['file'].slice(-1)=='N' && Math.random()<0.02) {iwho['file'] = iwho['file'].slice(0,-1)+'H';}
+		if (iwho['file'].slice(-1)=='H' && Math.random()<0.1) {iwho['file'] = iwho['file'].slice(0,-1)+'N';}
 	}
 }
 
@@ -1116,12 +1130,12 @@ function takelimo(col,Zbol,actO) {
 						.concat(Array.from({length: 30}, (_, i) => 'walkingByID("upx'+Math.min(8,i+1)+'","limo")'))
 						.concat(['chapterTitles(3,"Luck");playMusic("theend",false)']).concat(Array(120).fill(''))
 						.concat([
-'listText.push({"text":"        Thanks for playing!|      This is is a prototype|if you want to see the complete game|   support us at backwardgames.com", "I0":LI/2,"J0":110,"type":"text_normal","centered":true,"bubble":true,"pointer":false});pause=true'
+'listText.push({"text":"        Thanks for playing!|        This is a prototype|if you want to see the complete game|   support us at backwardgames.com", "I0":LI/2,"J0":110,"type":"text_normal","centered":true,"bubble":true,"pointer":false});pause=true'
 ]);
 			setCinematics(
 						walks1
 						);
-			if (printcine) console.log(cinematics);
+			if (printcine) {console.log(cinematics);}
 		} else {
 			whoTalks("guy","This is not the way to use a car.",30,true);			
 		}
@@ -1131,23 +1145,58 @@ function takelimo(col,Zbol,actO) {
 
 // COVER ANIMATION     -----------------------------------------------------------------------------------------------------
 
-function intro(col,Zbol,actO) {
+function menuCover() {
+	
+	menuIndex = Math.max(1,Math.min(menuIndex,2));
+	
+	// write start menu
+	if (memory['hotel_street_9']['menu']) {
+		var cursor = (menuIndex==2) ? '>>| | ' : ' | |>>' ;
+		//writeText(cursor,5,130,'text_normal',false,false,false,'text');
+		listText[3] = {'text':cursor,'I0':5,'J0':130,'type':'text_normal','centered':false,'bubble':false,'pointer':false};
+	}
+		
+	if (actionOn) {
+		if (chapter==0) { 
+			if (menuIndex==2) {
+				// let's go
+				//actionOn = false;
+				listText = [];
+				blockKeys = true;
+				memory['hotel_street_9']['started'] = true;
+				memory['hotel_street_9']['menu'] = false;
+			} else if (menuIndex==1) {
+				// let's go for the menu
+			}
+		}
+	} else {
+		blockKeys = false;
+	}
+	
+}
+
+function introf(col,Zbol,actO) {
+	
+	// starting sequence at the background
 	if (!memory['hotel_street_9']['isTalking']) {
 		subt = 0;
 		memory['hotel_street_9']['isTalking'] = true;
-		var walks1 = Array(2*2).fill('').concat([
+		var walks1 = Array(24).fill('').concat([
 //				'listText.push({"text":"*","I0":155,"J0":50,"type":"text_normal","centered":true,"bubble":true,"pointer":false,"time":200})',
 				'setFileByID("windowbroken2","windowguy");'+'hideshowItem("windowglass0",false);hideshowItem("windowglass1",false);hideshowItem("windowglass2",false);'+
-				'memory["hotel_street_9"]["moveglass"]=true;'])
+				'hideshowItem("bang",false);memory["hotel_street_9"]["moveglass"]=true;']);
 	
 		cinematics = walks1.concat(cinematics);
 		if (printcine) console.log(cinematics);
 	}
+	
+	// all dynamics for galss, save the movements for backwards
 	if (memory["hotel_street_9"]["moveglass"] && subt<70) {
-		++subt;
-		
+		++subt;	
+	
 		var glk012 = [getIndexFromID('windowglass0'),getIndexFromID('windowglass1'),getIndexFromID('windowglass2')];
-		
+
+		// move glass
 		for (var kk=0;kk<3;++kk) {
 			glk = glk012[kk];
 			if (subt>=4*kk) {
@@ -1156,7 +1205,7 @@ function intro(col,Zbol,actO) {
 					var IP = tiles[rowt['type']][rowt['folder']][rowt['file']]['I'];
 					
 					var dx = Math.round(rowt.X/8/6*Math.random());
-					var stpx = "dwx"+dx
+					var stpx = "dwx"+dx;
 					moveItem(stpx,glk[k]);
 					var sy = -15-IP;
 					var dy = Math.round(Math.abs(sy)/15*rowt.X/8/6*Math.random()*Math.random());
@@ -1164,24 +1213,85 @@ function intro(col,Zbol,actO) {
 					moveItem(stpy,glk[k]);
 					var stpz = 'dwz'+Math.floor((dx+4-kk)*Math.random());
 					moveItem(stpz,glk[k]);
-					memory["hotel_street_9"]["posglass"][kk][k].push([stpx,stpy,stpz]);
+					memory["hotel_street_9"]["posglass"][kk][k].unshift([stpx,stpy,stpz]);
 				}
 			}
 		}
 				
-		if (subt==5) hideshowItem("guyfall",false);
-		if (subt>5) {
-			var guyfall = getIndexFromID('guyfall')[0];
+		// move guy
+		if (subt==5) {hideshowItem("guyfall",false);}
+		if (subt<=5) {
+			stpx = 'dwx0';
+			stpz = 'dwz0';
+		} else {
 			stpx = [7,9,11,13,16,20,25,31].includes(subt) ? "dwx1" : "dwx0" ;
-			moveItem(stpx,guyfall);
 			stpz = subt%2==0&&subt>7 ? "dwz1" : "dwz0" ; 
-			moveItem(stpz,guyfall);
-			memory["hotel_street_9"]["posguy"].push([stpx,stpz])
 		}
+		var guyfall = getIndexFromID('guyfall')[0];				
+		moveItem(stpx,guyfall);
+		moveItem(stpz,guyfall);
+		if (subt%2==0) {walking('upy0',guyfall);}
+		memory["hotel_street_9"]["posguy"].unshift([stpx,'upy0',stpz]);
+		
+		if (subt==20) {hideshowItem("bang",false);}
+		
+	}
+	
+	// continue the count
+	if(subt>=70) {++subt;}
+	
+	// when both t=80 and started, go back in time 
+	if (subt>=80 && memory['hotel_street_9']['started']) {
+		subt = 80;
+		memory['hotel_street_9']['started'] = false;
+		var seq = //['music.pause()'].concat(Array(8).fill('')).concat(['playMusic("cover_reversed",true)'])
+				  Array(10).fill('')
+				  .concat(Array(70).fill('movebackGlassGuy()'))
+				  .concat(['hideshowItem("windowglass0",false);hideshowItem("windowglass1",false);hideshowItem("windowglass2",false);'+
+				           'setFileByID("windowguy","windowguy");hideshowItem("bang",false)'])
+				  .concat(Array(10).fill('')).concat(['loadRoom("hotel_room_5");memory["hotel_street_9"]["isTalking"] = false;memory["hotel_street_9"]["posglass"]=0']);
+		
+		cinematics = seq.concat(cinematics);
+		if (printcine) {console.log(cinematics);}	
 	}
 }
 
-
+function movebackGlassGuy() {
+	
+	//console.log(subt,subt-90,memory["hotel_street_9"]["posglass"][0][0].length)
+	
+	var glk012 = [getIndexFromID('windowglass0'),getIndexFromID('windowglass1'),getIndexFromID('windowglass2')];
+	var guyfall = getIndexFromID('guyfall')[0];
+	
+	for (var kk=0;kk<3;++kk) {
+		glk = glk012[kk];
+		for (var k=0;k<glk.length;++k) {
+			var xyz = memory["hotel_street_9"]["posglass"][kk][k][subt-90];
+			if (xyz!=undefined) {
+				//console.log(kk,k,xyz)
+				var stepx = xyz[0].slice(0,3) == 'upx' ? 'dwx'+xyz[0].slice(-1) : 'upx'+xyz[0].slice(-1) ;
+				var stepy = xyz[1].slice(0,3) == 'upy' ? 'dwy'+xyz[1].slice(-1) : 'upy'+xyz[1].slice(-1) ;
+				var stepz = xyz[2].slice(0,3) == 'upz' ? 'dwz'+xyz[2].slice(-1) : 'upz'+xyz[2].slice(-1) ;
+				moveItem(stepx,glk[k]);
+				moveItem(stepy,glk[k]);
+				moveItem(stepz,glk[k]);
+			}
+		}
+	}
+	
+	if (subt==90+70-5) hideshowItem("guyfall",false);
+	xyz = memory["hotel_street_9"]["posguy"][subt-90]
+	var stepx = xyz[0].slice(0,3) == 'upx' ? 'dwx'+xyz[0].slice(-1) : 'upx'+xyz[0].slice(-1) ;
+	var stepy = xyz[1].slice(0,3) == 'upy' ? 'dwy'+xyz[1].slice(-1) : 'upy'+xyz[1].slice(-1) ;
+	var stepz = xyz[2].slice(0,3) == 'upz' ? 'dwz'+xyz[2].slice(-1) : 'upz'+xyz[2].slice(-1) ;
+	moveItem(stepx,guyfall);
+	moveItem(stepy,guyfall);
+	moveItem(stepz,guyfall);
+	if (subt%2==0) {walking('upy0',guyfall);}
+	
+	if (subt==90+70-20) {hideshowItem("bang",false);}
+	
+}
 
 
 
