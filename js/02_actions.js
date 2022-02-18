@@ -327,7 +327,7 @@ function elevatorMirror(){
 	
     var x  = B(4,0)-2-guy['X'],
 	    y  = guy['Y'];
-    var pm = {'01':'00','00':'10','11':'01','10':'11'}[guy['file'].slice(-3,-1)];
+    var pm = {'01':'00','00':'10','11':'01','10':'11','up':'up','dw':'dw'}[guy['file'].slice(-3,-1)];
     pm=guy['file'].slice(0,-3)+pm+guy['file'].slice(-1);
 	
 	stuff[label][mirroredIndex]['file'] = pm;

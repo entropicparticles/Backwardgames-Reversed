@@ -159,7 +159,22 @@ function doTouchStart(event) {
 // START PRESSING ANY KEY (JUST ONCE) ---------------------------------------------------------------
 document.addEventListener("click"     , firstStart);
 document.addEventListener('keydown'   , firstStart);
-//document.addEventListener('touchstart', firstStart, false);
+document.addEventListener('touchstart', firstStart);
+
+
+// double clik with touch
+var mylatesttap;
+function touching(event) {
+	var now = new Date().getTime();
+	var timesince = now - mylatesttap;
+	if((timesince < 100) && (timesince > 0)){
+		do2Click(event);
+	} else {
+		doMouseDown(event);
+	}
+	mylatesttap = new Date().getTime();
+}
+
 
 function firstStart(e) {
 	if (firstEntry) { 
@@ -178,9 +193,12 @@ function start() {
 	effectcanvas  = document.getElementById("effectcanvas"); 
 	effectcontext = effectcanvas.getContext("2d");
 	
-	document.addEventListener("mousemove", getPosXY   );	
-	document.addEventListener("mousedown", doMouseDown);
-	document.addEventListener("mouseup"  , doMouseUp  );
+	document.addEventListener("mousemove" , getPosXY   );	
+	document.addEventListener("touchmove" , getPosXY   );
+	document.addEventListener("mousedown" , doMouseDown);
+	document.addEventListener('touchstart', touching);
+	document.addEventListener("mouseup"   , doMouseUp  );
+	document.addEventListener("touchend"  , doMouseUp  );
 	document.addEventListener('dblclick' , do2Click   );
 	//finalcanvas.addEventListener("touchstart", doTouchStart, false);
 	
@@ -202,6 +220,7 @@ function start() {
 	}
 	createImageBitmap(tile).then(img => effectcontext.drawImage(img,0,0,width*scale,height*scale));
 	effectcanvas.style.visibility = "visible";
+	effectcanvas.style.visibility ="hidden"
 		
 	dcontext = [finalcontext,finalbackcontext,effectcontext];
 	for (var k=0;k<dcontext.length;++k){
@@ -229,9 +248,11 @@ function start() {
 	objects = ['mano','gun','maletin','report'];
 	room = 'void';
 	preRoom = 'void';
-	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_street_0"]}];    //start: "hotel_street_9"
+	actions = [{'ID':'room','function':'changeroom','arguments':["hotel_street_9"]}];    //start: "hotel_street_9"
 	guy = {'folder':'guy_cool','file':'m0_01N','X':0,'Y':0,'Z':0,'state':0};
-	 
+	
+	actionOn = true;
+	
     // Initiate loop
     finalcanvas.interval = setInterval(updateit, 1000/15);
 	
@@ -313,11 +334,11 @@ function updateKeys() {
 		keyOn = keyOn[1];
 	} else {	
 		var key1 = keyOn[keyOn.length-1].slice(0,3),key2 = keyOn[keyOn.length-2].slice(0,3);
-		if        (['upx','upy'].includes(key1)&&['upx','upy'].includes(key2)) { keyOn = 'upp1';
-		} else if (['upx','dwy'].includes(key1)&&['upx','dwy'].includes(key2)) { keyOn = 'rgt1';
-		} else if (['dwx','dwy'].includes(key1)&&['dwx','dwy'].includes(key2)) { keyOn = 'dwn1';
-		} else if (['dwx','upy'].includes(key1)&&['dwx','upy'].includes(key2)) { keyOn = 'lft1';
-		} else { keyOn = keyOn[keyOn.length-1];	}
+		if      (['upx','upy'].includes(key1)&&['upx','upy'].includes(key2)) { keyOn = 'upp1';}
+		else if (['upx','dwy'].includes(key1)&&['upx','dwy'].includes(key2)) { keyOn = 'rgt1';}
+		else if (['dwx','dwy'].includes(key1)&&['dwx','dwy'].includes(key2)) { keyOn = 'dwn1';}
+		else if (['dwx','upy'].includes(key1)&&['dwx','upy'].includes(key2)) { keyOn = 'lft1';}
+		else { keyOn = keyOn[keyOn.length-1];	}
 	}
 	
 	//console.log(keyOn,guyIndex)

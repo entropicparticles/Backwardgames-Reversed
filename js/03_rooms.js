@@ -229,19 +229,24 @@ function loadRoom(inroom) {
 		I0 = 0,J0 = 4;		
 			
 		RGBcover = 'RGB_cover';
-		entryPoint['X']    = 22;
-		entryPoint['Y']    = 24;
+		entryPoint['X']    = 8;
+		entryPoint['Y']    = 8;
 		entryPoint['Z']    = 0;
 		entryPoint['file'] = 'm0_01N';
 				
+		/*allstuff = [
+			['box','objects','tables','211w', 1,B(2,0),B(2,0),D(0,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','211w',-1,B(3,2),B(2,4),D(1,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','112w', 1,B(2,-2),B(3,1),D(0,0),true,true,false,false,0,0,'VI']
+			];   */
 		allstuff = [
-			['box','objects','tables','211', 1,B(2,0),B(2,0),D(0,0),true,true,false,false,0,0,'VI'],
-			['box','objects','tables','211',-1,B(3,2),B(2,4),D(1,0),true,true,false,false,0,0,'VI'],
-			['box','objects','tables','112', 1,B(2,-2),B(3,1),D(0,0),true,true,false,false,0,0,'VI']
-			];   
+			['box','objects','tables','211w', 1,B(2,0),B(2,0),D(0,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','211w',-1,B(3,0),B(2,0),D(1,0),true,true,false,false,0,0,'VI'],
+			['box','objects','tables','112w', 1,B(2,0),B(3,0),D(0,0),true,true,false,false,0,0,'VI']
+			]; 
 
 		// doors
-		doors = putDoor(B(1,0),B(0,0) ,0,1,1,'matrix','rooms','door','back','closed',1);
+		doors = putDoor(B(5,0),B(0,0) ,0,1,1,'matrix','rooms','door','back','closed',1);
 		allstuff = allstuff.concat(doors);
 						
 		// Floors

@@ -382,6 +382,30 @@ function givemeColors(row) {
 		ra =  [ [r,cl(0.8+a/10),a  ],   // ligtht
 		        [r,1            ,a/4]];  // dark
 				
+	} else if (room=='impossible'){  //------------------------------------------------------------------------ OTHERS
+	
+		var r = 2*255-(XYZ2J(X-0.5*Y,Y,0)/XYZ2J(5,5,0))*5;
+		r = (r%255)/255;
+		
+		//f1 = room['globalsets']['lamp']
+		f1 = [0,1][0];
+		
+		if (!row) {
+			
+			var a = 0.95;
+		} else {
+			var L = 8;
+			var a  = expx([X,Y,0],[  L,  0,0],1.5*L)*180/2 +
+					 expx([X,Y,0],[2*L,  0,0],1.5*L)*180/2 +
+					 expx([X,Y,0],[  L,3*L,0],  4*L)*(205*f1+50) +
+					 expx([X,Y,0],[4*L,  0,0],    L)*150*f1;
+			a = cl(a/255);
+			a = ['people','objects','human'].includes(row['type']) ? 0.85 + 0.15*a : a ; 
+		}  
+				
+		ra =  [ [r,cl(0.75+a/10),a  ],   // ligtht
+		        [r,1            ,a/3]];  // dark
+				
 	} else {  //------------------------------------------------------------------------ OTHERS
 	
 		var r = 255-(XYZ2J(X,Y,0)/XYZ2J(5,5,0))*5;
